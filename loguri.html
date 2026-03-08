@@ -75,7 +75,7 @@
             display: grid;
             grid-template-columns: 300px 1fr;
             gap: 1.5rem;
-            height: calc(100vh - 140px); /* Scădem navbar-ul și padding-ul */
+            height: calc(100vh - 140px);
             margin-top: 100px;
         }
 
@@ -204,10 +204,7 @@
                 </div>
                 
                 <div id="file-list" class="flex-grow">
-                    <div class="flex items-center justify-center py-8 text-zinc-500">
-                        <div class="loader mr-3"></div>
-                        <span class="text-sm">Se încarcă lista...</span>
-                    </div>
+                    <!-- Aici se vor genera elementele din script -->
                 </div>
             </aside>
 
@@ -240,115 +237,108 @@
     </main>
 
     <script>
-        let currentFiles = [];
         let activeFile = null;
 
         async function loadFileList() {
             const fileListContainer = document.getElementById('file-list');
+            fileListContainer.innerHTML = `
+                <div class="flex items-center justify-center py-8 text-zinc-500">
+                    <div class="loader mr-3"></div>
+                    <span class="text-sm">Se încarcă lista...</span>
+                </div>
+            `;
             
             try {
-                // Preluăm lista de fișiere generată de GitHub Actions
-                const response = await fetch('data/logs-list.json');
+                // 1. Fetch-uim "fișierul superior" care conține lista (ex: ./logs/index.json)
+                const response = await fetch('./logs/index.json');
                 
                 if (!response.ok) {
-                    throw new Error("Nu am putut încărca lista de log-uri.");
+                    throw new Error("Nu am găsit fișierul superior ./logs/index.json");
                 }
 
-                const text = await response.text();
-                
-                // Dacă e un array JSON valid (când e gol)
-                if (text.trim() === '[]') {
-                    fileListContainer.innerHTML = '<p class="text-sm text-zinc-500 text-center py-4">Nu s-au găsit fișiere.</p>';
-                    return;
-                }
-
-                // Dacă e lista generată de `ls -1` (un fișier pe linie)
-                let files = [];
-                try {
-                    files = JSON.parse(text);
-                } catch (e) {
-                    // Fallback dacă e text simplu cu linii
-                    files = text.split('\n').filter(line => line.trim() !== '');
-                }
-
-                if (files.length === 0) {
-                    fileListContainer.innerHTML = '<p class="text-sm text-zinc-500 text-center py-4">Nu s-au găsit fișiere.</p>';
-                    return;
-                }
-
+                const files = await response.json();
                 fileListContainer.innerHTML = '';
-                files.forEach(fileName => {
-                    // Dacă e obiect (din API vechi) sau string (din ls -1)
-                    const name = typeof fileName === 'string' ? fileName : fileName.name;
-                    const path = `data/log/${name}`;
-                    
+                
+                if (!files || files.length === 0) {
+                    fileListContainer.innerHTML = '<p class="text-sm text-zinc-500 text-center py-4">Nu s-au găsit fișiere în index.json.</p>';
+                    return;
+                }
+
+                // 2. Generăm elementele în sidebar pentru fiecare fișier
+                files.forEach((fileName) => {
                     const div = document.createElement('div');
                     div.className = 'file-item';
-                    div.dataset.path = path;
                     
-                    // Iconiță în funcție de extensie
                     let icon = 'ph-file-text';
-                    if (name.endsWith('.json')) icon = 'ph-file-code';
-                    else if (name.endsWith('.log') || name.endsWith('.txt')) icon = 'ph-terminal';
+                    if (fileName.endsWith('.json')) icon = 'ph-file-code';
+                    else if (fileName.endsWith('.log') || fileName.endsWith('.txt')) icon = 'ph-terminal';
                     
                     div.innerHTML = `
                         <i class="ph ${icon} text-lg opacity-70"></i>
-                        <span class="truncate text-sm">${name}</span>
+                        <span class="truncate text-sm">${fileName}</span>
                     `;
                     
-                    div.addEventListener('click', () => loadFileContent({name, path}, div));
+                    div.addEventListener('click', () => loadFileContent(fileName, div));
                     fileListContainer.appendChild(div);
                 });
 
             } catch (error) {
                 console.error("Eroare la încărcarea listei de fișiere:", error);
                 fileListContainer.innerHTML = `
-                    <div class="text-red-400 text-center py-4">
+                    <div class="text-red-400 text-center py-4 px-2">
                         <i class="ph ph-warning-circle text-2xl mb-2"></i>
                         <p class="text-xs">${error.message}</p>
-                        <p class="text-[10px] mt-2 text-zinc-500">Asigură-te că GitHub Actions a rulat.</p>
+                        <p class="text-[10px] mt-2 text-zinc-500">Asigură-te că ai creat <b>logs/index.json</b> și folosești un server local (ex. Live Server).</p>
                     </div>
                 `;
             }
         }
 
-        async function loadFileContent(file, element) {
-            // Update UI
+        async function loadFileContent(fileName, element) {
+            // Update UI Sidebar
             document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
             if (element) element.classList.add('active');
             
-            activeFile = file;
-            document.getElementById('current-file-name').textContent = file.name;
-            
-            const btnDownload = document.getElementById('btn-download');
-            btnDownload.classList.remove('hidden');
-            // Setăm link-ul de download direct către fișierul local
-            btnDownload.onclick = () => window.open(file.path, '_blank');
+            activeFile = fileName;
+            document.getElementById('current-file-name').textContent = fileName;
             
             const contentContainer = document.getElementById('log-content');
             contentContainer.innerHTML = '<div class="flex items-center justify-center h-full"><div class="loader"></div></div>';
 
             try {
-                const response = await fetch(file.path);
-                if (!response.ok) throw new Error("Fișierul nu a putut fi citit.");
+                // Fetch-uim conținutul real al fișierului de log
+                const response = await fetch(`./logs/${fileName}`);
+                if (!response.ok) throw new Error(`Nu am putut citi ./logs/${fileName}`);
                 
                 const content = await response.text();
+
+                // Creare logică de download folosind Blob
+                const btnDownload = document.getElementById('btn-download');
+                btnDownload.classList.remove('hidden');
+                btnDownload.onclick = () => {
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                };
                 
-                // Evidențiere simplă pentru log-uri (opțional)
+                // Formatare culori pentru textul log-ului
                 let formattedContent = content
                     .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;')
                     .replace(/(ERROR|FATAL|CRITICAL)/g, '<span class="text-red-400 font-bold">$1</span>')
                     .replace(/(WARN|WARNING)/g, '<span class="text-yellow-400 font-bold">$1</span>')
-                    .replace(/(INFO|NOTICE)/g, '<span class="text-sky-400 font-bold">$1</span>')
+                    .replace(/(INFO|NOTICE|Outputs:|ok:)/g, '<span class="text-sky-400 font-bold">$1</span>')
+                    .replace(/(changed:)/g, '<span class="text-emerald-400 font-bold">$1</span>')
                     .replace(/(DEBUG|TRACE)/g, '<span class="text-zinc-500 font-bold">$1</span>');
 
                 contentContainer.innerHTML = formattedContent;
-                
-                // Scroll la final dacă e log sau txt
-                if (file.name.endsWith('.log') || file.name.endsWith('.txt')) {
-                    contentContainer.scrollTop = contentContainer.scrollHeight;
-                }
+                contentContainer.scrollTop = contentContainer.scrollHeight;
 
             } catch (error) {
                 console.error("Eroare la încărcarea conținutului:", error);
@@ -372,7 +362,7 @@
             }
         });
 
-        // Inițializare
+        // Inițializare listă log-uri
         document.addEventListener('DOMContentLoaded', loadFileList);
     </script>
 </body>
