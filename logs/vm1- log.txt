@@ -1,0 +1,139 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sun Mar  1 17:46:19 UTC 2026
+
+  System load:  0.04              Users logged in:         1
+  Usage of /:   2.8% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 1%                IPv4 address for ens3:   192.168.66.243
+  Swap usage:   0%                IPv4 address for virbr0: 192.168.122.1
+  Processes:    245
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+93 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Sun Mar  1 17:42:30 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ sudo virsh list --all | grep juju
+ 29   juju-controller   running
+ubuntu@vm2-services-hypervisor:~$ sudo virsh domifaddr juju-controller
+ Name       MAC address          Protocol     Address
+-------------------------------------------------------------------------------
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh vncdisplay juju-controller
+127.0.0.1:0
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh console juju-controller
+Connected to domain juju-controller
+Escape character is ^]
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh destroy juju-controller
+Domain juju-controller destroyed
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh undefine juju-controller
+Domain juju-controller has been undefined
+
+ubuntu@vm2-services-hypervisor:~$ sudo virt-install --os-variant ubuntu20.04 --noautoconsole --print-xml --boot network,hd,menu=on \
+>   --graphics vnc --video=cirrus \
+>   --controller scsi,model=virtio-scsi,index=0 \
+>   --name juju-controller --ram 4096 --vcpus 2 --cpu host \
+>   --disk path=/home/VMs/juju-controller/juju-controller.img,size=40,format=raw,bus=virtio,cache=none,io=native \
+>   --network=network=host-bridge,mac=52:54:00:63:dd:dc,model=virtio \
+>   --network=network=host-bridge,mac=52:54:00:63:dd:dd,model=virtio \
+>   > juju-controller.xml
+ubuntu@vm2-services-hypervisor:~$ sudo virsh define juju-controller.xml
+Domain juju-controller defined from juju-controller.xml
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh autostart juju-controller
+Domain juju-controller marked as autostarted
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh start juju-controller
+Domain juju-controller started
+
+ubuntu@vm2-services-hypervisor:~$ exit
+logout
+Connection to 192.168.66.243 closed.
+alex@DESKTOP-8JOK6E1:~$ ssh ubuntu@130.195.57.249
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sun Mar  1 18:14:01 UTC 2026
+
+  System load:             0.08
+  Usage of /:              13.0% of 96.73GB
+  Memory usage:            21%
+  Swap usage:              0%
+  Processes:               251
+  Users logged in:         1
+  IPv4 address for ens3:   192.168.66.27
+  IPv4 address for ens3:   10.10.10.1
+  IPv4 address for lxdbr0: 10.115.30.1
+  IPv6 address for lxdbr0: fd42:3738:6497:8f07::1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+54 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+94 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Sun Mar  1 17:45:25 2026 from 100.69.250.0
+ubuntu@vm1-orchestrator:~$ sudo journalctl -u snap.maas.supervisor -f | grep -i "dx36ea\|compute01"
+^C
+ubuntu@vm1-orchestrator:~$ sudo journalctl -u snap.maas.supervisor -f
+-- Logs begin at Wed 2025-11-19 23:32:55 UTC. --
+Mar 01 18:12:08 vm1-orchestrator dhcpd[1775846]: execute_statement argv[10] = --socket
+Mar 01 18:12:08 vm1-orchestrator dhcpd[1775846]: execute_statement argv[11] = /var/snap/maas/8724/var/lib/maas/dhcpd.sock
+Mar 01 18:14:32 vm1-orchestrator dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+Mar 01 18:14:32 vm1-orchestrator dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+Mar 01 18:14:34 vm1-orchestrator dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+Mar 01 18:14:34 vm1-orchestrator dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+Mar 01 18:14:36 vm1-orchestrator dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+Mar 01 18:14:36 vm1-orchestrator dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+Mar 01 18:14:40 vm1-orchestrator dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+Mar 01 18:14:40 vm1-orchestrator dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+^C
+ubuntu@vm1-orchestrator:~$ maas admin machine read dx36ea | python3 -m json.tool | grep -E '"status_name"|"status_message"|"power_state"'
+    "status_message": "Powering on",
+    "status_name": "Deploying",
+    "power_state": "on",
+ubuntu@vm1-orchestrator:~$ maas admin machine read dx36ea | python3 -m json.tool | grep "mac_address"
+        "mac_address": "52:54:00:31:a1:67",
+            "mac_address": "52:54:00:31:a1:67",
+ubuntu@vm1-orchestrator:~$ watch -n 10 "maas admin machine read dx36ea | python3 -m json.tool | grep -E '\"status_name\"|\"status_message\"|\"power_state\"'"

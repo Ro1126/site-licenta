@@ -1,0 +1,212 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -i ~/.ssh/id_rsa ubuntu@130.195.57.249
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sun Mar  1 14:58:14 UTC 2026
+
+  System load:             0.82
+  Usage of /:              17.0% of 96.73GB
+  Memory usage:            28%
+  Swap usage:              0%
+  Processes:               279
+  Users logged in:         0
+  IPv4 address for ens3:   192.168.66.27
+  IPv4 address for ens3:   10.10.10.1
+  IPv4 address for lxdbr0: 10.115.30.1
+  IPv6 address for lxdbr0: fd42:3738:6497:8f07::1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+54 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+94 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Wed Feb 25 07:32:25 2026 from 100.69.250.0
+ubuntu@vm1-orchestrator:~$ ssh ubuntu@192.168.66.243
+ubuntu@192.168.66.243: Permission denied (publickey).
+ubuntu@vm1-orchestrator:~$ exit
+logout
+Connection to 130.195.57.249 closed.
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sun Mar  1 14:58:32 UTC 2026
+
+  System load:  0.03              Users logged in:         0
+  Usage of /:   2.8% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 1%                IPv4 address for ens3:   192.168.66.243
+  Swap usage:   0%                IPv4 address for virbr0: 192.168.122.1
+  Processes:    259
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+93 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Wed Feb 25 07:10:07 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ sudo maas admin machines read | python3 -m json.tool | grep -E '"hostname"|"status_name"'
+sudo: maas: command not found
+Expecting value: line 1 column 1 (char 0)
+ubuntu@vm2-services-hypervisor:~$ snap list | grep maas
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name           State
+------------------------------
+ 24   os-compute02   running
+ 25   os-compute03   running
+ 26   os-compute01   paused
+
+ubuntu@vm2-services-hypervisor:~$ ip a show br0
+7: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether fa:16:3e:ee:c8:cd brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.104/24 metric 100 brd 10.10.10.255 scope global dynamic br0
+       valid_lft 24894sec preferred_lft 24894sec
+    inet6 fe80::f816:3eff:feee:c8cd/64 scope link
+       valid_lft forever preferred_lft forever
+ubuntu@vm2-services-hypervisor:~$ ls /home/VMs/
+compute01  compute02  compute03
+ubuntu@vm2-services-hypervisor:~$ ssh ubuntu@10.10.10.104 "virsh list --all"
+The authenticity of host '10.10.10.104 (10.10.10.104)' can't be established.
+ECDSA key fingerprint is SHA256:nOJcgIHT+yH/iWI3rnLxPN8TreoBX5i9nber5rbzh7Q.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '10.10.10.104' (ECDSA) to the list of known hosts.
+ubuntu@10.10.10.104: Permission denied (publickey).
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name           State
+------------------------------
+ 24   os-compute02   running
+ 25   os-compute03   running
+ 26   os-compute01   paused
+
+ubuntu@vm2-services-hypervisor:~$ sudo cat /var/snap/maas/common/root-id_rsa.pub
+cat: /var/snap/maas/common/root-id_rsa.pub: No such file or directory
+ubuntu@vm2-services-hypervisor:~$ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDiQblaVy/SuXnbcJRxltaCqOQu2MYtuSiGli8nlyhJTSEEW+7fOZIpt6ZyAhNxEqDfd2sGVoSV+11mLRi+VbjK79NELnukPNX5Qy17Dj+Hsa4PjJAg8y5k8t6KaGECCRm4h+oF+MrPBzkjb/hd5Jpzr9fqY7yg31ujsGcuwtw4ZQELf8FFQOb08+kqOIAeKhB8TCwiwKoOuFki8Ov8U/vJ9slJnRnpANusmdht7vLdeJS3L5rCQSXHumN7DwEh98HSjrYYOBm96fdUOtKv0QUh8JKTkp1Nd1DGP6aCPjpMsT4tQWubEvOB0RFPnJsptL6mGBrjxWzQgXRHoQZ3CtEOPZRDX/r0LwLFTi4q7DcEGXNIG81DWn0qr5KQjbYsvdwK8xnJxxZ4NVeckdN7fyp3xAgAz4PeoWHbsNWsAbHXW3IqueLnI1dF56wXZtO+JXvK6Mz/cEynOxaifSQVnHBmDWarXAG/Zo7X7w0fmiPZH3VKjPDxh66HwK0iXdJuBwc= root@vm1-orchestrator" >> ~/.ssh/authorized_keys
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ sudo virsh resume os-compute01
+Domain os-compute01 resumed
+
+ubuntu@vm2-services-hypervisor:~$ virsh uri
+qemu:///system
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh uri
+qemu:///system
+
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ --all Id   Name           State
+------------------------------
+ 24   os-compute02   running
+ 25   os-compute03   running
+ 26   os-compute01   running
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh list --all
+ Id   Name           State
+------------------------------
+ 24   os-compute02   running
+ 25   os-compute03   running
+ 26   os-compute01   running
+
+ubuntu@vm2-services-hypervisor:~$ sudo usermod -aG libvirt ubuntu
+ubuntu@vm2-services-hypervisor:~$ sudo usermod -aG kvm ubuntu
+ubuntu@vm2-services-hypervisor:~$ sudo cat /etc/polkit-1/localauthority/50-local.d/50-libvirt-access.pkla 2>/dev/null || echo "nu exista"
+nu exista
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name           State
+------------------------------
+ 24   os-compute02   running
+ 25   os-compute03   running
+ 26   os-compute01   running
+
+ubuntu@vm2-services-hypervisor:~$ virsh -c qemu:///system list --all
+ Id   Name           State
+------------------------------
+ 24   os-compute02   running
+ 25   os-compute03   running
+ 26   os-compute01   running
+
+ubuntu@vm2-services-hypervisor:~$ virsh -c qemu:///session list --all
+ Id   Name   State
+--------------------
+
+ubuntu@vm2-services-hypervisor:~$ id ubuntu
+uid=1000(ubuntu) gid=1000(ubuntu) groups=1000(ubuntu),4(adm),20(dialout),24(cdrom),25(floppy),27(sudo),29(audio),30(dip),44(video),46(plugdev),108(kvm),118(netdev),119(lxd),121(libvirt)
+ubuntu@vm2-services-hypervisor:~$ virsh --list all
+error: unsupported option '--list'. See --help.
+ubuntu@vm2-services-hypervisor:~$ virsh lista --all
+error: unknown command: 'lista'
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name           State
+------------------------------
+ 25   os-compute03   running
+ 27   os-compute01   running
+ 28   os-compute02   running
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       46.6s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute02 | grep -i "cpu time"
+CPU time:       41.0s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       46.9s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute02 | grep -i "cpu time"
+CPU time:       41.2s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.0s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.1s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.2s
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dominfo os-compute01 | grep -i "cpu time"
+CPU time:       47.2s
+ubuntu@vm2-services-hypervisor:~$ client_loop: send disconnect: Broken pipe
+client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$

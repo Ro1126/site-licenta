@@ -1,0 +1,1067 @@
+alex@DESKTOP-8JOK6E1:~$ ssh ubuntu@130.195.57.249
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Mon Mar  2 08:20:34 UTC 2026
+
+  System load:             0.64
+  Usage of /:              15.9% of 96.73GB
+  Memory usage:            32%
+  Swap usage:              0%
+  Processes:               274
+  Users logged in:         0
+  IPv4 address for ens3:   192.168.66.27
+  IPv4 address for ens3:   10.10.10.1
+  IPv4 address for lxdbr0: 10.115.30.1
+  IPv6 address for lxdbr0: fd42:3738:6497:8f07::1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+54 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+94 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Mon Mar  2 08:16:02 2026 from 100.69.250.0
+ubuntu@vm1-orchestrator:~$ sudo maas admin boot-resources read | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> for r in data:
+>     print(r['name'], '|', r.get('architecture',''))
+> "
+grub-efi-signed/uefi | amd64/generic
+grub-efi/uefi | arm64/generic
+grub-ieee1275/open-firmware | ppc64el/generic
+pxelinux/pxe | i386/generic
+ubuntu/bionic | amd64/ga-18.04
+ubuntu/bionic | amd64/ga-18.04-lowlatency
+ubuntu/bionic | amd64/hwe-18.04
+ubuntu/bionic | amd64/hwe-18.04-edge
+ubuntu/bionic | amd64/hwe-18.04-lowlatency
+ubuntu/bionic | amd64/hwe-18.04-lowlatency-edge
+ubuntu/focal | amd64/ga-20.04
+ubuntu/focal | amd64/ga-20.04-lowlatency
+ubuntu/focal | amd64/hwe-20.04
+ubuntu/focal | amd64/hwe-20.04-edge
+ubuntu/focal | amd64/hwe-20.04-lowlatency
+ubuntu/focal | amd64/hwe-20.04-lowlatency-edge
+ubuntu/noble | amd64/ga-24.04
+ubuntu/noble | amd64/ga-24.04-lowlatency
+ubuntu/noble | amd64/hwe-24.04
+ubuntu/noble | amd64/hwe-24.04-edge
+ubuntu/noble | amd64/hwe-24.04-lowlatency
+ubuntu/noble | amd64/hwe-24.04-lowlatency-edge
+ubuntu@vm1-orchestrator:~$ sudo maas admin boot-source-selections create 1 os=ubuntu release=jammy arches=amd64 subarches='*' labels='*'
+Success.
+Machine-readable output follows:
+{
+    "os": "ubuntu",
+    "release": "jammy",
+    "arches": [
+        "amd64"
+    ],
+    "subarches": [
+        "*"
+    ],
+    "labels": [
+        "*"
+    ],
+    "boot_source_id": 1,
+    "id": 5,
+    "resource_uri": "/MAAS/api/2.0/boot-sources/1/selections/5/"
+}
+ubuntu@vm1-orchestrator:~$ sudo maas admin boot-resources import
+Success.
+Machine-readable output follows:
+Import of boot resources started
+ubuntu@vm1-orchestrator:~$ watch -n 30 'sudo maas admin boot-resources read | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> for r in data:
+>     if \"jammy\" in r[\"name\"]:
+>         print(r[\"name\"], \"|\", r.get(\"architecture\",\"\"))
+> "'
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "^Machine|^[0-9]"
+Machine  State    Address  Inst id  Base          AZ  Message
+0        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+0/lxd/0  pending           pending  ubuntu@22.04
+0/lxd/1  pending           pending  ubuntu@22.04
+0/lxd/2  pending           pending  ubuntu@22.04
+0/lxd/3  pending           pending  ubuntu@22.04
+0/lxd/4  pending           pending  ubuntu@22.04
+1        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+1/lxd/0  pending           pending  ubuntu@22.04
+1/lxd/1  pending           pending  ubuntu@22.04
+1/lxd/2  pending           pending  ubuntu@22.04
+1/lxd/3  pending           pending  ubuntu@22.04
+1/lxd/4  pending           pending  ubuntu@22.04
+1/lxd/5  pending           pending  ubuntu@22.04
+2        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+2/lxd/0  pending           pending  ubuntu@22.04
+2/lxd/1  pending           pending  ubuntu@22.04
+2/lxd/2  pending           pending  ubuntu@22.04
+2/lxd/3  pending           pending  ubuntu@22.04
+2/lxd/4  pending           pending  ubuntu@22.04
+2/lxd/5  pending           pending  ubuntu@22.04
+2/lxd/6  pending           pending  ubuntu@22.04
+ubuntu@vm1-orchestrator:~$ sudo maas admin boot-resources read | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> for r in data:
+>     if 'jammy' in r['name']:
+>         print(r['name'], '|', r.get('architecture',''))
+> "
+ubuntu/jammy | amd64/ga-22.04
+ubuntu/jammy | amd64/ga-22.04-lowlatency
+ubuntu/jammy | amd64/hwe-22.04
+ubuntu/jammy | amd64/hwe-22.04-edge
+ubuntu/jammy | amd64/hwe-22.04-lowlatency
+ubuntu/jammy | amd64/hwe-22.04-lowlatency-edge
+ubuntu@vm1-orchestrator:~$ sudo snap restart maas
+
+2026-03-02T08:23:03Z INFO Waiting for "snap.maas.supervisor.service" to stop.
+Restarted.
+ubuntu@vm1-orchestrator:~$ sleep 20
+ubuntu@vm1-orchestrator:~$ juju retry-provisioning 0 1 2
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "^Machine|^[0-9]"
+Machine  State    Address  Inst id  Base          AZ  Message
+0        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+0/lxd/0  pending           pending  ubuntu@22.04
+0/lxd/1  pending           pending  ubuntu@22.04
+0/lxd/2  pending           pending  ubuntu@22.04
+0/lxd/3  pending           pending  ubuntu@22.04
+0/lxd/4  pending           pending  ubuntu@22.04
+1        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+1/lxd/0  pending           pending  ubuntu@22.04
+1/lxd/1  pending           pending  ubuntu@22.04
+1/lxd/2  pending           pending  ubuntu@22.04
+1/lxd/3  pending           pending  ubuntu@22.04
+1/lxd/4  pending           pending  ubuntu@22.04
+1/lxd/5  pending           pending  ubuntu@22.04
+2        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+2/lxd/0  pending           pending  ubuntu@22.04
+2/lxd/1  pending           pending  ubuntu@22.04
+2/lxd/2  pending           pending  ubuntu@22.04
+2/lxd/3  pending           pending  ubuntu@22.04
+2/lxd/4  pending           pending  ubuntu@22.04
+2/lxd/5  pending           pending  ubuntu@22.04
+2/lxd/6  pending           pending  ubuntu@22.04
+ubuntu@vm1-orchestrator:~$ juju destroy-model openstack --destroy-storage --force --no-prompt
+Destroying model
+Waiting for model to be removed, 3 error(s), 21 machine(s), 25 application(s)...
+...
+Waiting for model to be removed, 3 error(s), 21 machine(s), 22 application(s)...
+Waiting for model to be removed, 3 error(s), 21 machine(s), 20 application(s)...
+Waiting for model to be removed, 3 error(s), 21 machine(s), 14 application(s)...
+.
+Waiting for model to be removed, 21 machine(s), 14 application(s)...
+Waiting for model to be removed, 2 machine(s), 14 application(s)...
+Waiting for model to be removed, 2 machine(s)................................
+Waiting for model to be removed...
+Model destroyed.
+ubuntu@vm1-orchestrator:~$ sed -i 's/series: jammy/series: focal/' ~/bundle.yaml
+ubuntu@vm1-orchestrator:~$ head -1 ~/bundle.yaml
+series: focal
+ubuntu@vm1-orchestrator:~$ juju add-model openstack my-maas
+Added 'openstack' model on my-maas/default with credential 'admin' for user 'admin'
+ubuntu@vm1-orchestrator:~$ juju deploy ./bundle.yaml
+WARNING series are being deprecated in favour of bases. For more information about the transition to bases see https://discourse.charmhub.io/t/transition-from-series-to-base-in-juju-4-0/14127
+Located charm "ceph-mon" in charm-hub, channel quincy/stable
+Located charm "ceph-osd" in charm-hub, channel quincy/stable
+Located charm "cinder" in charm-hub, channel 2023.2/stable
+Located charm "cinder-ceph" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "glance" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "keystone" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "mysql-innodb-cluster" in charm-hub, channel 8.0/stable
+Located charm "neutron-api" in charm-hub, channel 2023.2/stable
+Located charm "neutron-api-plugin-ovn" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "nova-cloud-controller" in charm-hub, channel 2023.2/stable
+Located charm "nova-compute" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "ntp" in charm-hub, channel latest/stable
+Located charm "openstack-dashboard" in charm-hub, channel 2023.2/stable
+Located charm "ovn-central" in charm-hub, channel 23.09/stable
+Located charm "ovn-chassis" in charm-hub, channel 23.09/stable
+Located charm "placement" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "rabbitmq-server" in charm-hub, channel 3.9/stable
+Located charm "vault" in charm-hub, channel 1.8/stable
+ERROR cannot deploy bundle: cannot resolve charm or bundle "cinder": selecting releases: charm or bundle not found for channel "2023.2/stable", base "amd64/ubuntu/20.04"
+available releases are:
+  channel "ussuri/candidate": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "ussuri/beta": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "stein/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "train/candidate": available bases are: ubuntu@18.04
+  channel "stein/beta": available bases are: ubuntu@18.04
+  channel "zed/stable": available bases are: ubuntu@22.04, ubuntu@22.10
+  channel "zed/beta": available bases are: ubuntu@22.04, ubuntu@22.10
+  channel "2024.1/stable": available bases are: ubuntu@22.04
+  channel "2024.1/candidate": available bases are: ubuntu@22.04, ubuntu@23.10, ubuntu@23.04
+  channel "2024.1/edge": available bases are: ubuntu@22.04, ubuntu@23.10, ubuntu@23.04
+  channel "2023.1/candidate": available bases are: ubuntu@22.04, ubuntu@23.04, ubuntu@22.10
+  channel "2023.1/edge": available bases are: ubuntu@22.04, ubuntu@23.04, ubuntu@22.10
+  channel "ussuri/stable": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "latest/edge": available bases are: ubuntu@24.04, ubuntu@22.04, ubuntu@20.04, ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@14.04, ubuntu@12.04, ubuntu@23.10, ubuntu@23.04, ubuntu@22.10, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10, ubuntu@19.10, ubuntu@19.04, ubuntu@18.10, ubuntu@17.10, ubuntu@17.04, ubuntu@16.10
+  channel "xena/beta": available bases are: ubuntu@20.04
+  channel "train/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "rocky/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "train/beta": available bases are: ubuntu@18.04
+  channel "queens/candidate": available bases are: ubuntu@18.04
+  channel "yoga/edge": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@21.10
+  channel "xena/candidate": available bases are: ubuntu@20.04
+  channel "queens/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "rocky/candidate": available bases are: ubuntu@18.04
+  channel "rocky/beta": available bases are: ubuntu@18.04
+  channel "wallaby/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "victoria/beta": available bases are: ubuntu@20.04
+  channel "ussuri/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "latest/candidate": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@14.04, ubuntu@12.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10, ubuntu@19.10, ubuntu@19.04, ubuntu@18.10, ubuntu@17.10, ubuntu@17.04, ubuntu@16.10
+  channel "latest/beta": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@14.04, ubuntu@12.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10, ubuntu@19.10, ubuntu@19.04, ubuntu@18.10, ubuntu@17.10, ubuntu@17.04, ubuntu@16.10
+  channel "stein/candidate": available bases are: ubuntu@18.04
+  channel "wallaby/beta": available bases are: ubuntu@20.04
+  channel "zed/edge": available bases are: ubuntu@22.04, ubuntu@22.10
+  channel "yoga/candidate": available bases are: ubuntu@22.04, ubuntu@20.04
+  channel "2023.2/edge": available bases are: ubuntu@22.04, ubuntu@23.10, ubuntu@23.04
+  channel "2023.1/stable": available bases are: ubuntu@22.04, ubuntu@23.04, ubuntu@22.10
+  channel "xena/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "wallaby/candidate": available bases are: ubuntu@20.04
+  channel "queens/beta": available bases are: ubuntu@18.04
+  channel "xena/stable": available bases are: ubuntu@20.04
+  channel "victoria/candidate": available bases are: ubuntu@20.04
+  channel "zed/candidate": available bases are: ubuntu@22.04, ubuntu@22.10
+  channel "yoga/stable": available bases are: ubuntu@22.04, ubuntu@20.04
+  channel "2023.2/stable": available bases are: ubuntu@22.04, ubuntu@23.10
+  channel "2023.2/candidate": available bases are: ubuntu@22.04, ubuntu@23.10, ubuntu@23.04
+  channel "2023.2/beta": available bases are: ubuntu@22.04, ubuntu@23.10, ubuntu@23.04
+  channel "2023.1/beta": available bases are: ubuntu@22.04, ubuntu@23.04, ubuntu@22.10
+  channel "wallaby/stable": available bases are: ubuntu@20.04
+  channel "victoria/stable": available bases are: ubuntu@20.04
+  channel "yoga/beta": available bases are: ubuntu@22.04, ubuntu@20.04
+  channel "2024.1/beta": available bases are: ubuntu@22.04, ubuntu@23.10, ubuntu@23.04
+  channel "victoria/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+ubuntu@vm1-orchestrator:~$ sudo ss -tulpn | grep 5240
+udp   UNCONN 0      0                                      *:5240             *:*                                                                                users:(("python3",pid=1854364,fd=20))
+tcp   LISTEN 0      50                                     *:5240             *:*                                                                                users:(("python3",pid=1854431,fd=20))
+tcp   LISTEN 0      50                                     *:5240             *:*                                                                                users:(("python3",pid=1854428,fd=20))
+tcp   LISTEN 0      50                                     *:5240             *:*                                                                                users:(("python3",pid=1854429,fd=21))
+tcp   LISTEN 0      50                                     *:5240             *:*                                                                                users:(("python3",pid=1854427,fd=24))
+ubuntu@vm1-orchestrator:~$ sed -i 's/series: focal/series: jammy/' ~/bundle.yaml
+ubuntu@vm1-orchestrator:~$ head -1 ~/bundle.yaml
+series: jammy
+ubuntu@vm1-orchestrator:~$ snap info maas --installed
+error: unknown flag `installed'
+ubuntu@vm1-orchestrator:~$ sudo snap refresh maas --channel=3.0/stable
+error: snap "maas" is not available on 3.0/stable but is available to install on the following
+       channels:
+
+       3.0/candidate  snap refresh --channel=3.0/candidate maas
+       3.0/beta       snap refresh --channel=3.0/beta maas
+       3.0/edge       snap refresh --channel=3.0/edge maas
+
+       Please be mindful pre-release channels may include features not completely tested or
+       implemented. Get more information with 'snap info maas'.
+ubuntu@vm1-orchestrator:~$ snap info maas | grep -E "3\.[0-9]|tracking"
+tracking:     2.7/stable/ubuntu-20.04
+  3.7/stable:       3.7.1-17963-g.1757012e8        2026-02-13 (41216) 234MB -
+  3.7/candidate:    3.7.0-17939-g.41ff78848        2025-11-28 (40925) 234MB -
+  3.7/beta:         3.7.1-17963-g.1757012e8        2026-02-13 (41216) 234MB -
+  3.7/edge:         3.7.1-17967-g.614de3784        2026-02-25 (41447) 234MB -
+  latest/edge:      3.8.0~alpha1-18324-g.2263126e4 2026-03-01 (41489) 274MB -
+  3.6/stable:       3.6.3-17614-g.f7993b9c4        2026-02-24 (41404) 212MB -
+  3.6/candidate:    3.6.1-17573-g.bc3a12219        2025-08-05 (40143) 212MB -
+  3.6/beta:         3.6.2-17588-g.7b59ae9e8        2025-10-09 (40614) 212MB -
+  3.6/edge:         3.6.3-17615-g.360257d62        2026-02-25 (41454) 212MB -
+  3.5/stable:       3.5.10-16398-g.8e932f0fa       2025-12-16 (40962) 195MB -
+  3.5/candidate:    3.5.10-16398-g.8e932f0fa       2025-12-16 (40962) 195MB -
+  3.5/beta:         3.5.10-16398-g.8e932f0fa       2025-12-16 (40962) 195MB -
+  3.5/edge:         3.5.10-16401-g.6351764dd       2026-02-11 (41319) 195MB -
+  3.4/stable:       3.4.9-14399-g.48cea136e        2025-10-14 (40585) 151MB -
+  3.4/candidate:    ^
+  3.4/beta:         3.4.9-14399-g.48cea136e        2025-09-26 (40585) 151MB -
+  3.4/edge:         3.4.9-14401-g.665401e8f        2025-10-31 (40748) 151MB -
+  3.3/stable:       3.3.11-13270-g.ccb202330       2025-10-14 (40576) 138MB -
+  3.3/candidate:    3.3.11-13270-g.ccb202330       2025-10-14 (40576) 138MB -
+  3.3/beta:         3.3.11-13270-g.ccb202330       2025-09-26 (40576) 138MB -
+  3.3/edge:         3.3.11-13270-g.ccb202330       2025-09-26 (40576) 138MB -
+  3.2/stable:       3.2.11-12079-g.8ca75dae5       2024-08-12 (36614) 149MB -
+  3.2/candidate:    3.2.11-12079-g.8ca75dae5       2024-08-12 (36614) 149MB -
+  3.2/beta:         3.2.11-12079-g.8ca75dae5       2024-08-12 (36614) 149MB -
+  3.2/edge:         3.2.11-12079-g.8ca75dae5       2024-07-25 (36614) 149MB -
+  3.1/stable:       3.1.4-10938-g.ea3efe190        2024-08-12 (36618) 143MB -
+  3.1/candidate:    3.1.4-10938-g.ea3efe190        2024-08-12 (36618) 143MB -
+  3.1/beta:         3.1.4-10938-g.ea3efe190        2024-08-12 (36618) 143MB -
+  3.1/edge:         3.1.4-10938-g.ea3efe190        2024-07-25 (36618) 143MB -
+  3.0/stable:       3.0.2-10056-g.089ec66c2        2024-02-26 (33607) 143MB -
+  3.0/candidate:    3.0.0-10029-g.986ea3e45        2022-11-15 (24909) 143MB -
+  3.0/beta:         ^
+  3.0/edge:         3.0.2-10056-g.089ec66c2        2024-02-16 (33607) 143MB -
+ubuntu@vm1-orchestrator:~$ sudo snap refresh maas --channel=3.3/stable
+error: snap "maas" is not available on 3.3/stable but is available to install on the following
+       channels:
+
+       3.3/candidate  snap refresh --channel=3.3/candidate maas
+       3.3/beta       snap refresh --channel=3.3/beta maas
+       3.3/edge       snap refresh --channel=3.3/edge maas
+
+       Please be mindful pre-release channels may include features not completely tested or
+       implemented. Get more information with 'snap info maas'.
+ubuntu@vm1-orchestrator:~$ sudo snap refresh maas --channel=3.4/stable
+error: snap "maas" is not available on 3.4/stable but is available to install on the following
+       channels:
+
+       3.4/candidate  snap refresh --channel=3.4/candidate maas
+       3.4/beta       snap refresh --channel=3.4/beta maas
+       3.4/edge       snap refresh --channel=3.4/edge maas
+
+       Please be mindful pre-release channels may include features not completely tested or
+       implemented. Get more information with 'snap info maas'.
+ubuntu@vm1-orchestrator:~$ sudo snap refresh maas --channel=3.0/stable
+error: snap "maas" is not available on 3.0/stable but is available to install on the following
+       channels:
+
+       3.0/candidate  snap refresh --channel=3.0/candidate maas
+       3.0/beta       snap refresh --channel=3.0/beta maas
+       3.0/edge       snap refresh --channel=3.0/edge maas
+
+       Please be mindful pre-release channels may include features not completely tested or
+       implemented. Get more information with 'snap info maas'.
+ubuntu@vm1-orchestrator:~$ juju destroy-model openstack --force --no-prompt
+Destroying model
+Waiting for model to be removed.......
+Model destroyed.
+ubuntu@vm1-orchestrator:~$ cd ~
+ubuntu@vm1-orchestrator:~$ cp bundle.yaml bundle.yaml.bak
+table|channel: latest/stable|g' bundle.yaml
+sed -i 's|channel: 8.0/stable|channel: 8.0/stable|g' bundle.yamlubuntu@vm1-orchestrator:~$ sed -i 's/series: jammy/series: focal/' bundle.yaml
+ubuntu@vm1-orchestrator:~$ sed -i 's|channel: 2023.2/stable|channel: ussuri/stable|g' bundle.yaml
+ubuntu@vm1-orchestrator:~$ sed -i 's|channel: 23.09/stable|channel: latest/stable|g' bundle.yaml
+ubuntu@vm1-orchestrator:~$ sed -i 's|channel: quincy/stable|channel: latest/stable|g' bundle.yaml
+ubuntu@vm1-orchestrator:~$ sed -i 's|channel: 8.0/stable|channel: 8.0/stable|g' bundle.yaml
+ubuntu@vm1-orchestrator:~$ cat bundle.yaml | head -40
+series: focal
+machines:
+  "0":
+    constraints: tags=compute
+  "1":
+    constraints: tags=compute
+  "2":
+    constraints: tags=compute
+applications:
+  ceph-mon:
+    charm: ceph-mon
+    channel: latest/stable
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      expected-osd-count: 3
+      monitor-count: 3
+  ceph-osd:
+    charm: ceph-osd
+    channel: latest/stable
+    num_units: 3
+    to:
+    - "0"
+    - "1"
+    - "2"
+    options:
+      osd-devices: /dev/vdb
+  cinder:
+    charm: cinder
+    channel: ussuri/stable
+    num_units: 1
+    to:
+    - lxd:1
+    options:
+      block-device: None
+      glance-api-version: 2
+  cinder-ceph:
+ubuntu@vm1-orchestrator:~$ cat ~/bundle.yaml
+series: focal
+machines:
+  "0":
+    constraints: tags=compute
+  "1":
+    constraints: tags=compute
+  "2":
+    constraints: tags=compute
+applications:
+  ceph-mon:
+    charm: ceph-mon
+    channel: latest/stable
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      expected-osd-count: 3
+      monitor-count: 3
+  ceph-osd:
+    charm: ceph-osd
+    channel: latest/stable
+    num_units: 3
+    to:
+    - "0"
+    - "1"
+    - "2"
+    options:
+      osd-devices: /dev/vdb
+  cinder:
+    charm: cinder
+    channel: ussuri/stable
+    num_units: 1
+    to:
+    - lxd:1
+    options:
+      block-device: None
+      glance-api-version: 2
+  cinder-ceph:
+    charm: cinder-ceph
+    channel: ussuri/stable
+  cinder-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+  dashboard-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+  glance:
+    charm: glance
+    channel: ussuri/stable
+    num_units: 1
+    to:
+    - lxd:2
+  glance-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+  keystone:
+    charm: keystone
+    channel: ussuri/stable
+    num_units: 1
+    to:
+    - lxd:0
+    options:
+      admin-password: admin
+  keystone-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+  mysql-innodb-cluster:
+    charm: mysql-innodb-cluster
+    channel: 8.0/stable
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+  neutron-api:
+    charm: neutron-api
+    channel: ussuri/stable
+    num_units: 1
+    to:
+    - lxd:1
+    options:
+      neutron-security-groups: true
+      flat-network-providers: physnet1
+  neutron-api-plugin-ovn:
+    charm: neutron-api-plugin-ovn
+    channel: ussuri/stable
+  neutron-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+  nova-cloud-controller:
+    charm: nova-cloud-controller
+    channel: ussuri/stable
+    num_units: 1
+    to:
+    - lxd:2
+    options:
+      network-manager: Neutron
+  nova-compute:
+    charm: nova-compute
+    channel: ussuri/stable
+    num_units: 3
+    to:
+    - "0"
+    - "1"
+    - "2"
+    options:
+      config-flags: default_ephemeral_format=ext4
+      enable-live-migration: true
+      enable-resize: true
+      migration-auth-type: ssh
+      virt-type: kvm
+  nova-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+  ntp:
+    charm: ntp
+    channel: latest/stable
+  openstack-dashboard:
+    charm: openstack-dashboard
+    channel: ussuri/stable
+    num_units: 1
+    to:
+    - lxd:0
+  ovn-central:
+    charm: ovn-central
+    channel: latest/stable
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+  ovn-chassis:
+    charm: ovn-chassis
+    channel: latest/stable
+    options:
+      ovn-bridge-mappings: physnet1:br-ex
+      bridge-interface-mappings: br-ex:ens3
+  placement:
+    charm: placement
+    channel: ussuri/stable
+    num_units: 1
+    to:
+    - lxd:2
+  placement-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+  rabbitmq-server:
+    charm: rabbitmq-server
+    channel: 3.9/stable
+    num_units: 1
+    to:
+    - lxd:2
+  vault:
+    charm: vault
+    channel: 1.8/stable
+    num_units: 1
+    to:
+    - lxd:1
+relations:
+- - nova-compute:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:identity-service
+  - keystone:identity-service
+- - glance:identity-service
+  - keystone:identity-service
+- - neutron-api:identity-service
+  - keystone:identity-service
+- - neutron-api:amqp
+  - rabbitmq-server:amqp
+- - glance:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:image-service
+  - glance:image-service
+- - nova-compute:image-service
+  - glance:image-service
+- - nova-cloud-controller:cloud-compute
+  - nova-compute:cloud-compute
+- - nova-cloud-controller:amqp
+  - rabbitmq-server:amqp
+- - openstack-dashboard:identity-service
+  - keystone:identity-service
+- - nova-cloud-controller:neutron-api
+  - neutron-api:neutron-api
+- - cinder:image-service
+  - glance:image-service
+- - cinder:amqp
+  - rabbitmq-server:amqp
+- - cinder:identity-service
+  - keystone:identity-service
+- - cinder:cinder-volume-service
+  - nova-cloud-controller:cinder-volume-service
+- - cinder-ceph:storage-backend
+  - cinder:storage-backend
+- - ceph-mon:client
+  - nova-compute:ceph
+- - nova-compute:ceph-access
+  - cinder-ceph:ceph-access
+- - ceph-mon:client
+  - cinder-ceph:ceph
+- - ceph-mon:client
+  - glance:ceph
+- - ceph-osd:mon
+  - ceph-mon:osd
+- - ntp:juju-info
+  - nova-compute:juju-info
+- - placement:identity-service
+  - keystone:identity-service
+- - placement:placement
+  - nova-cloud-controller:placement
+- - keystone:shared-db
+  - keystone-mysql-router:shared-db
+- - cinder:shared-db
+  - cinder-mysql-router:shared-db
+- - glance:shared-db
+  - glance-mysql-router:shared-db
+- - nova-cloud-controller:shared-db
+  - nova-mysql-router:shared-db
+- - neutron-api:shared-db
+  - neutron-mysql-router:shared-db
+- - openstack-dashboard:shared-db
+  - dashboard-mysql-router:shared-db
+- - placement:shared-db
+  - placement-mysql-router:shared-db
+- - keystone-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - cinder-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - nova-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - glance-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - neutron-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - dashboard-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - placement-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - neutron-api-plugin-ovn:neutron-plugin
+  - neutron-api:neutron-plugin-api-subordinate
+- - ovn-central:ovsdb-cms
+  - neutron-api-plugin-ovn:ovsdb-cms
+- - ovn-chassis:nova-compute
+  - nova-compute:neutron-plugin
+- - ovn-chassis:ovsdb
+  - ovn-central:ovsdb
+- - vault:certificates
+  - neutron-api-plugin-ovn:certificates
+- - vault:certificates
+  - cinder:certificates
+- - vault:certificates
+  - glance:certificates
+- - vault:certificates
+  - keystone:certificates
+- - vault:certificates
+  - nova-cloud-controller:certificates
+- - vault:certificates
+  - openstack-dashboard:certificates
+- - vault:certificates
+  - placement:certificates
+- - ovn-central:certificates
+  - vault:certificates
+- - ovn-chassis:certificates
+  - vault:certificates
+ubuntu@vm1-orchestrator:~$ juju add-model openstack my-maas
+Added 'openstack' model on my-maas/default with credential 'admin' for user 'admin'
+ubuntu@vm1-orchestrator:~$ juju deploy ./bundle.yaml
+WARNING series are being deprecated in favour of bases. For more information about the transition to bases see https://discourse.charmhub.io/t/transition-from-series-to-base-in-juju-4-0/14127
+ERROR cannot deploy bundle: cannot resolve charm or bundle "ceph-mon": selecting releases: charm or bundle not found for channel "latest/stable", base "amd64"
+available releases are:
+  channel "squid/candidate": available bases are: ubuntu@24.04, ubuntu@22.04, ubuntu@20.04
+  channel "pacific/candidate": available bases are: ubuntu@20.04
+  channel "octopus/beta": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "octopus/edge": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "nautilus/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "quincy/candidate": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@23.04, ubuntu@22.10
+  channel "octopus/stable": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "mimic/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "luminous/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "squid/stable": available bases are: ubuntu@24.04, ubuntu@22.04, ubuntu@20.04
+  channel "squid/beta": available bases are: ubuntu@24.04, ubuntu@22.04, ubuntu@20.04
+  channel "quincy/edge": available bases are: ubuntu@24.04, ubuntu@22.04, ubuntu@20.04, ubuntu@23.04, ubuntu@22.10
+  channel "reef/candidate": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@23.10, ubuntu@23.04
+  channel "quincy/beta": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@23.04, ubuntu@22.10
+  channel "pacific/stable": available bases are: ubuntu@20.04
+  channel "squid/edge": available bases are: ubuntu@24.04, ubuntu@22.04, ubuntu@20.04
+  channel "reef/stable": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@23.10, ubuntu@23.04
+  channel "reef/beta": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@23.10, ubuntu@23.04
+  channel "reef/edge": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@23.10, ubuntu@23.04
+  channel "quincy/stable": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@23.04, ubuntu@22.10
+  channel "pacific/beta": available bases are: ubuntu@20.04
+  channel "pacific/edge": available bases are: ubuntu@20.04
+  channel "octopus/candidate": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "latest/edge": available bases are: ubuntu@24.04, ubuntu@22.04, ubuntu@20.04, ubuntu@23.10, ubuntu@23.04, ubuntu@22.10
+ubuntu@vm1-orchestrator:~$ sed -i '/charm: ceph-mon/{n;s|channel: latest/stable|channel: pacific/stable|}' ~/bundle.yaml
+ubuntu@vm1-orchestrator:~$ sed -i '/charm: ceph-osd/{n;s|channel: latest/stable|channel: pacific/stable|}' ~/bundle.yaml
+ubuntu@vm1-orchestrator:~$ sed -i '/charm: ovn-central/{n;s|channel: latest/stable|channel: 22.03/stable|}' ~/bundle.yaml
+ubuntu@vm1-orchestrator:~$ sed -i '/charm: ovn-chassis/{n;s|channel: latest/stable|channel: 22.03/stable|}' ~/bundle.yaml
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ grep "channel:" ~/bundle.yaml
+    channel: pacific/stable
+    channel: pacific/stable
+    channel: ussuri/stable
+    channel: ussuri/stable
+    channel: 8.0/stable
+    channel: 8.0/stable
+    channel: ussuri/stable
+    channel: 8.0/stable
+    channel: ussuri/stable
+    channel: 8.0/stable
+    channel: 8.0/stable
+    channel: ussuri/stable
+    channel: ussuri/stable
+    channel: 8.0/stable
+    channel: ussuri/stable
+    channel: ussuri/stable
+    channel: 8.0/stable
+    channel: latest/stable
+    channel: ussuri/stable
+    channel: 22.03/stable
+    channel: 22.03/stable
+    channel: ussuri/stable
+    channel: 8.0/stable
+    channel: 3.9/stable
+    channel: 1.8/stable
+ubuntu@vm1-orchestrator:~$ juju deploy ./bundle.yaml
+WARNING series are being deprecated in favour of bases. For more information about the transition to bases see https://discourse.charmhub.io/t/transition-from-series-to-base-in-juju-4-0/14127
+Located charm "ceph-mon" in charm-hub, channel pacific/stable
+Located charm "ceph-osd" in charm-hub, channel pacific/stable
+Located charm "cinder" in charm-hub, channel ussuri/stable
+Located charm "cinder-ceph" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "glance" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "keystone" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "mysql-innodb-cluster" in charm-hub, channel 8.0/stable
+Located charm "neutron-api" in charm-hub, channel ussuri/stable
+Located charm "neutron-api-plugin-ovn" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "nova-cloud-controller" in charm-hub, channel ussuri/stable
+Located charm "nova-compute" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "ntp" in charm-hub, channel latest/stable
+Located charm "openstack-dashboard" in charm-hub, channel ussuri/stable
+Located charm "ovn-central" in charm-hub, channel 22.03/stable
+Located charm "ovn-chassis" in charm-hub, channel 22.03/stable
+Located charm "placement" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "rabbitmq-server" in charm-hub, channel 3.9/stable
+Located charm "vault" in charm-hub, channel 1.8/stable
+ERROR cannot deploy bundle: cannot resolve charm or bundle "vault": selecting releases: charm or bundle not found for channel "1.8/stable", base "amd64/ubuntu/20.04"
+available releases are:
+  channel "1.18/candidate": available bases are: ubuntu@24.04
+  channel "1.8/candidate": available bases are: ubuntu@22.04
+  channel "1.18/edge": available bases are: ubuntu@24.04
+  channel "1.16/beta": available bases are: ubuntu@22.04
+  channel "1.16/edge": available bases are: ubuntu@22.04
+  channel "1.15/edge": available bases are: ubuntu@22.04
+  channel "1.6/beta": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@21.10
+  channel "latest/candidate": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10, ubuntu@19.10, ubuntu@19.04, ubuntu@18.10
+  channel "1.7/beta": available bases are: ubuntu@22.04, ubuntu@20.04
+  channel "1.17/beta": available bases are: ubuntu@24.04
+  channel "1.15/beta": available bases are: ubuntu@22.04
+  channel "1.8/beta": available bases are: ubuntu@22.04
+  channel "1.7/stable": available bases are: ubuntu@22.04, ubuntu@20.04
+  channel "1.7/candidate": available bases are: ubuntu@22.04, ubuntu@20.04
+  channel "1.6/candidate": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@21.10
+  channel "latest/edge": available bases are: ubuntu@24.04, ubuntu@22.04, ubuntu@20.04, ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@23.10, ubuntu@23.04, ubuntu@22.10, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10, ubuntu@19.10, ubuntu@19.04, ubuntu@18.10
+  channel "1.15/stable": available bases are: ubuntu@22.04
+  channel "1.5/stable": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "latest/beta": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10, ubuntu@19.10, ubuntu@19.04, ubuntu@18.10
+  channel "1.18/beta": available bases are: ubuntu@24.04
+  channel "1.16/candidate": available bases are: ubuntu@22.04
+  channel "1.7/edge": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "1.5/candidate": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@18.04, ubuntu@21.10
+  channel "1.5/beta": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@18.04, ubuntu@21.10
+  channel "1.5/edge": available bases are: ubuntu@22.04, ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+  channel "1.6/stable": available bases are: ubuntu@20.04, ubuntu@18.04
+  channel "1.17/candidate": available bases are: ubuntu@24.04
+  channel "1.8/stable": available bases are: ubuntu@22.04
+  channel "1.17/edge": available bases are: ubuntu@24.04
+  channel "1.16/stable": available bases are: ubuntu@22.04
+  channel "1.8/edge": available bases are: ubuntu@22.04, ubuntu@23.10, ubuntu@23.04
+  channel "1.18/stable": available bases are: ubuntu@24.04
+  channel "1.17/stable": available bases are: ubuntu@24.04
+  channel "1.15/candidate": available bases are: ubuntu@22.04
+  channel "1.6/edge": available bases are: ubuntu@20.04, ubuntu@18.04, ubuntu@16.04, ubuntu@21.10, ubuntu@21.04, ubuntu@20.10
+ubuntu@vm1-orchestrator:~$ sed -i 's|channel: 1.8/stable|channel: 1.7/stable|' ~/bundle.yaml
+ubuntu@vm1-orchestrator:~$ grep "vault" -A1 ~/bundle.yaml
+  vault:
+    charm: vault
+    channel: 1.7/stable
+--
+- - vault:certificates
+  - neutron-api-plugin-ovn:certificates
+- - vault:certificates
+  - cinder:certificates
+- - vault:certificates
+  - glance:certificates
+- - vault:certificates
+  - keystone:certificates
+- - vault:certificates
+  - nova-cloud-controller:certificates
+- - vault:certificates
+  - openstack-dashboard:certificates
+- - vault:certificates
+  - placement:certificates
+--
+  - vault:certificates
+- - ovn-chassis:certificates
+  - vault:certificates
+ubuntu@vm1-orchestrator:~$ juju deploy ./bundle.yaml
+WARNING series are being deprecated in favour of bases. For more information about the transition to bases see https://discourse.charmhub.io/t/transition-from-series-to-base-in-juju-4-0/14127
+Located charm "ceph-mon" in charm-hub, channel pacific/stable
+Located charm "ceph-osd" in charm-hub, channel pacific/stable
+Located charm "cinder" in charm-hub, channel ussuri/stable
+Located charm "cinder-ceph" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "glance" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "keystone" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "mysql-innodb-cluster" in charm-hub, channel 8.0/stable
+Located charm "neutron-api" in charm-hub, channel ussuri/stable
+Located charm "neutron-api-plugin-ovn" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "nova-cloud-controller" in charm-hub, channel ussuri/stable
+Located charm "nova-compute" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "ntp" in charm-hub, channel latest/stable
+Located charm "openstack-dashboard" in charm-hub, channel ussuri/stable
+Located charm "ovn-central" in charm-hub, channel 22.03/stable
+Located charm "ovn-chassis" in charm-hub, channel 22.03/stable
+Located charm "placement" in charm-hub, channel ussuri/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "rabbitmq-server" in charm-hub, channel 3.9/stable
+Located charm "vault" in charm-hub, channel 1.7/stable
+Executing changes:
+- upload charm ceph-mon from charm-hub for base ubuntu@20.04/stable from channel pacific/stable with architecture=amd64
+- deploy application ceph-mon from charm-hub on ubuntu@20.04/stable with pacific/stable
+- upload charm ceph-osd from charm-hub for base ubuntu@20.04/stable from channel pacific/stable with architecture=amd64
+- deploy application ceph-osd from charm-hub on ubuntu@20.04/stable with pacific/stable
+- upload charm cinder from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application cinder from charm-hub on ubuntu@20.04/stable with ussuri/stable
+  added resource policyd-override
+- upload charm cinder-ceph from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application cinder-ceph from charm-hub on ubuntu@20.04/stable with ussuri/stable
+- upload charm mysql-router from charm-hub for base ubuntu@20.04/stable from channel 8.0/stable with architecture=amd64
+- deploy application cinder-mysql-router from charm-hub on ubuntu@20.04/stable with 8.0/stable using mysql-router
+- deploy application dashboard-mysql-router from charm-hub on ubuntu@20.04/stable with 8.0/stable using mysql-router
+- upload charm glance from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application glance from charm-hub on ubuntu@20.04/stable with ussuri/stable
+  added resource policyd-override
+- deploy application glance-mysql-router from charm-hub on ubuntu@20.04/stable with 8.0/stable using mysql-router
+- upload charm keystone from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application keystone from charm-hub on ubuntu@20.04/stable with ussuri/stable
+  added resource policyd-override
+- deploy application keystone-mysql-router from charm-hub on ubuntu@20.04/stable with 8.0/stable using mysql-router
+- upload charm mysql-innodb-cluster from charm-hub for base ubuntu@20.04/stable from channel 8.0/stable with architecture=amd64
+- deploy application mysql-innodb-cluster from charm-hub on ubuntu@20.04/stable with 8.0/stable
+  added resource mysql-shell
+- upload charm neutron-api from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application neutron-api from charm-hub on ubuntu@20.04/stable with ussuri/stable
+  added resource policyd-override
+- upload charm neutron-api-plugin-ovn from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application neutron-api-plugin-ovn from charm-hub on ubuntu@20.04/stable with ussuri/stable
+- deploy application neutron-mysql-router from charm-hub on ubuntu@20.04/stable with 8.0/stable using mysql-router
+- upload charm nova-cloud-controller from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application nova-cloud-controller from charm-hub on ubuntu@20.04/stable with ussuri/stable
+  added resource policyd-override
+- upload charm nova-compute from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application nova-compute from charm-hub on ubuntu@20.04/stable with ussuri/stable
+- deploy application nova-mysql-router from charm-hub on ubuntu@20.04/stable with 8.0/stable using mysql-router
+- upload charm ntp from charm-hub for base ubuntu@20.04/stable from channel latest/stable with architecture=amd64
+- deploy application ntp from charm-hub on ubuntu@20.04/stable with latest/stable
+- upload charm openstack-dashboard from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application openstack-dashboard from charm-hub on ubuntu@20.04/stable with ussuri/stable
+  added resource policyd-override
+  added resource theme
+- upload charm ovn-central from charm-hub for base ubuntu@20.04/stable from channel 22.03/stable with architecture=amd64
+- deploy application ovn-central from charm-hub on ubuntu@20.04/stable with 22.03/stable
+- upload charm ovn-chassis from charm-hub for base ubuntu@20.04/stable from channel 22.03/stable with architecture=amd64
+- deploy application ovn-chassis from charm-hub on ubuntu@20.04/stable with 22.03/stable
+- upload charm placement from charm-hub for base ubuntu@20.04/stable from channel ussuri/stable with architecture=amd64
+- deploy application placement from charm-hub on ubuntu@20.04/stable with ussuri/stable
+- deploy application placement-mysql-router from charm-hub on ubuntu@20.04/stable with 8.0/stable using mysql-router
+- upload charm rabbitmq-server from charm-hub for base ubuntu@20.04/stable from channel 3.9/stable with architecture=amd64
+- deploy application rabbitmq-server from charm-hub on ubuntu@20.04/stable with 3.9/stable
+- upload charm vault from charm-hub for base ubuntu@20.04/stable from channel 1.7/stable with architecture=amd64
+- deploy application vault from charm-hub on ubuntu@20.04/stable with 1.7/stable
+  added resource core
+  added resource vault
+- add new machine 0
+- add new machine 1
+- add new machine 2
+- add relation nova-compute:amqp - rabbitmq-server:amqp
+- add relation nova-cloud-controller:identity-service - keystone:identity-service
+- add relation glance:identity-service - keystone:identity-service
+- add relation neutron-api:identity-service - keystone:identity-service
+- add relation neutron-api:amqp - rabbitmq-server:amqp
+- add relation glance:amqp - rabbitmq-server:amqp
+- add relation nova-cloud-controller:image-service - glance:image-service
+- add relation nova-compute:image-service - glance:image-service
+- add relation nova-cloud-controller:cloud-compute - nova-compute:cloud-compute
+- add relation nova-cloud-controller:amqp - rabbitmq-server:amqp
+- add relation openstack-dashboard:identity-service - keystone:identity-service
+- add relation nova-cloud-controller:neutron-api - neutron-api:neutron-api
+- add relation cinder:image-service - glance:image-service
+- add relation cinder:amqp - rabbitmq-server:amqp
+- add relation cinder:identity-service - keystone:identity-service
+- add relation cinder:cinder-volume-service - nova-cloud-controller:cinder-volume-service
+- add relation cinder-ceph:storage-backend - cinder:storage-backend
+- add relation ceph-mon:client - nova-compute:ceph
+- add relation nova-compute:ceph-access - cinder-ceph:ceph-access
+- add relation ceph-mon:client - cinder-ceph:ceph
+- add relation ceph-mon:client - glance:ceph
+- add relation ceph-osd:mon - ceph-mon:osd
+- add relation ntp:juju-info - nova-compute:juju-info
+- add relation placement:identity-service - keystone:identity-service
+- add relation placement:placement - nova-cloud-controller:placement
+- add relation keystone:shared-db - keystone-mysql-router:shared-db
+- add relation cinder:shared-db - cinder-mysql-router:shared-db
+- add relation glance:shared-db - glance-mysql-router:shared-db
+- add relation nova-cloud-controller:shared-db - nova-mysql-router:shared-db
+- add relation neutron-api:shared-db - neutron-mysql-router:shared-db
+- add relation openstack-dashboard:shared-db - dashboard-mysql-router:shared-db
+- add relation placement:shared-db - placement-mysql-router:shared-db
+- add relation keystone-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation cinder-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation nova-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation glance-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation neutron-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation dashboard-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation placement-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation neutron-api-plugin-ovn:neutron-plugin - neutron-api:neutron-plugin-api-subordinate
+- add relation ovn-central:ovsdb-cms - neutron-api-plugin-ovn:ovsdb-cms
+- add relation ovn-chassis:nova-compute - nova-compute:neutron-plugin
+- add relation ovn-chassis:ovsdb - ovn-central:ovsdb
+- add relation vault:certificates - neutron-api-plugin-ovn:certificates
+- add relation vault:certificates - cinder:certificates
+- add relation vault:certificates - glance:certificates
+- add relation vault:certificates - keystone:certificates
+- add relation vault:certificates - nova-cloud-controller:certificates
+- add relation vault:certificates - openstack-dashboard:certificates
+- add relation vault:certificates - placement:certificates
+- add relation ovn-central:certificates - vault:certificates
+- add relation ovn-chassis:certificates - vault:certificates
+- add unit ceph-osd/0 to new machine 0
+- add unit ceph-osd/1 to new machine 1
+- add unit ceph-osd/2 to new machine 2
+- add unit nova-compute/0 to new machine 0
+- add unit nova-compute/1 to new machine 1
+- add unit nova-compute/2 to new machine 2
+- add lxd container 0/lxd/0 on new machine 0
+- add lxd container 1/lxd/0 on new machine 1
+- add lxd container 2/lxd/0 on new machine 2
+- add lxd container 1/lxd/1 on new machine 1
+- add lxd container 2/lxd/1 on new machine 2
+- add lxd container 0/lxd/1 on new machine 0
+- add lxd container 0/lxd/2 on new machine 0
+- add lxd container 1/lxd/2 on new machine 1
+- add lxd container 2/lxd/2 on new machine 2
+- add lxd container 1/lxd/3 on new machine 1
+- add lxd container 2/lxd/3 on new machine 2
+- add lxd container 0/lxd/3 on new machine 0
+- add lxd container 0/lxd/4 on new machine 0
+- add lxd container 1/lxd/4 on new machine 1
+- add lxd container 2/lxd/4 on new machine 2
+- add lxd container 2/lxd/5 on new machine 2
+- add lxd container 2/lxd/6 on new machine 2
+- add lxd container 1/lxd/5 on new machine 1
+- add unit ceph-mon/0 to 0/lxd/0
+- add unit ceph-mon/1 to 1/lxd/0
+- add unit ceph-mon/2 to 2/lxd/0
+- add unit cinder/0 to 1/lxd/1
+- add unit glance/0 to 2/lxd/1
+- add unit keystone/0 to 0/lxd/1
+- add unit mysql-innodb-cluster/0 to 0/lxd/2
+- add unit mysql-innodb-cluster/1 to 1/lxd/2
+- add unit mysql-innodb-cluster/2 to 2/lxd/2
+- add unit neutron-api/0 to 1/lxd/3
+- add unit nova-cloud-controller/0 to 2/lxd/3
+- add unit openstack-dashboard/0 to 0/lxd/3
+- add unit ovn-central/0 to 0/lxd/4
+- add unit ovn-central/1 to 1/lxd/4
+- add unit ovn-central/2 to 2/lxd/4
+- add unit placement/0 to 2/lxd/5
+- add unit rabbitmq-server/0 to 2/lxd/6
+- add unit vault/0 to 1/lxd/5
+Deploy of bundle completed.
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "^Machine|^[0-9]"
+Machine  State    Address  Inst id       Base          AZ       Message
+0        pending           os-compute01  ubuntu@20.04  default  Deploying: Powering on
+0/lxd/0  pending           pending       ubuntu@20.04
+0/lxd/1  pending           pending       ubuntu@20.04
+0/lxd/2  pending           pending       ubuntu@20.04
+0/lxd/3  pending           pending       ubuntu@20.04
+0/lxd/4  pending           pending       ubuntu@20.04
+1        pending           os-compute02  ubuntu@20.04  default  Deploying: Powering on
+1/lxd/0  pending           pending       ubuntu@20.04
+1/lxd/1  pending           pending       ubuntu@20.04
+1/lxd/2  pending           pending       ubuntu@20.04
+1/lxd/3  pending           pending       ubuntu@20.04
+1/lxd/4  pending           pending       ubuntu@20.04
+1/lxd/5  pending           pending       ubuntu@20.04
+2        pending           os-compute03  ubuntu@20.04  default  Deploying: Powering on
+2/lxd/0  pending           pending       ubuntu@20.04
+2/lxd/1  pending           pending       ubuntu@20.04
+2/lxd/2  pending           pending       ubuntu@20.04
+2/lxd/3  pending           pending       ubuntu@20.04
+2/lxd/4  pending           pending       ubuntu@20.04
+2/lxd/5  pending           pending       ubuntu@20.04
+2/lxd/6  pending           pending       ubuntu@20.04
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "^Machine|^[0-9]"
+Machine  State    Address        Inst id       Base          AZ       Message
+0        pending  10.115.30.193  os-compute01  ubuntu@20.04  default  Deploying: Powering on
+0/lxd/0  pending                 pending       ubuntu@20.04
+0/lxd/1  pending                 pending       ubuntu@20.04
+0/lxd/2  pending                 pending       ubuntu@20.04
+0/lxd/3  pending                 pending       ubuntu@20.04
+0/lxd/4  pending                 pending       ubuntu@20.04
+1        pending  10.115.30.194  os-compute02  ubuntu@20.04  default  Deploying: Powering on
+1/lxd/0  pending                 pending       ubuntu@20.04
+1/lxd/1  pending                 pending       ubuntu@20.04
+1/lxd/2  pending                 pending       ubuntu@20.04
+1/lxd/3  pending                 pending       ubuntu@20.04
+1/lxd/4  pending                 pending       ubuntu@20.04
+1/lxd/5  pending                 pending       ubuntu@20.04
+2        pending  10.115.30.195  os-compute03  ubuntu@20.04  default  Deploying: Powering on
+2/lxd/0  pending                 pending       ubuntu@20.04
+2/lxd/1  pending                 pending       ubuntu@20.04
+2/lxd/2  pending                 pending       ubuntu@20.04
+2/lxd/3  pending                 pending       ubuntu@20.04
+2/lxd/4  pending                 pending       ubuntu@20.04
+2/lxd/5  pending                 pending       ubuntu@20.04
+2/lxd/6  pending                 pending       ubuntu@20.04
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "^Machine|^[0-9]"
+Machine  State    Address  Inst id       Base          AZ       Message
+0        pending           os-compute01  ubuntu@20.04  default  Deploying: Powering on
+0/lxd/0  pending           pending       ubuntu@20.04
+0/lxd/1  pending           pending       ubuntu@20.04
+0/lxd/2  pending           pending       ubuntu@20.04
+0/lxd/3  pending           pending       ubuntu@20.04
+0/lxd/4  pending           pending       ubuntu@20.04
+1        pending           os-compute02  ubuntu@20.04  default  Deploying: Powering on
+1/lxd/0  pending           pending       ubuntu@20.04
+1/lxd/1  pending           pending       ubuntu@20.04
+1/lxd/2  pending           pending       ubuntu@20.04
+1/lxd/3  pending           pending       ubuntu@20.04
+1/lxd/4  pending           pending       ubuntu@20.04
+1/lxd/5  pending           pending       ubuntu@20.04
+2        pending           os-compute03  ubuntu@20.04  default  Deploying: Powering on
+2/lxd/0  pending           pending       ubuntu@20.04
+2/lxd/1  pending           pending       ubuntu@20.04
+2/lxd/2  pending           pending       ubuntu@20.04
+2/lxd/3  pending           pending       ubuntu@20.04
+2/lxd/4  pending           pending       ubuntu@20.04
+2/lxd/5  pending           pending       ubuntu@20.04
+2/lxd/6  pending           pending       ubuntu@20.04
+ubuntu@vm1-orchestrator:~$ client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$

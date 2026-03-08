@@ -1,0 +1,1663 @@
+alex@DESKTOP-8JOK6E1:~$ ssh ubuntu@130.195.57.249
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Mar  3 20:29:09 UTC 2026
+
+  System load:             1.06
+  Usage of /:              19.6% of 96.73GB
+  Memory usage:            44%
+  Swap usage:              0%
+  Processes:               268
+  Users logged in:         0
+  IPv4 address for ens3:   192.168.66.27
+  IPv4 address for ens3:   10.10.10.1
+  IPv4 address for lxdbr0: 10.115.30.1
+  IPv6 address for lxdbr0: fd42:3738:6497:8f07::1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+54 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+94 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Mar  3 08:21:25 2026 from 100.69.250.1
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "sudo dpkg --configure -a && sudo apt --fix-broken install -y"
+juju resolved keystone/0
+
+juju status 2>&1 | grep "openstack-dashboard/"
+dpkg: dependency problems prevent configuration of python3-alembic:
+ python3-alembic depends on python3-dateutil; however:
+  Package python3-dateutil is not installed.
+
+dpkg: error processing package python3-alembic (--configure):
+ dependency problems - leaving unconfigured
+dpkg: dependency problems prevent configuration of xml-core:
+ xml-core depends on sgml-base (>= 1.28); however:
+  Package sgml-base is not installed.
+
+dpkg: error processing package xml-core (--configure):
+ dependency problems - leaving unconfigured
+dpkg: dependency problems prevent configuration of docutils-common:
+ docutils-common depends on sgml-base (>= 1.28); however:
+  Package sgml-base is not installed.
+ docutils-common depends on xml-core (>= 0.14); however:
+  Package xml-core is not configured yet.
+
+dpkg: error processing package docutils-common (--configure):
+ dependency problems - leaving unconfigured
+dpkg: dependency problems prevent configuration of python3-docutils:
+ python3-docutils depends on docutils-common (= 0.16+dfsg-2); however:
+  Package docutils-common is not configured yet.
+
+dpkg: error processing package python3-docutils (--configure):
+ dependency problems - leaving unconfigured
+dpkg: dependency problems prevent configuration of alembic:
+ alembic depends on python3-alembic (= 1.1.0-1ubuntu1); however:
+  Package python3-alembic is not configured yet.
+
+dpkg: error processing package alembic (--configure):
+ dependency problems - leaving unconfigured
+Errors were encountered while processing:
+ python3-alembic
+ xml-core
+ docutils-common
+ python3-docutils
+ alembic
+Connection to 10.10.10.206 closed.
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ERROR unit "keystone/0" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep "openstack-dashboard/"
+openstack-dashboard/0*       error        idle       0/lxd/3  10.10.10.201                    hook failed: "install"
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "sudo apt update && sudo apt install -f -y && sudo dpkg --configure -a"
+Hit:1 http://security.ubuntu.com/ubuntu focal-security InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu focal InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu focal-updates InRelease
+Hit:4 http://archive.ubuntu.com/ubuntu focal-backports InRelease
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+1 package can be upgraded. Run 'apt list --upgradable' to see it.
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Correcting dependencies... Done
+The following packages were automatically installed and are no longer required:
+  alembic apache2-data apache2-utils docutils-common javascript-common libfreetype6 libimagequant0 libjbig0
+  libjpeg-turbo8 libjpeg8 libjs-jquery libjs-sphinxdoc libjs-underscore liblcms2-2 libossp-uuid16
+  libpaper-utils libpaper1 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 pycadf-common python-babel-localedata
+  python-pastedeploy-tpl python3-alembic python3-aniso8601 python3-anyjson python3-babel python3-bs4
+  python3-cachetools python3-dateutil python3-debtcollector python3-decorator python3-defusedxml
+  python3-docutils python3-dogpile.cache python3-eventlet python3-extras python3-fasteners python3-fixtures
+  python3-flask python3-flask-restful python3-futurist python3-greenlet python3-html5lib python3-iso8601
+  python3-itsdangerous python3-linecache2 python3-mako python3-mimeparse python3-monotonic python3-msgpack
+  python3-os-service-types python3-oslo.context python3-oslo.i18n python3-oslo.serialization
+  python3-oslo.utils python3-pbr python3-roman python3-soupsieve python3-sqlalchemy python3-stevedore
+  python3-testtools python3-traceback2 python3-tz python3-unittest2 python3-webencodings python3-werkzeug
+  python3-wrapt sgml-base xml-core
+Use 'sudo apt autoremove' to remove them.
+The following additional packages will be installed:
+  python3-dateutil python3-memcache sgml-base
+Suggested packages:
+  memcached sgml-base-doc
+The following NEW packages will be installed:
+  python3-dateutil sgml-base
+The following packages will be upgraded:
+  python3-memcache
+1 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+6 not fully installed or removed.
+Need to get 0 B/93.4 kB of archives.
+After this operation, 469 kB of additional disk space will be used.
+Selecting previously unselected package python3-dateutil.
+(Reading database ... 42194 files and directories currently installed.)
+Preparing to unpack .../python3-dateutil_2.7.3-3ubuntu1_all.deb ...
+Unpacking python3-dateutil (2.7.3-3ubuntu1) ...
+Selecting previously unselected package sgml-base.
+Preparing to unpack .../sgml-base_1.29.1_all.deb ...
+Unpacking sgml-base (1.29.1) ...
+Preparing to unpack .../python3-memcache_1.59-4_all.deb ...
+Unpacking python3-memcache (1.59-4) over (1.59-4) ...
+Setting up python3-memcache (1.59-4) ...
+Setting up python3-dateutil (2.7.3-3ubuntu1) ...
+Setting up sgml-base (1.29.1) ...
+Setting up python3-alembic (1.1.0-1ubuntu1) ...
+Setting up xml-core (0.18+nmu1) ...
+Setting up alembic (1.1.0-1ubuntu1) ...
+Processing triggers for man-db (2.9.1-1) ...
+Processing triggers for sgml-base (1.29.1) ...
+Setting up docutils-common (0.16+dfsg-2) ...
+Processing triggers for sgml-base (1.29.1) ...
+Setting up python3-docutils (0.16+dfsg-2) ...
+update-alternatives: using /usr/share/docutils/scripts/python3/rst-buildhtml to provide /usr/bin/rst-buildhtml (rst-buildhtml) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2html to provide /usr/bin/rst2html (rst2html) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2html4 to provide /usr/bin/rst2html4 (rst2html4) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2html5 to provide /usr/bin/rst2html5 (rst2html5) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2latex to provide /usr/bin/rst2latex (rst2latex) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2man to provide /usr/bin/rst2man (rst2man) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2odt to provide /usr/bin/rst2odt (rst2odt) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2odt_prepstyles to provide /usr/bin/rst2odt_prepstyles (rst2odt_prepstyles) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2pseudoxml to provide /usr/bin/rst2pseudoxml (rst2pseudoxml) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2s5 to provide /usr/bin/rst2s5 (rst2s5) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2xetex to provide /usr/bin/rst2xetex (rst2xetex) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2xml to provide /usr/bin/rst2xml (rst2xml) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rstpep2html to provide /usr/bin/rstpep2html (rstpep2html) in auto mode
+Connection to 10.10.10.206 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/3 "sudo dpkg --configure -a && sudo apt install -f -y"
+juju resolved openstack-dashboard/0Setting up javascript-common (11) ...
+Package apache2 is not configured yet. Will defer actions by package javascript-common.
+Setting up libapr1:amd64 (1.6.5-1ubuntu1.1) ...
+Setting up python3-pyperclip (1.7.0-1) ...
+Setting up memcached (1.5.22-2ubuntu0.3) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/memcached.service → /lib/systemd/system/memcached.service.
+Setting up libjansson4:amd64 (2.12-1build1) ...
+Setting up python3-wcwidth (0.1.8+dfsg1-3) ...
+Setting up libfreetype6:amd64 (2.10.1-2ubuntu0.4) ...
+Setting up python3-cmd2 (0.8.5-2.1ubuntu0.1) ...
+Setting up libimagequant0:amd64 (2.12.2-1.1) ...
+Setting up libjpeg-turbo8:amd64 (2.0.3-0ubuntu1.20.04.3) ...
+Setting up liblua5.2-0:amd64 (5.2.4-1.1build3) ...
+Setting up liblua5.3-0:amd64 (5.3.3-1.1ubuntu2) ...
+Setting up sgml-base (1.29.1) ...
+Setting up apache2-data (2.4.41-4ubuntu3.23) ...
+Setting up libaprutil1:amd64 (1.6.1-4ubuntu2.2) ...
+Setting up haproxy (2.0.33-0ubuntu0.1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/haproxy.service → /lib/systemd/system/haproxy.service.
+Setting up libaprutil1-ldap:amd64 (1.6.1-4ubuntu2.2) ...
+Setting up libaprutil1-dbd-sqlite3:amd64 (1.6.1-4ubuntu2.2) ...
+Setting up xml-core (0.18+nmu1) ...
+Setting up apache2-utils (2.4.41-4ubuntu3.23) ...
+Setting up apache2-bin (2.4.41-4ubuntu3.23) ...
+Setting up apache2 (2.4.41-4ubuntu3.23) ...
+Enabling module mpm_event.
+Enabling module authz_core.
+Enabling module authz_host.
+Enabling module authn_core.
+Enabling module auth_basic.
+Enabling module access_compat.
+Enabling module authn_file.
+Enabling module authz_user.
+Enabling module alias.
+Enabling module dir.
+Enabling module autoindex.
+Enabling module env.
+Enabling module mime.
+Enabling module negotiation.
+Enabling module setenvif.
+Enabling module filter.
+Enabling module deflate.
+Enabling module status.
+Enabling module reqtimeout.
+Enabling conf charset.
+Enabling conf localized-error-pages.
+Enabling conf other-vhosts-access-log.
+Enabling conf security.
+Enabling conf serve-cgi-bin.
+Enabling site 000-default.
+info: Executing deferred 'a2enconf javascript-common' for package javascript-common
+Enabling conf javascript-common.
+Created symlink /etc/systemd/system/multi-user.target.wants/apache2.service → /lib/systemd/system/apache2.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/apache-htcacheclean.service → /lib/systemd/system/apache-htcacheclean.service.
+Setting up libapache2-mod-wsgi-py3 (4.6.8-1ubuntu3.1) ...
+apache2_invoke: Enable module wsgi
+Processing triggers for libc-bin (2.31-0ubuntu9.18) ...
+Processing triggers for rsyslog (8.2001.0-1ubuntu1.3) ...
+Processing triggers for ufw (0.36-6ubuntu1.1) ...
+Processing triggers for systemd (245.4-4ubuntu3.24) ...
+Processing triggers for man-db (2.9.1-1) ...
+Processing triggers for shared-mime-info (1.15-1) ...
+Processing triggers for sgml-base (1.29.1) ...
+Setting up docutils-common (0.16+dfsg-2) ...
+Processing triggers for sgml-base (1.29.1) ...
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  apache2 apache2-data apache2-utils docutils-common javascript-common libfreetype6 libimagequant0
+  libjpeg-turbo8 libjpeg8 python3-cmd2 python3-pyperclip python3-wcwidth sgml-base xml-core
+Use 'sudo apt autoremove' to remove them.
+The following additional packages will be installed:
+  libjpeg8
+The following packages will be upgraded:
+  libjpeg8
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+1 not fully installed or removed.
+Need to get 0 B/2194 B of archives.
+After this operation, 26.6 kB of additional disk space will be used.
+(Reading database ... 39946 files and directories currently installed.)
+Preparing to unpack .../libjpeg8_8c-2ubuntu8_amd64.deb ...
+Unpacking libjpeg8:amd64 (8c-2ubuntu8) over (8c-2ubuntu8) ...
+Setting up libjpeg8:amd64 (8c-2ubuntu8) ...
+Connection to 10.10.10.201 closed.
+ubuntu@vm1-orchestrator:~$ juju resolved openstack-dashboard/0
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ed. Run 'apt list --upgradable' to see it.
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Correcting dependencies... Done
+The following packages were automatically installed and are no longer required:
+  alembic apache2-data apache2-utils docutils-common javascript-common libfreetype6 libimagequant0 libjbig0
+  libjpeg-turbo8 libjpeg8 libjs-jquery libjs-sphinxdoc libjs-underscore liblcms2-2 libossp-uuid16
+  libpaper-utils libpaper1 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 pycadf-common python-babel-localedata
+  python-pastedeploy-tpl python3-alembic python3-aniso8601 python3-anyjson python3-babel python3-bs4
+  python3-cachetools python3-dateutil python3-debtcollector python3-decorator python3-defusedxml
+  python3-docutils python3-dogpile.cache python3-eventlet python3-extras python3-fasteners python3-fixtures
+  python3-flask python3-flask-restful python3-futurist python3-greenlet python3-html5lib python3-iso8601
+  python3-itsdangerous python3-linecache2 python3-mako python3-mimeparse python3-monotonic python3-msgpack
+  python3-os-service-types python3-oslo.context python3-oslo.i18n python3-oslo.serialization
+  python3-oslo.utils python3-pbr python3-roman python3-soupsieve python3-sqlalchemy python3-stevedore
+  python3-testtools python3-traceback2 python3-tz python3-unittest2 python3-webencodings python3-werkzeug
+  python3-wrapt sgml-base xml-core
+Use 'sudo apt autoremove' to remove them.
+The following additional packages will be installed:
+  python3-dateutil python3-memcache sgml-base
+Suggested packages:
+  memcached sgml-base-doc
+The following NEW packages will be installed:
+  python3-dateutil sgml-base
+The following packages will be upgraded:
+  python3-memcache
+1 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+6 not fully installed or removed.
+Need to get 0 B/93.4 kB of archives.
+After this operation, 469 kB of additional disk space will be used.
+Selecting previously unselected package python3-dateutil.
+(Reading database ... 42194 files and directories currently installed.)
+Preparing to unpack .../python3-dateutil_2.7.3-3ubuntu1_all.deb ...
+Unpacking python3-dateutil (2.7.3-3ubuntu1) ...
+Selecting previously unselected package sgml-base.
+Preparing to unpack .../sgml-base_1.29.1_all.deb ...
+Unpacking sgml-base (1.29.1) ...
+Preparing to unpack .../python3-memcache_1.59-4_all.deb ...
+Unpacking python3-memcache (1.59-4) over (1.59-4) ...
+Setting up python3-memcache (1.59-4) ...
+Setting up python3-dateutil (2.7.3-3ubuntu1) ...
+Setting up sgml-base (1.29.1) ...
+Setting up python3-alembic (1.1.0-1ubuntu1) ...
+Setting up xml-core (0.18+nmu1) ...
+Setting up alembic (1.1.0-1ubuntu1) ...
+Processing triggers for man-db (2.9.1-1) ...
+Processing triggers for sgml-base (1.29.1) ...
+Setting up docutils-common (0.16+dfsg-2) ...
+Processing triggers for sgml-base (1.29.1) ...
+Setting up python3-docutils (0.16+dfsg-2) ...
+update-alternatives: using /usr/share/docutils/scripts/python3/rst-buildhtml to provide /usr/bin/rst-buildhtml (rst-buildhtml) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2html to provide /usr/bin/rst2html (rst2html) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2html4 to provide /usr/bin/rst2html4 (rst2html4) in auto mode
+update-alternatives: using /usr/share/docutils/scripts/python3/rst2html5 tubuntu@vm1-orchestrator:~$: command not found
+ubuntu@vm1-orchestrator:~$ ERROR unit "keystone/0" is not in an error state
+o provide /usr/bin/rst2html5 (rst2html5) in auto ERROR: command not found
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep "openstack-dashboard/"
+ubuntu@vm1-orchestrator:~$ openstack-dashboard/0*       error        idle       0/lxd/3  10.10.10.201                    hook failed: "install"
+-bash: openstack-dashboard/0*: No such file or directory
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "sudo apt update && sudo apt install -f -y && sudo dpkg --configure -a"
+ubuntu@vm1-orchestrator:~$: command not found
+ubuntu@vm1-orchestrator:~$ Hit:1 http://security.ubuntu.com/ubuntu focal-security InRelease
+Hit:1: command not found
+ubuntu@vm1-orchestrator:~$ Hit:2 http://archive.ubuntu.com/ubuntu focal InRelease
+mode
+update-alternatives: using /usr/share/docutils/scrHit:2: command not found
+ubuntu@vm1-orchestrator:~$ Hit:3 http://archive.ubuntu.com/ubuntu focal-updates InRelease
+2odt_preHit:3: command not found
+ubuntu@vm1-orchestrator:~$ Hit:4 http://archive.ubuntu.com/ubuntu focal-backports InRelease
+Hit:4: command not found
+ubuntu@vm1-orchestrator:~$ Reading package lists... Done
+scriptReading: command not found
+ubuntu@vm1-orchestrator:~$ Building dependency tree
+Building: command not found
+ubuntu@vm1-orchestrator:~$ Reading state information... Done
+Reading: command not found
+ubuntu@vm1-orchestrator:~$ 1 package can be upgraded. Run 'apt list --upgradable' to see it.
+1: command not found
+ubuntu@vm1-orchestrator:~$ Reading package lists... Done
+Reading: command not found
+ubuntu@vm1-orchestrator:~$ Building dependency tree
+Building: command not found
+ubuntu@vm1-orchestrator:~$ Reading state information... Done
+Reading: command not found
+ubuntu@vm1-orchestrator:~$ Correcting dependencies... Done
+Correcting: command not found
+ubuntu@vm1-orchestrator:~$ The following packages were automatically installed and are no longer required:
+
+Command 'The' not found, did you mean:
+
+  command 'he' from deb node-he (1.2.0-1)
+  command 'the' from deb the (3.3~rc1-3build1)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm1-orchestrator:~$   alembic apache2-data apache2-utils docutils-common javascript-common libfreetype6 libimagequant0 libjbig0
+
+Command 'alembic' not found, but can be installed with:
+
+sudo apt install alembic
+
+ubuntu@vm1-orchestrator:~$   libjpeg-turbo8 libjpeg8 libjs-jquery libjs-sphinxdoc libjs-underscore liblcms2-2 libossp-uuid16
+libjpeg-turbo8: command not found
+ubuntu@vm1-orchestrator:~$   libpaper-utils libpaper1 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 pycadf-common python-babel-localedata
+libpaper-utils: command not found
+ubuntu@vm1-orchestrator:~$   python-pastedeploy-tpl python3-alembic python3-aniso8601 python3-anyjson python3-babel python3-bs4
+python-pastedeploy-tpl: command not found
+ubuntu@vm1-orchestrator:~$   python3-cachetools python3-dateutil python3-debtcollector python3-decorator python3-defusedxml
+python3-cachetools: command not found
+ubuntu@vm1-orchestrator:~$   python3-docutils python3-dogpile.cache python3-eventlet python3-extras python3-fasteners python3-fixtures
+python3-docutils: command not found
+ubuntu@vm1-orchestrator:~$   python3-flask python3-flask-restful python3-futurist python3-greenlet python3-html5lib python3-iso8601
+python3-flask: command not found
+ubuntu@vm1-orchestrator:~$   python3-itsdangerous python3-linecache2 python3-mako python3-mimeparse python3-monotonic python3-msgpack
+python3-itsdangerous: command not found
+ubuntu@vm1-orchestrator:~$   python3-os-service-types python3-oslo.context python3-oslo.i18n python3-oslo.serialization
+python3-os-service-types: command not found
+ubuntu@vm1-orchestrator:~$   python3-oslo.utils python3-pbr python3-roman python3-soupsieve python3-sqlalchemy python3-stevedore
+python3-oslo.utils: command not found
+ubuntu@vm1-orchestrator:~$   python3-testtools python3-traceback2 python3-tz python3-unittest2 python3-webencodings python3-werkzeug
+python3-testtools: command not found
+ubuntu@vm1-orchestrator:~$   python3-wrapt sgml-base xml-core
+python3-wrapt: command not found
+ubuntu@vm1-orchestrator:~$ Use 'sudo apt autoremove' to remove them.
+
+Command 'Use' not found, did you mean:
+
+  command 'ase' from deb ase (3.19.0-1)
+  command 'nse' from deb ns2 (2.35+dfsg-3build1)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm1-orchestrator:~$ The following additional packages will be installed:
+gml-base (1.29.1) ...
+Setti
+Command 'The' not found, did you mean:
+
+  command 'he' from deb node-he (1.2.0-1)
+  command 'the' from deb the (3.3~rc1-3build1)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm1-orchestrator:~$   python3-dateutil python3-memcache sgml-base
+python3-dateutil: command not found
+ubuntu@vm1-orchestrator:~$ Suggested packages:
+Suggested: command not found
+ubuntu@vm1-orchestrator:~$   memcached sgml-base-doc
+u2.2)
+Command 'memcached' not found, but can be installed with:
+
+sudo apt install memcached
+
+ubuntu@vm1-orchestrator:~$ The following NEW packages will be installed:
+aproxy (2.0.33-0ubuntu0.1) ...
+Command 'The' not found, did you mean:
+
+  command 'he' from deb node-he (1.2.0-1)
+  command 'the' from deb the (3.3~rc1-3build1)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm1-orchestrator:~$   python3-dateutil sgml-base
+python3-dateutil: command not found
+ubuntu@vm1-orchestrator:~$ The following packages will be upgraded:
+
+Command 'The' not found, did you mean:
+
+  command 'the' from deb the (3.3~rc1-3build1)
+  command 'he' from deb node-he (1.2.0-1)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm1-orchestrator:~$   python3-memcache
+python3-memcache: command not found
+ubuntu@vm1-orchestrator:~$ 1 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+1: command not found
+ubuntu@vm1-orchestrator:~$ 6 not fully installed or removed.
+6: command not found
+ubuntu@vm1-orchestrator:~$ Need to get 0 B/93.4 kB of archives.
+Need: command not found
+ubuntu@vm1-orchestrator:~$ After this operation, 469 kB of additional disk space will be used.
+After: command not found
+ubuntu@vm1-orchestrator:~$ Selecting previously unselected package python3-dateutil.
+Selecting: command not found
+ubuntu@vm1-orchestrator:~$ (Reading database ... 42194 files and directories currently installed.)
+Reading: command not found
+ubuntu@vm1-orchestrator:~$ Preparing to unpack .../python3-dateutil_2.7.3-3ubuntu1_all.deb ...
+Preparing: command not found
+ubuntu@vm1-orchestrator:~$ Unpacking python3-dateutil (2.7.3-3ubuntu1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Selecting previously unselected package sgml-base.
+Selecting: command not found
+ubuntu@vm1-orchestrator:~$ Preparing to unpack .../sgml-base_1.29.1_all.deb ...
+Preparing: command not found
+ubuntu@vm1-orchestrator:~$ Unpacking sgml-base (1.29.1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Preparing to unpack .../python3-memcache_1.59-4_all.deb ...
+Preparing: command not found
+ubuntu@vm1-orchestrator:~$ Unpacking python3-memcache (1.59-4) over (1.59-4) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Setting up python3-memcache (1.59-4) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Setting up python3-dateutil (2.7.3-3ubuntu1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Setting up sgml-base (1.29.1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Setting up python3-alembic (1.1.0-1ubuntu1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Setting up xml-core (0.18+nmu1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Setting up alembic (1.1.0-1ubuntu1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Processing triggers for man-db (2.9.1-1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Processing triggers for sgml-base (1.29.1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Setting up docutils-common (0.16+dfsg-2) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Processing triggers for sgml-base (1.29.1) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Setting up python3-docutils (0.16+dfsg-2) ...
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst-buildhtml to provide /usr/bin/rst-buildhtml (rst-buildhtml) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2html to provide /usr/bin/rst2html (rst2html) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2html4 to provide /usr/bin/rst2html4 (rst2html4) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2html5 to provide /usr/bin/rst2html5 (rst2html5) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2latex to provide /usr/bin/rst2latex (rst2latex) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2man to provide /usr/bin/rst2man (rst2man) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2odt to provide /usr/bin/rst2odt (rst2odt) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2odt_prepstyles to provide /usr/bin/rst2odt_prepstyles (rst2odt_prepstyles) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2pseudoxml to provide /usr/bin/rst2pseudoxml (rst2pseudoxml) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2s5 to provide /usr/bin/rst2s5 (rst2s5) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2xetex to provide /usr/bin/rst2xetex (rst2xetex) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rst2xml to provide /usr/bin/rst2xml (rst2xml) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ update-alternatives: using /usr/share/docutils/scripts/python3/rstpep2html to provide /usr/bin/rstpep2html (rstpep2html) in auto mode
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ Connection to 10.10.10.206 closed.
+Connection: command not found
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/3 "sudo dpkg --configure -a && sudo apt install -f -y"
+ubuntu@vm1-orchestrator:~$: command not found
+ubuntu@vm1-orchestrator:~$ juju resolve^C
+
+
+Command 'uju' not found, did you mean:
+
+  command 'uuu' from snap universal-update-utility (1.5.21)
+
+See 'snap info <snapname>' for additional versions.
+
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ ^C
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0 2>/dev/null
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|active" | head -20
+cinder-mysql-router     8.0.42   active           1  mysql-router            8.0/stable      257  no       Unit is ready
+glance-mysql-router     8.0.42   active           1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   active           3  mysql-innodb-cluster    8.0/stable      159  no       Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+neutron-mysql-router    8.0.42   active           1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-mysql-router       8.0.42   active           1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active           3  ntp                     latest/stable    52  no       chrony: Ready
+placement-mysql-router  8.0.42   active           1  mysql-router            8.0/stable      257  no       Unit is ready
+rabbitmq-server         3.8.3    active           1  rabbitmq-server         3.9/stable      246  no       Unit is ready
+  cinder-mysql-router/0*     active       idle                10.10.10.213                    Unit is ready
+  glance-mysql-router/0*     active       idle                10.10.10.212                    Unit is ready
+mysql-innodb-cluster/0       active       idle       0/lxd/2  10.10.10.202                    Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+mysql-innodb-cluster/1*      active       idle       1/lxd/2  10.10.10.207                    Unit is ready: Mode: R/W, Cluster is ONLINE and can tolerate up to ONE failure.
+mysql-innodb-cluster/2       active       idle       2/lxd/2  10.10.10.204                    Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+  neutron-mysql-router/0*    active       idle                10.10.10.208                    Unit is ready
+  nova-mysql-router/0*       active       idle                10.10.10.205                    Unit is ready
+  ntp/0                      active       idle                10.10.10.113    123/udp         chrony: Ready
+  ntp/2*                     active       idle                10.10.10.108    123/udp         chrony: Ready
+  ntp/1                      active       idle                10.10.10.107    123/udp         chrony: Ready
+  placement-mysql-router/0*  active       idle                10.10.10.214                    Unit is ready
+rabbitmq-server/0*           active       idle       2/lxd/6  10.10.10.203    5672,15672/tcp  Unit is ready
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "blocked|waiting|maintenance" | head -20
+ceph-mon                16.2.15  waiting          3  ceph-mon                pacific/stable  217  no       Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-osd                16.2.15  blocked          3  ceph-osd                pacific/stable  615  no       No block devices detected using current configuration
+cinder                  16.4.2   waiting          1  cinder                  ussuri/stable   670  no       Incomplete relations: identity
+cinder-ceph             16.4.2   waiting          1  cinder-ceph             ussuri/stable   518  no       Ceph broker request incomplete
+glance                  20.2.0   waiting          1  glance                  ussuri/stable   589  no       Incomplete relations: storage-backend, identity
+keystone                17.0.1   waiting          1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+keystone-mysql-router            maintenance      1  mysql-router            8.0/stable      257  no       installing charm software
+neutron-api             16.4.2   waiting          1  neutron-api             ussuri/stable   588  no       Incomplete relations: identity
+neutron-api-plugin-ovn  16.4.2   waiting          1  neutron-api-plugin-ovn  ussuri/stable    98  no       'certificates' awaiting server certificate data, 'neutron-plugin' incomplete, 'ovsdb-cms' incomplete
+nova-cloud-controller   21.2.4   waiting          1  nova-cloud-controller   ussuri/stable   748  no       Incomplete relations: identity
+nova-compute            23.2.2   waiting          3  nova-compute            ussuri/stable   779  no       Incomplete relations: storage-backend
+openstack-dashboard              maintenance      1  openstack-dashboard     ussuri/stable   723  no       Installing packages
+ovn-central             22.03.3  waiting          3  ovn-central             22.03/stable    245  no       'ovsdb-peer' incomplete, 'certificates' awaiting server certificate data
+ovn-chassis             22.03.3  waiting          3  ovn-chassis             22.03/stable    324  no       'certificates' awaiting server certificate data, 'ovsdb' incomplete
+placement               3.0.1    waiting          1  placement               ussuri/stable    99  no       'identity-service' incomplete
+vault                            blocked          1  vault                   1.7/stable      371  no       'shared-db' or 'db' missing
+ceph-mon/0                   waiting      idle       0/lxd/0  10.10.10.217                    Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-mon/1                   waiting      idle       1/lxd/0  10.10.10.216                    Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-mon/2*                  waiting      idle       2/lxd/0  10.10.10.209                    Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-osd/0                   blocked      idle       0        10.10.10.113                    No block devices detected using current configuration
+ubuntu@vm1-orchestrator:~$ juju deploy mysql-router vault-mysql-router --channel 8.0/stable
+b-router
+juju relate vault:shared-db vault-mysql-router:shared-dbDeployed "vault-mysql-router" from charm-hub charm "mysql-router", revision 257 in channel 8.0/stable on ubuntu@20.04/stable
+ubuntu@vm1-orchestrator:~$ juju relate vault-mysql-router:db-router mysql-innodb-cluster:db-router
+ubuntu@vm1-orchestrator:~$ juju relate vault:shared-db vault-mysql-router:shared-db
+ubuntu@vm1-orchestrator:~$ juju deploy mysql-router vault-mysql-router --channel 8.0/stable
+late vault:shared-db vault-mysql-router:shared-dbERROR cannot add application "vault-mysql-router": application already exists
+ERROR failed to deploy charm "mysql-router"
+ubuntu@vm1-orchestrator:~$ juju relate vault-mysql-router:db-router mysql-innodb-cluster:db-router
+ERROR cannot add relation "vault-mysql-router:db-router mysql-innodb-cluster:db-router"
+relation vault-mysql-router:db-router mysql-innodb-cluster:db-router (already exists):
+
+Use 'juju status --relations' to view the current relations.
+ubuntu@vm1-orchestrator:~$ juju relate vault:shared-db vault-mysql-router:shared-db
+ERROR cannot add relation "vault:shared-db vault-mysql-router:shared-db"
+relation vault:shared-db vault-mysql-router:shared-db (already exists):
+
+Use 'juju status --relations' to view the current relations.
+ubuntu@vm1-orchestrator:~$ juju status vault
+Model      Controller     Cloud/Region     Version  SLA          Timestamp
+openstack  my-controller  my-maas/default  3.6.14   unsupported  20:34:58Z
+
+App                 Version  Status       Scale  Charm         Channel     Rev  Exposed  Message
+vault                        blocked          1  vault         1.7/stable  371  no       'shared-db' or 'db' missing
+vault-mysql-router           maintenance      1  mysql-router  8.0/stable  257  no       installing charm software
+
+Unit                     Workload     Agent      Machine  Public address  Ports  Message
+vault/0*                 blocked      idle       1/lxd/5  10.10.10.211           'shared-db' or 'db' missing
+  vault-mysql-router/0*  maintenance  executing           10.10.10.211           (install) installing charm software
+
+Machine  State    Address       Inst id              Base          AZ       Message
+1        started  10.10.10.108  os-compute03         ubuntu@20.04  default  Deployed
+1/lxd/5  started  10.10.10.211  juju-23d286-1-lxd-5  ubuntu@20.04  default  Container started
+ubuntu@vm1-orchestrator:~$ export VAULT_ADDR="http://$(juju status vault/0 --format=json | python3 -c 'import sys,json; print(json.load(sys.stdin)["applications"]["vault"]["units"]["vault/0"]["public-address"])'):8200"
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ echo $VAULT_ADDR
+http://10.10.10.211:8200
+ubuntu@vm1-orchestrator:~$ vault operator init -key-shares=5 -key-threshold=3
+
+Command 'vault' not found, but can be installed with:
+
+sudo snap install vault
+
+ubuntu@vm1-orchestrator:~$ watch -n 10 "juju status vault 2>&1 | grep -E 'vault/|vault-mysql'"
+ubuntu@vm1-orchestrator:~$ watch -n 10 "juju status vault 2>&1 | grep -E 'vault/|vault-mysql'"
+ubuntu@vm1-orchestrator:~$ juju debug-log --replay --no-tail --include vault-mysql-router/0 2>&1 | tail -10
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.apicaller [9fce65] "unit-vault-mysql-router-0" successfully connected to "wss://10.115.30.214:17070"
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.upgrader no waiter, upgrader is done
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.migrationminion migration migration phase is now: NONE
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.logger logger worker started
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.uniter unit "vault-mysql-router/0" started
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.uniter resuming charm install
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.uniter.charm downloading ch:amd64/mysql-router-257 from API server
+unit-vault-mysql-router-0: 20:33:50 INFO juju.worker.uniter hooks are retried true
+unit-vault-mysql-router-0: 20:33:50 INFO juju.worker.uniter.storage initial storage attachments ready
+unit-vault-mysql-router-0: 20:33:50 INFO juju.worker.uniter found queued "install" hook
+ubuntu@vm1-orchestrator:~$ juju debug-log --no-tail --include vault-mysql-router/0 2>&1 | tail -5
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.uniter resuming charm install
+unit-vault-mysql-router-0: 20:33:47 INFO juju.worker.uniter.charm downloading ch:amd64/mysql-router-257 from API server
+unit-vault-mysql-router-0: 20:33:50 INFO juju.worker.uniter hooks are retried true
+unit-vault-mysql-router-0: 20:33:50 INFO juju.worker.uniter.storage initial storage attachments ready
+unit-vault-mysql-router-0: 20:33:50 INFO juju.worker.uniter found queued "install" hook
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/5 "ps aux | grep -E 'apt|dpkg|pip' | grep -v grep"
+Connection to 10.10.10.211 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/5 "df -h /; ping -c 1 archive.ubuntu.com"
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        60G   25G   32G  44% /
+PING archive.ubuntu.com (91.189.92.22) 56(84) bytes of data.
+64 bytes from ubuntu-archive-mirror-1.ps7.canonical.com (91.189.92.22): icmp_seq=1 ttl=48 time=51.1 ms
+
+--- archive.ubuntu.com ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 51.094/51.094/51.094/0.000 ms
+Connection to 10.10.10.211 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/5 "ps aux | grep juju | grep -v grep"
+root        5336  0.0  0.0   8696   800 ?        Ss   09:43   0:00 bash /etc/systemd/system/jujud-machine-1-lxd-5-exec-start.sh
+root        5343  0.1  0.8 1458104 35100 ?       Sl   09:43   0:51 /var/lib/juju/tools/machine-1-lxd-5/jujud machine --data-dir /var/lib/juju --machine-id 1/lxd/5 --debug
+Connection to 10.10.10.211 closed.
+ubuntu@vm1-orchestrator:~$ juju debug-log --replay --no-tail --include vault-mysql-router/0 2>&1 | grep -i "error\|fail\|timeout\|running"
+ubuntu@vm1-orchestrator:~$ juju resolved vault-mysql-router/0
+ERROR unit "vault-mysql-router/0" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju status vault-mysql-router/0 --format=json | python3 -c "
+> import sys,json
+> d=json.load(sys.stdin)
+> u=d['applications']['vault-mysql-router']['units']['vault-mysql-router/0']
+> print('agent:', u['juju-status']['current'], '|', u['juju-status'].get('message',''))
+> print('workload:', u['workload-status']['current'], '|', u['workload-status'].get('message',''))
+> "
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+KeyError: 'units'
+ubuntu@vm1-orchestrator:~$ juju status vault 2>&1 | grep -E "vault"
+vault               1.7.9    blocked      1  vault         1.7/stable  371  no       Vault needs to be initialized
+vault-mysql-router  8.0.42   active       1  mysql-router  8.0/stable  257  no       Unit is ready
+vault/0*                 blocked   idle   1/lxd/5  10.10.10.211    8200/tcp  Vault needs to be initialized
+  vault-mysql-router/0*  active    idle            10.10.10.211              Unit is ready
+ubuntu@vm1-orchestrator:~$ export VAULT_ADDR="http://10.10.10.211:8200"
+ubuntu@vm1-orchestrator:~$ vault operator init -key-shares=5 -key-threshold=3
+
+Command 'vault' not found, but can be installed with:
+
+sudo snap install vault
+
+ubuntu@vm1-orchestrator:~$ sudo snap install vault
+vault (1.19/stable) 1.19.5 from Canonical✓ installed
+ubuntu@vm1-orchestrator:~$ export VAULT_ADDR="http://10.10.10.211:8200"
+ubuntu@vm1-orchestrator:~$ vault operator init -key-shares=5 -key-threshold=3
+Unseal Key 1: yzge62n6nOZjGRnl2xAO7AteazluYTVjjc7gf20m2bkW
+Unseal Key 2: 28ZSYm08bMI+39b8ZPTzYxiyxKWCMshr8d4ZArgTEv8g
+Unseal Key 3: 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+Unseal Key 4: On7A6z0ZvX7u+75ldOQTBQWiViuGtyXtBPZV4Cqsi+wF
+Unseal Key 5: JhD2AWGbMFVTx2ljGEL0N9w+gXPBnzXWxy9k7RPmPHVd
+
+Initial Root Token: s.tFhleKtSl1KvCXmO4SLmRprP
+
+Vault initialized with 5 key shares and a key threshold of 3. Please securely
+distribute the key shares printed above. When the Vault is re-sealed,
+restarted, or stopped, you must supply at least 3 of these keys to unseal it
+before it can start servicing requests.
+
+Vault does not store the generated root key. Without at least 3 keys to
+reconstruct the root key, Vault will remain permanently sealed!
+
+It is possible to generate new unseal keys, provided you have a quorum of
+existing unseal keys shares. See "vault operator rekey" for more information.
+ubuntu@vm1-orchestrator:~$ vault operator unseal yzge62n6nOZjGRnl2xAO7AteazluYTVjjc7gf20m2bkW
+edtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    1/3
+Unseal Nonce       dc8363b6-ef2b-04ef-a647-78f4f94b31b1
+Version            1.7.9
+Build Date         n/a
+Storage Type       mysql
+HA Enabled         false
+ubuntu@vm1-orchestrator:~$ vault operator unseal 28ZSYm08bMI+39b8ZPTzYxiyxKWCMshr8d4ZArgTEv8g
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    2/3
+Unseal Nonce       dc8363b6-ef2b-04ef-a647-78f4f94b31b1
+Version            1.7.9
+Build Date         n/a
+Storage Type       mysql
+HA Enabled         false
+ubuntu@vm1-orchestrator:~$ vault operator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+Key             Value
+---             -----
+Seal Type       shamir
+Initialized     true
+Sealed          false
+Total Shares    5
+Threshold       3
+Version         1.7.9
+Build Date      n/a
+Storage Type    mysql
+Cluster Name    vault-cluster-1048e864
+Cluster ID      97730b44-f196-e0bc-4045-4b123818794c
+HA Enabled      false
+ubuntu@vm1-orchestrator:~$ export VAULT_TOKEN=s.tFhleKtSl1KvCXmO4SLmRprP
+ubuntu@vm1-orchestrator:~$ vault token create -ttl=10m
+Key                  Value
+---                  -----
+token                s.u4YlgEQt7Z3JHFWk76WAuxqW
+token_accessor       0BRlcCebYkMMhfVBSdStG5A1
+token_duration       10m
+token_renewable      true
+token_policies       ["root"]
+identity_policies    []
+policies             ["root"]
+ubuntu@vm1-orchestrator:~$ juju run vault/leader authorize-charm token=s.u4YlgEQt7Z3JHFWk76WAuxqW
+Running operation 1 with 1 task
+  - task 2 on unit-vault-0
+
+Waiting for task 2...
+
+lxc
+active
+ubuntu@vm1-orchestrator:~$ juju run vault/leader generate-root-ca
+Running operation 3 with 1 task
+  - task 4 on unit-vault-0
+
+Waiting for task 4...
+output: |-
+  -----BEGIN CERTIFICATE-----
+  MIIDazCCAlOgAwIBAgIUEKItXGp9rw6Y7lZlpvCVIBK27q4wDQYJKoZIhvcNAQEL
+  BQAwPTE7MDkGA1UEAxMyVmF1bHQgUm9vdCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkg
+  KGNoYXJtLXBraS1sb2NhbCkwHhcNMjYwMzAzMjA1MTUxWhcNMzYwMjI5MTk1MjIw
+  WjA9MTswOQYDVQQDEzJWYXVsdCBSb290IENlcnRpZmljYXRlIEF1dGhvcml0eSAo
+  Y2hhcm0tcGtpLWxvY2FsKTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+  AJOII+yU9KzKNbaSqz4sY7c7f5+cRenQCGIswd3LpIL23RXr8THChPXaFm3ShFzZ
+  MtJ76yDfA5vONw4GL/A6aia4yKTJU8Uq4fO6+de9tuN7E1C/rvlySeCClXbZUpyY
+  I7kZTlDCOU6jWk3uyWtslWuRakQM0JQaOvR2oI8zwo04dV4I4me2d+umZTn7eg5r
+  q/u4vUOVMb/3CaXbQvs59g+jj09DVCWZYcSJH+RZ8ZlLbhF9Juf0RtiJSLBgpHQ4
+  Ex1moY1+V8O6VIzwJs5ybHApPBegms9ZjjtH192iotWmLCl8h7eid4ingSdudfhL
+  v2ssV2KgW2FYmOvnbh7BGSECAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgEGMA8GA1Ud
+  EwEB/wQFMAMBAf8wHQYDVR0OBBYEFBYD8cWH5oQwjr5kD/iNKytbQzdLMB8GA1Ud
+  IwQYMBaAFBYD8cWH5oQwjr5kD/iNKytbQzdLMA0GCSqGSIb3DQEBCwUAA4IBAQBt
+  mlp26cZ3pogDAgc9JtldWfxTeH/U9JoY+NxlOqDMV77gO+jJlUUt0aflcZmrBiE2
+  mT12i+XtAEhn8A7l5qeGg82pkUYEp7Wxr677IFkygX47/XZm6jKsg/7ZvTTzizGU
+  3BdR2vkeMx9Qc34gDmiFdUMUvpoRgY7BSgaRqN1sgNc+oo6TJkDqgWn7pNfpDYCR
+  9/VPQI4QLr9YkDuG+PDGr34CHEs05CM2vKEu0KU0Rk0kFPWZXEbYoX3iiPK2EMZE
+  lDRwovDWjMDam4zPCqdf8xYjwyRkms6vgu8GRabk0fjoYCbcn71Mp8ZV8bnr2mVf
+  RftQY57Cb5biTV0vIPnq
+  -----END CERTIFICATE-----
+
+lxc
+active
+active
+active
+lxc
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|active|blocked" | head -25
+ceph-osd                16.2.15  blocked      3  ceph-osd                pacific/stable  615  no       No block devices detected using current configuration
+cinder-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   active       3  mysql-innodb-cluster    8.0/stable      159  no       Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+placement-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+rabbitmq-server         3.8.3    active       1  rabbitmq-server         3.9/stable      246  no       Unit is ready
+vault                   1.7.9    active       1  vault                   1.7/stable      371  no       Unit is ready (active: true, mlock: disabled)
+vault-mysql-router      8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ceph-osd/0                   blocked   idle       0        10.10.10.113                    No block devices detected using current configuration
+ceph-osd/1*                  blocked   idle       1        10.10.10.108                    No block devices detected using current configuration
+ceph-osd/2                   blocked   idle       2        10.10.10.107                    No block devices detected using current configuration
+  cinder-mysql-router/0*     active    idle                10.10.10.213                    Unit is ready
+  glance-mysql-router/0*     active    idle                10.10.10.212                    Unit is ready
+keystone/0*                  error     idle       0/lxd/1  10.10.10.206    5000/tcp        hook failed: "shared-db-relation-changed"
+  keystone-mysql-router/0*   active    idle                10.10.10.206                    Unit is ready
+mysql-innodb-cluster/0       active    idle       0/lxd/2  10.10.10.202                    Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+mysql-innodb-cluster/1*      active    idle       1/lxd/2  10.10.10.207                    Unit is ready: Mode: R/W, Cluster is ONLINE and can tolerate up to ONE failure.
+mysql-innodb-cluster/2       active    idle       2/lxd/2  10.10.10.204                    Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+  neutron-mysql-router/0*    active    idle                10.10.10.208                    Unit is ready
+  nova-mysql-router/0*       active    idle                10.10.10.205                    Unit is ready
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ERROR unit "keystone/0" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ERROR unit "keystone/0" is not in an error state
+ubuntu@vm1-orchestrator:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G   20G   78G  20% /
+ubuntu@vm1-orchestrator:~$ sudo qemu-img create -f qcow2 /var/lib/libvirt/images/os-compute01-osd.qcow2 20G
+sudo: qemu-img: command not found
+-f qcow2 /home/VMs/compute03/compute03-osd.qcow2 20Gubuntu@vm1-orchestrator:~$ sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02-osd.qcow2 20G
+sudo: qemu-img: command not found
+ubuntu@vm1-orchestrator:~$ sudo qemu-img create -f qcow2 /home/VMs/compute03/compute03-osd.qcow2 20G
+sudo: qemu-img: command not found
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "lsblk | grep vdb"
+| grep vdb"
+juju ssh 2 "lsblk | grep vdb"juju ssh 1 "lsblk | grep vdb"
+juju ssh 2 "lsblk | grep vdb"
+vdb    252:16   0   20G  0 disk
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1 "lsblk | grep vdb"
+vdb    252:16   0   20G  0 disk
+Connection to 10.10.10.108 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 2 "lsblk | grep vdb"
+vdb    252:16   0   20G  0 disk
+Connection to 10.10.10.107 closed.
+ubuntu@vm1-orchestrator:~$ juju config ceph-osd osd-devices=/dev/vdb
+ubuntu@vm1-orchestrator:~$ juju status ceph-osd ceph-mon 2>&1 | grep -E "ceph-osd/|ceph-mon/"
+ceph-mon/0        waiting   idle   0/lxd/0  10.10.10.217             Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-mon/1        waiting   idle   1/lxd/0  10.10.10.216             Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-mon/2*       waiting   idle   2/lxd/0  10.10.10.209             Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-osd/0        blocked   idle   0        10.10.10.113             No block devices detected using current configuration
+ceph-osd/1*       blocked   idle   1        10.10.10.108             No block devices detected using current configuration
+ceph-osd/2        blocked   idle   2        10.10.10.107             No block devices detected using current configuration
+ubuntu@vm1-orchestrator:~$ juju status ceph-osd ceph-mon 2>&1 | grep -E "ceph-osd/|ceph-mon/"
+ceph-mon/0        waiting   idle       0/lxd/0  10.10.10.217             Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-mon/1        waiting   idle       1/lxd/0  10.10.10.216             Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-mon/2*       waiting   idle       2/lxd/0  10.10.10.209             Monitor bootstrapped but waiting for number of OSDs to reach expected-osd-count (3)
+ceph-osd/0        blocked   idle       0        10.10.10.113             No block devices detected using current configuration
+ceph-osd/1*       blocked   idle       1        10.10.10.108             No block devices detected using current configuration
+ceph-osd/2        blocked   idle       2        10.10.10.107             No block devices detected using current configuration
+ubuntu@vm1-orchestrator:~$ juju config ceph-osd osd-devices
+/dev/vdb
+ubuntu@vm1-orchestrator:~$ juju run --unit ceph-osd/0 "hooks/config-changed" 2>&1 | tail -5
+ERROR option provided but not defined: --unit
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "ls -la /dev/vdb; lsblk /dev/vdb"
+brw-rw---- 1 root disk 252, 16 Mar  3 20:58 /dev/vdb
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+vdb  252:16   0  20G  0 disk
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit ceph-osd/0 "hooks/config-changed"
+nged"
+juju exec --unit ceph-osd/2 "hooks/config-changed"
+kernel.pid_max = 2097152
+vm.max_map_count = 524288
+kernel.threads-max = 2097152
+  Physical volume "/dev/vdb" successfully created.
+  Volume group "ceph-3ca7c785-c798-4657-80f8-e526ff3e07b0" successfully created
+  Logical volume "osd-block-3ca7c785-c798-4657-80f8-e526ff3e07b0" created.
+  Failed to find physical volume "/dev/vdb".
+partx: /dev/vdb: failed to read partition table
+  Failed to find physical volume "/dev/vdb".
+  Failed to find physical volume "/dev/vdb".
+Running command: /usr/bin/ceph-authtool --gen-print-key
+Running command: /usr/bin/ceph --cluster ceph --name client.bootstrap-osd --keyring /var/lib/ceph/bootstrap-osd/ceph.keyring -i - osd new 3ca7c785-c798-4657-80f8-e526ff3e07b0
+Running command: /usr/bin/ceph-authtool --gen-print-key
+Running command: /usr/bin/mount -t tmpfs tmpfs /var/lib/ceph/osd/ceph-0
+--> Executable selinuxenabled not in PATH: /var/lib/juju/tools/unit-ceph-osd-0:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+Running command: /usr/bin/chown -h ceph:ceph /dev/ceph-3ca7c785-c798-4657-80f8-e526ff3e07b0/osd-block-3ca7c785-c798-4657-80f8-e526ff3e07b0
+Running command: /usr/bin/chown -R ceph:ceph /dev/dm-0
+Running command: /usr/bin/ln -s /dev/ceph-3ca7c785-c798-4657-80f8-e526ff3e07b0/osd-block-3ca7c785-c798-4657-80f8-e526ff3e07b0 /var/lib/ceph/osd/ceph-0/block
+Running command: /usr/bin/ceph --cluster ceph --name client.bootstrap-osd --keyring /var/lib/ceph/bootstrap-osd/ceph.keyring mon getmap -o /var/lib/ceph/osd/ceph-0/activate.monmap
+ stderr: 2026-03-03T21:01:17.825+0000 7f833e9f5700 -1 auth: unable to find a keyring on /etc/ceph/ceph.client.bootstrap-osd.keyring,/etc/ceph/ceph.keyring,/etc/ceph/keyring,/etc/ceph/keyring.bin,: (2) No such file or directory
+ stderr: 2026-03-03T21:01:17.825+0000 7f833e9f5700 -1 AuthRegistry(0x7f833805bcb8) no keyring found at /etc/ceph/ceph.client.bootstrap-osd.keyring,/etc/ceph/ceph.keyring,/etc/ceph/keyring,/etc/ceph/keyring.bin,, disabling cephx
+ stderr: got monmap epoch 1
+--> Creating keyring file for osd.0
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-0/keyring
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-0/
+Running command: /usr/bin/ceph-osd --cluster ceph --osd-objectstore bluestore --mkfs -i 0 --monmap /var/lib/ceph/osd/ceph-0/activate.monmap --keyfile - --osd-data /var/lib/ceph/osd/ceph-0/ --osd-uuid 3ca7c785-c798-4657-80f8-e526ff3e07b0 --setuser ceph --setgroup ceph
+ stderr: 2026-03-03T21:01:18.649+0000 7ff4464ac200 -1 bluestore(/var/lib/ceph/osd/ceph-0/) _read_fsid unparsable uuid
+--> ceph-volume lvm prepare successful for: ceph-3ca7c785-c798-4657-80f8-e526ff3e07b0/osd-block-3ca7c785-c798-4657-80f8-e526ff3e07b0
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-0
+Running command: /usr/bin/ceph-bluestore-tool --cluster=ceph prime-osd-dir --dev /dev/ceph-3ca7c785-c798-4657-80f8-e526ff3e07b0/osd-block-3ca7c785-c798-4657-80f8-e526ff3e07b0 --path /var/lib/ceph/osd/ceph-0 --no-mon-config
+Running command: /usr/bin/ln -snf /dev/ceph-3ca7c785-c798-4657-80f8-e526ff3e07b0/osd-block-3ca7c785-c798-4657-80f8-e526ff3e07b0 /var/lib/ceph/osd/ceph-0/block
+Running command: /usr/bin/chown -h ceph:ceph /var/lib/ceph/osd/ceph-0/block
+Running command: /usr/bin/chown -R ceph:ceph /dev/dm-0
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-0
+Running command: /usr/bin/systemctl enable ceph-volume@lvm-0-3ca7c785-c798-4657-80f8-e526ff3e07b0
+ stderr: Created symlink /etc/systemd/system/multi-user.target.wants/ceph-volume@lvm-0-3ca7c785-c798-4657-80f8-e526ff3e07b0.service → /lib/systemd/system/ceph-volume@.service.
+Running command: /usr/bin/systemctl enable --runtime ceph-osd@0
+ stderr: Created symlink /run/systemd/system/ceph-osd.target.wants/ceph-osd@0.service → /lib/systemd/system/ceph-osd@.service.
+Running command: /usr/bin/systemctl start ceph-osd@0
+--> ceph-volume lvm activate successful for osd ID: 0
+--> ceph-volume lvm create successful for: ceph-3ca7c785-c798-4657-80f8-e526ff3e07b0/osd-block-3ca7c785-c798-4657-80f8-e526ff3e07b0
+ubuntu@vm1-orchestrator:~$ juju exec --unit ceph-osd/1 "hooks/config-changed"
+kernel.pid_max = 2097152
+vm.max_map_count = 524288
+kernel.threads-max = 2097152
+  Physical volume "/dev/vdb" successfully created.
+  Volume group "ceph-24118f59-f87c-457a-8593-210f015cf04b" successfully created
+  Logical volume "osd-block-24118f59-f87c-457a-8593-210f015cf04b" created.
+  Failed to find physical volume "/dev/vdb".
+partx: /dev/vdb: failed to read partition table
+  Failed to find physical volume "/dev/vdb".
+  Failed to find physical volume "/dev/vdb".
+Running command: /usr/bin/ceph-authtool --gen-print-key
+Running command: /usr/bin/ceph --cluster ceph --name client.bootstrap-osd --keyring /var/lib/ceph/bootstrap-osd/ceph.keyring -i - osd new 24118f59-f87c-457a-8593-210f015cf04b
+Running command: /usr/bin/ceph-authtool --gen-print-key
+Running command: /usr/bin/mount -t tmpfs tmpfs /var/lib/ceph/osd/ceph-1
+--> Executable selinuxenabled not in PATH: /var/lib/juju/tools/unit-ceph-osd-1:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+Running command: /usr/bin/chown -h ceph:ceph /dev/ceph-24118f59-f87c-457a-8593-210f015cf04b/osd-block-24118f59-f87c-457a-8593-210f015cf04b
+Running command: /usr/bin/chown -R ceph:ceph /dev/dm-0
+Running command: /usr/bin/ln -s /dev/ceph-24118f59-f87c-457a-8593-210f015cf04b/osd-block-24118f59-f87c-457a-8593-210f015cf04b /var/lib/ceph/osd/ceph-1/block
+Running command: /usr/bin/ceph --cluster ceph --name client.bootstrap-osd --keyring /var/lib/ceph/bootstrap-osd/ceph.keyring mon getmap -o /var/lib/ceph/osd/ceph-1/activate.monmap
+ stderr: 2026-03-03T21:01:36.935+0000 7f6e0e03f700 -1 auth: unable to find a keyring on /etc/ceph/ceph.client.bootstrap-osd.keyring,/etc/ceph/ceph.keyring,/etc/ceph/keyring,/etc/ceph/keyring.bin,: (2) No such file or directory
+ stderr: 2026-03-03T21:01:36.935+0000 7f6e0e03f700 -1 AuthRegistry(0x7f6e0805bcb8) no keyring found at /etc/ceph/ceph.client.bootstrap-osd.keyring,/etc/ceph/ceph.keyring,/etc/ceph/keyring,/etc/ceph/keyring.bin,, disabling cephx
+ stderr: got monmap epoch 1
+--> Creating keyring file for osd.1
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-1/keyring
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-1/
+Running command: /usr/bin/ceph-osd --cluster ceph --osd-objectstore bluestore --mkfs -i 1 --monmap /var/lib/ceph/osd/ceph-1/activate.monmap --keyfile - --osd-data /var/lib/ceph/osd/ceph-1/ --osd-uuid 24118f59-f87c-457a-8593-210f015cf04b --setuser ceph --setgroup ceph
+ stderr: 2026-03-03T21:01:37.879+0000 7f7263612200 -1 bluestore(/var/lib/ceph/osd/ceph-1/) _read_fsid unparsable uuid
+--> ceph-volume lvm prepare successful for: ceph-24118f59-f87c-457a-8593-210f015cf04b/osd-block-24118f59-f87c-457a-8593-210f015cf04b
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-1
+Running command: /usr/bin/ceph-bluestore-tool --cluster=ceph prime-osd-dir --dev /dev/ceph-24118f59-f87c-457a-8593-210f015cf04b/osd-block-24118f59-f87c-457a-8593-210f015cf04b --path /var/lib/ceph/osd/ceph-1 --no-mon-config
+Running command: /usr/bin/ln -snf /dev/ceph-24118f59-f87c-457a-8593-210f015cf04b/osd-block-24118f59-f87c-457a-8593-210f015cf04b /var/lib/ceph/osd/ceph-1/block
+Running command: /usr/bin/chown -h ceph:ceph /var/lib/ceph/osd/ceph-1/block
+Running command: /usr/bin/chown -R ceph:ceph /dev/dm-0
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-1
+Running command: /usr/bin/systemctl enable ceph-volume@lvm-1-24118f59-f87c-457a-8593-210f015cf04b
+ stderr: Created symlink /etc/systemd/system/multi-user.target.wants/ceph-volume@lvm-1-24118f59-f87c-457a-8593-210f015cf04b.service → /lib/systemd/system/ceph-volume@.service.
+Running command: /usr/bin/systemctl enable --runtime ceph-osd@1
+ stderr: Created symlink /run/systemd/system/ceph-osd.target.wants/ceph-osd@1.service → /lib/systemd/system/ceph-osd@.service.
+Running command: /usr/bin/systemctl start ceph-osd@1
+--> ceph-volume lvm activate successful for osd ID: 1
+--> ceph-volume lvm create successful for: ceph-24118f59-f87c-457a-8593-210f015cf04b/osd-block-24118f59-f87c-457a-8593-210f015cf04b
+ubuntu@vm1-orchestrator:~$ juju exec --unit ceph-osd/2 "hooks/config-changed"
+kernel.pid_max = 2097152
+vm.max_map_count = 524288
+kernel.threads-max = 2097152
+  Physical volume "/dev/vdb" successfully created.
+  Volume group "ceph-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1" successfully created
+  Logical volume "osd-block-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1" created.
+  Failed to find physical volume "/dev/vdb".
+partx: /dev/vdb: failed to read partition table
+  Failed to find physical volume "/dev/vdb".
+  Failed to find physical volume "/dev/vdb".
+Running command: /usr/bin/ceph-authtool --gen-print-key
+Running command: /usr/bin/ceph --cluster ceph --name client.bootstrap-osd --keyring /var/lib/ceph/bootstrap-osd/ceph.keyring -i - osd new 35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1
+Running command: /usr/bin/ceph-authtool --gen-print-key
+Running command: /usr/bin/mount -t tmpfs tmpfs /var/lib/ceph/osd/ceph-2
+--> Executable selinuxenabled not in PATH: /var/lib/juju/tools/unit-ceph-osd-2:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+Running command: /usr/bin/chown -h ceph:ceph /dev/ceph-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1/osd-block-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1
+Running command: /usr/bin/chown -R ceph:ceph /dev/dm-0
+Running command: /usr/bin/ln -s /dev/ceph-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1/osd-block-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1 /var/lib/ceph/osd/ceph-2/block
+Running command: /usr/bin/ceph --cluster ceph --name client.bootstrap-osd --keyring /var/lib/ceph/bootstrap-osd/ceph.keyring mon getmap -o /var/lib/ceph/osd/ceph-2/activate.monmap
+ stderr: 2026-03-03T21:02:11.768+0000 7feabcb14700 -1 auth: unable to find a keyring on /etc/ceph/ceph.client.bootstrap-osd.keyring,/etc/ceph/ceph.keyring,/etc/ceph/keyring,/etc/ceph/keyring.bin,: (2) No such file or directory
+2026-03-03T21:02:11.768+0000 7feabcb14700 -1 AuthRegistry(0x7feab805bcb8) no keyring found at /etc/ceph/ceph.client.bootstrap-osd.keyring,/etc/ceph/ceph.keyring,/etc/ceph/keyring,/etc/ceph/keyring.bin,, disabling cephx
+ stderr: got monmap epoch 1
+--> Creating keyring file for osd.2
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-2/keyring
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-2/
+Running command: /usr/bin/ceph-osd --cluster ceph --osd-objectstore bluestore --mkfs -i 2 --monmap /var/lib/ceph/osd/ceph-2/activate.monmap --keyfile - --osd-data /var/lib/ceph/osd/ceph-2/ --osd-uuid 35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1 --setuser ceph --setgroup ceph
+ stderr: 2026-03-03T21:02:13.032+0000 7f2a38d43200 -1 bluestore(/var/lib/ceph/osd/ceph-2/) _read_fsid unparsable uuid
+--> ceph-volume lvm prepare successful for: ceph-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1/osd-block-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-2
+Running command: /usr/bin/ceph-bluestore-tool --cluster=ceph prime-osd-dir --dev /dev/ceph-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1/osd-block-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1 --path /var/lib/ceph/osd/ceph-2 --no-mon-config
+Running command: /usr/bin/ln -snf /dev/ceph-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1/osd-block-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1 /var/lib/ceph/osd/ceph-2/block
+Running command: /usr/bin/chown -h ceph:ceph /var/lib/ceph/osd/ceph-2/block
+Running command: /usr/bin/chown -R ceph:ceph /dev/dm-0
+Running command: /usr/bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-2
+Running command: /usr/bin/systemctl enable ceph-volume@lvm-2-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1
+ stderr: Created symlink /etc/systemd/system/multi-user.target.wants/ceph-volume@lvm-2-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1.service → /lib/systemd/system/ceph-volume@.service.
+Running command: /usr/bin/systemctl enable --runtime ceph-osd@2
+ stderr: Created symlink /run/systemd/system/ceph-osd.target.wants/ceph-osd@2.service → /lib/systemd/system/ceph-osd@.service.
+Running command: /usr/bin/systemctl start ceph-osd@2
+--> ceph-volume lvm activate successful for osd ID: 2
+--> ceph-volume lvm create successful for: ceph-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1/osd-block-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|active|blocked" | head -25
+ceph-mon                16.2.15  active       3  ceph-mon                pacific/stable  217  no       Unit is ready and clustered
+ceph-osd                16.2.15  active       3  ceph-osd                pacific/stable  615  no       Unit is ready (1 OSD)
+cinder-ceph             16.4.2   active       1  cinder-ceph             ussuri/stable   518  no       Unit is ready
+cinder-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   active       3  mysql-innodb-cluster    8.0/stable      159  no       Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-compute            23.2.2   active       3  nova-compute            ussuri/stable   779  no       Unit is ready
+nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+ovn-central             22.03.3  active       3  ovn-central             22.03/stable    245  no       Unit is ready (northd: active)
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+placement-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+rabbitmq-server         3.8.3    active       1  rabbitmq-server         3.9/stable      246  no       Unit is ready
+vault                   1.7.9    active       1  vault                   1.7/stable      371  no       Unit is ready (active: true, mlock: disabled)
+vault-mysql-router      8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ceph-mon/0                   active    idle       0/lxd/0  10.10.10.217                    Unit is ready and clustered
+ceph-mon/1                   active    idle       1/lxd/0  10.10.10.216                    Unit is ready and clustered
+ceph-mon/2*                  active    idle       2/lxd/0  10.10.10.209                    Unit is ready and clustered
+ceph-osd/0                   active    idle       0        10.10.10.113                    Unit is ready (1 OSD)
+ceph-osd/1*                  active    idle       1        10.10.10.108                    Unit is ready (1 OSD)
+ceph-osd/2                   active    idle       2        10.10.10.107                    Unit is ready (1 OSD)
+  cinder-ceph/0*             active    idle                10.10.10.213                    Unit is ready
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/0
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/1
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/2
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked|waiting" | head -20
+cinder                  16.4.2   waiting      1  cinder                  ussuri/stable   670  no       Incomplete relations: identity
+glance                  20.2.0   waiting      1  glance                  ussuri/stable   589  no       Incomplete relations: identity
+keystone                17.0.1   waiting      1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+neutron-api             16.4.2   waiting      1  neutron-api             ussuri/stable   588  no       Incomplete relations: identity
+neutron-api-plugin-ovn  16.4.2   waiting      1  neutron-api-plugin-ovn  ussuri/stable    98  no       'neutron-plugin' incomplete
+nova-cloud-controller   21.2.4   waiting      1  nova-cloud-controller   ussuri/stable   748  no       Incomplete relations: identity
+openstack-dashboard     18.3.5   waiting      1  openstack-dashboard     ussuri/stable   723  no       Incomplete relations: identity
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+placement               3.0.1    waiting      1  placement               ussuri/stable    99  no       'identity-service' incomplete
+cinder/0*                    waiting   idle       1/lxd/1  10.10.10.213    8776/tcp        Incomplete relations: identity
+glance/0*                    waiting   idle       2/lxd/1  10.10.10.212    9292/tcp        Incomplete relations: identity
+keystone/0*                  error     idle       0/lxd/1  10.10.10.206    5000/tcp        hook failed: "shared-db-relation-changed"
+neutron-api/0*               waiting   idle       1/lxd/3  10.10.10.208    9696/tcp        Incomplete relations: identity
+  neutron-api-plugin-ovn/0*  waiting   idle                10.10.10.208                    'neutron-plugin' incomplete
+nova-cloud-controller/0*     waiting   idle       2/lxd/3  10.10.10.205    8774-8775/tcp   Incomplete relations: identity
+  ovn-chassis/0              error     idle                10.10.10.113                    hook failed: "ovsdb-relation-changed"
+  ovn-chassis/2*             waiting   executing           10.10.10.108                    'ovsdb' incomplete
+  ovn-chassis/1              waiting   executing           10.10.10.107                    'ovsdb' incomplete
+openstack-dashboard/0*       waiting   idle       0/lxd/3  10.10.10.201    80,443/tcp      Incomplete relations: identity
+placement/0*                 waiting   idle       2/lxd/5  10.10.10.214    8778/tcp        'identity-service' incomplete
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked|waiting" | head -20
+cinder                  16.4.2   waiting      1  cinder                  ussuri/stable   670  no       Incomplete relations: identity
+glance                  20.2.0   waiting      1  glance                  ussuri/stable   589  no       Incomplete relations: identity
+keystone                17.0.1   waiting      1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+neutron-api             16.4.2   waiting      1  neutron-api             ussuri/stable   588  no       Incomplete relations: identity
+neutron-api-plugin-ovn  16.4.2   waiting      1  neutron-api-plugin-ovn  ussuri/stable    98  no       'neutron-plugin' incomplete
+nova-cloud-controller   21.2.4   waiting      1  nova-cloud-controller   ussuri/stable   748  no       Incomplete relations: identity
+openstack-dashboard     18.3.5   waiting      1  openstack-dashboard     ussuri/stable   723  no       Incomplete relations: identity
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+placement               3.0.1    waiting      1  placement               ussuri/stable    99  no       'identity-service' incomplete
+cinder/0*                    waiting   idle       1/lxd/1  10.10.10.213    8776/tcp        Incomplete relations: identity
+glance/0*                    waiting   idle       2/lxd/1  10.10.10.212    9292/tcp        Incomplete relations: identity
+keystone/0*                  error     idle       0/lxd/1  10.10.10.206    5000/tcp        hook failed: "shared-db-relation-changed"
+neutron-api/0*               waiting   idle       1/lxd/3  10.10.10.208    9696/tcp        Incomplete relations: identity
+  neutron-api-plugin-ovn/0*  waiting   idle                10.10.10.208                    'neutron-plugin' incomplete
+nova-cloud-controller/0*     waiting   idle       2/lxd/3  10.10.10.205    8774-8775/tcp   Incomplete relations: identity
+  ovn-chassis/0              waiting   executing           10.10.10.113                    'ovsdb' incomplete
+  ovn-chassis/2*             error     idle                10.10.10.108                    hook failed: "ovsdb-relation-changed"
+  ovn-chassis/1              error     idle                10.10.10.107                    hook failed: "ovsdb-relation-changed"
+openstack-dashboard/0*       waiting   idle       0/lxd/3  10.10.10.201    80,443/tcp      Incomplete relations: identity
+placement/0*                 waiting   idle       2/lxd/5  10.10.10.214    8778/tcp        'identity-service' incomplete
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/0
+assis/1
+juju resolved ovn-chassis/2ERROR unit "ovn-chassis/0" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/1
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/2
+ERROR unit "ovn-chassis/2" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/1
+ERROR unit "ovn-chassis/1" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju debug-log --replay --no-tail --include keystone/0 2>&1 | tail -10
+unit-keystone-0: 20:42:57 INFO unit.keystone/0.juju-log identity-service:18: HAProxy context is incomplete, this unit has no peers.
+unit-keystone-0: 20:42:57 INFO unit.keystone/0.juju-log identity-service:18: HAProxy context is incomplete, this unit has no peers.
+unit-keystone-0: 20:43:08 INFO unit.keystone/0.juju-log identity-service:18: database relations's interface, shared-db, is related but has no units in the relation.
+unit-keystone-0: 20:43:08 INFO unit.keystone/0.juju-log identity-service:18: This unit was not found in any allowed unit list
+unit-keystone-0: 20:43:09 INFO unit.keystone/0.juju-log identity-service:18: This unit was not found in any allowed unit list
+unit-keystone-0: 20:43:10 INFO juju.worker.uniter.operation ran "identity-service-relation-changed" hook (via explicit, bespoke hook script)
+unit-keystone-0: 21:09:05 ERROR juju.worker.dependency "log-sender" manifold worker returned unexpected error: sending log message: websocket: close 1005 (no status): websocket: close sent
+unit-keystone-0: 21:09:05 INFO juju.worker.uniter awaiting error resolution for "relation-changed" hook
+unit-keystone-0: 21:10:03 WARNING unit.keystone/0.juju-log Package openstack-release has no installation candidate.
+unit-keystone-0: 21:10:05 INFO juju.worker.uniter awaiting error resolution for "relation-changed" hook
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|active" | head -20
+ceph-mon                16.2.15  active       3  ceph-mon                pacific/stable  217  no       Unit is ready and clustered
+ceph-osd                16.2.15  active       3  ceph-osd                pacific/stable  615  no       Unit is ready (1 OSD)
+cinder-ceph             16.4.2   active       1  cinder-ceph             ussuri/stable   518  no       Unit is ready
+cinder-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   active       3  mysql-innodb-cluster    8.0/stable      159  no       Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-compute            23.2.2   active       3  nova-compute            ussuri/stable   779  no       Unit is ready
+nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+ovn-central             22.03.3  active       3  ovn-central             22.03/stable    245  no       Unit is ready (northd: active)
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+placement-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+rabbitmq-server         3.8.3    active       1  rabbitmq-server         3.9/stable      246  no       Unit is ready
+vault                   1.7.9    active       1  vault                   1.7/stable      371  no       Unit is ready (active: true, mlock: disabled)
+vault-mysql-router      8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ceph-mon/0                   active       idle       0/lxd/0  10.10.10.217                    Unit is ready and clustered
+ceph-mon/1                   active       idle       1/lxd/0  10.10.10.216                    Unit is ready and clustered
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/0
+assis/1
+juju resolved ovn-chassis/2ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/1
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/2
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked|waiting" | head -20
+cinder                  16.4.2   waiting      1  cinder                  ussuri/stable   670  no       Incomplete relations: identity
+glance                  20.2.0   waiting      1  glance                  ussuri/stable   589  no       Incomplete relations: identity
+keystone                17.0.1   waiting      1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+neutron-api             16.4.2   waiting      1  neutron-api             ussuri/stable   588  no       Incomplete relations: identity
+neutron-api-plugin-ovn  16.4.2   waiting      1  neutron-api-plugin-ovn  ussuri/stable    98  no       'neutron-plugin' incomplete
+nova-cloud-controller   21.2.4   waiting      1  nova-cloud-controller   ussuri/stable   748  no       Incomplete relations: identity
+openstack-dashboard     18.3.5   waiting      1  openstack-dashboard     ussuri/stable   723  no       Incomplete relations: identity
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+placement               3.0.1    waiting      1  placement               ussuri/stable    99  no       'identity-service' incomplete
+cinder/0*                    waiting      idle       1/lxd/1  10.10.10.213    8776/tcp        Incomplete relations: identity
+glance/0*                    waiting      idle       2/lxd/1  10.10.10.212    9292/tcp        Incomplete relations: identity
+neutron-api/0*               waiting      idle       1/lxd/3  10.10.10.208    9696/tcp        Incomplete relations: identity
+  neutron-api-plugin-ovn/0*  waiting      idle                10.10.10.208                    'neutron-plugin' incomplete
+nova-cloud-controller/0*     waiting      idle       2/lxd/3  10.10.10.205    8774-8775/tcp   Incomplete relations: identity
+  ovn-chassis/0              error        idle                10.10.10.113                    hook failed: "ovsdb-relation-changed"
+  ovn-chassis/2*             waiting      executing           10.10.10.108                    'ovsdb' incomplete
+  ovn-chassis/1              waiting      executing           10.10.10.107                    'ovsdb' incomplete
+openstack-dashboard/0*       waiting      idle       0/lxd/3  10.10.10.201    80,443/tcp      Incomplete relations: identity
+placement/0*                 waiting      idle       2/lxd/5  10.10.10.214    8778/tcp        'identity-service' incomplete
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked|waiting" | head -20
+cinder                  16.4.2   waiting      1  cinder                  ussuri/stable   670  no       Incomplete relations: identity
+glance                  20.2.0   waiting      1  glance                  ussuri/stable   589  no       Incomplete relations: identity
+keystone                17.0.1   waiting      1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+neutron-api             16.4.2   waiting      1  neutron-api             ussuri/stable   588  no       Incomplete relations: identity
+neutron-api-plugin-ovn  16.4.2   waiting      1  neutron-api-plugin-ovn  ussuri/stable    98  no       'neutron-plugin' incomplete
+nova-cloud-controller   21.2.4   waiting      1  nova-cloud-controller   ussuri/stable   748  no       Incomplete relations: identity
+openstack-dashboard     18.3.5   waiting      1  openstack-dashboard     ussuri/stable   723  no       Incomplete relations: identity
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+placement               3.0.1    waiting      1  placement               ussuri/stable    99  no       'identity-service' incomplete
+cinder/0*                    waiting      idle       1/lxd/1  10.10.10.213    8776/tcp        Incomplete relations: identity
+glance/0*                    waiting      idle       2/lxd/1  10.10.10.212    9292/tcp        Incomplete relations: identity
+neutron-api/0*               waiting      idle       1/lxd/3  10.10.10.208    9696/tcp        Incomplete relations: identity
+  neutron-api-plugin-ovn/0*  waiting      idle                10.10.10.208                    'neutron-plugin' incomplete
+nova-cloud-controller/0*     waiting      idle       2/lxd/3  10.10.10.205    8774-8775/tcp   Incomplete relations: identity
+  ovn-chassis/0              error        idle                10.10.10.113                    hook failed: "ovsdb-relation-changed"
+  ovn-chassis/2*             waiting      executing           10.10.10.108                    'ovsdb' incomplete
+  ovn-chassis/1              error        idle                10.10.10.107                    hook failed: "ovsdb-relation-changed"
+openstack-dashboard/0*       waiting      idle       0/lxd/3  10.10.10.201    80,443/tcp      Incomplete relations: identity
+placement/0*                 waiting      idle       2/lxd/5  10.10.10.214    8778/tcp        'identity-service' incomplete
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked|waiting" | head -20
+cinder                  16.4.2   waiting      1  cinder                  ussuri/stable   670  no       Incomplete relations: identity
+glance                  20.2.0   waiting      1  glance                  ussuri/stable   589  no       Incomplete relations: identity
+keystone                17.0.1   waiting      1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+neutron-api             16.4.2   waiting      1  neutron-api             ussuri/stable   588  no       Incomplete relations: identity
+neutron-api-plugin-ovn  16.4.2   waiting      1  neutron-api-plugin-ovn  ussuri/stable    98  no       'neutron-plugin' incomplete
+nova-cloud-controller   21.2.4   waiting      1  nova-cloud-controller   ussuri/stable   748  no       Incomplete relations: identity
+openstack-dashboard     18.3.5   waiting      1  openstack-dashboard     ussuri/stable   723  no       Incomplete relations: identity
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+placement               3.0.1    waiting      1  placement               ussuri/stable    99  no       'identity-service' incomplete
+cinder/0*                    waiting      idle       1/lxd/1  10.10.10.213    8776/tcp        Incomplete relations: identity
+glance/0*                    waiting      idle       2/lxd/1  10.10.10.212    9292/tcp        Incomplete relations: identity
+neutron-api/0*               waiting      idle       1/lxd/3  10.10.10.208    9696/tcp        Incomplete relations: identity
+  neutron-api-plugin-ovn/0*  waiting      idle                10.10.10.208                    'neutron-plugin' incomplete
+nova-cloud-controller/0*     waiting      idle       2/lxd/3  10.10.10.205    8774-8775/tcp   Incomplete relations: identity
+  ovn-chassis/0              waiting      executing           10.10.10.113                    'ovsdb' incomplete
+  ovn-chassis/2*             error        idle                10.10.10.108                    hook failed: "ovsdb-relation-changed"
+  ovn-chassis/1              waiting      executing           10.10.10.107                    'ovsdb' incomplete
+openstack-dashboard/0*       waiting      idle       0/lxd/3  10.10.10.201    80,443/tcp      Incomplete relations: identity
+placement/0*                 waiting      idle       2/lxd/5  10.10.10.214    8778/tcp        'identity-service' incomplete
+ubuntu@vm1-orchestrator:~$ juju debug-log --replay --no-tail --include keystone/0 2>&1 | tail -5
+unit-keystone-0: 20:43:10 INFO juju.worker.uniter.operation ran "identity-service-relation-changed" hook (via explicit, bespoke hook script)
+unit-keystone-0: 21:09:05 ERROR juju.worker.dependency "log-sender" manifold worker returned unexpected error: sending log message: websocket: close 1005 (no status): websocket: close sent
+unit-keystone-0: 21:09:05 INFO juju.worker.uniter awaiting error resolution for "relation-changed" hook
+unit-keystone-0: 21:10:03 WARNING unit.keystone/0.juju-log Package openstack-release has no installation candidate.
+unit-keystone-0: 21:10:05 INFO juju.worker.uniter awaiting error resolution for "relation-changed" hook
+ubuntu@vm1-orchestrator:~$ juju exec --unit keystone/0 "hooks/shared-db-relation-changed"
+Retrying 'get_keystone_manager' 5 more times (delay=3)
+Retrying 'get_keystone_manager' 4 more times (delay=6)
+Retrying 'get_keystone_manager' 3 more times (delay=9)
+Retrying 'get_keystone_manager' 2 more times (delay=12)
+Retrying 'get_keystone_manager' 1 more times (delay=15)
+/var/lib/juju/agents/unit-keystone-0/charm/hooks/manager.py: something went wrong: Unable to establish connection to http://localhost:35347/v3/auth/tokens: HTTPConnectionPool(host='localhost', port=35347): Max retries exceeded with url: /v3/auth/tokens (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f8aa7faec40>: Failed to establish a new connection: [Errno 111] Connection refused'))
+ERROR no relation id specified
+Traceback (most recent call last):
+  File "hooks/shared-db-relation-changed", line 949, in <module>
+    main()
+  File "hooks/shared-db-relation-changed", line 942, in main
+    hooks.execute(sys.argv)
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/core/hookenv.py", line 962, in execute
+    self._hooks[hook_name]()
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/contrib/openstack/utils.py", line 1867, in wrapped_f
+    return restart_on_change_helper(
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/core/host.py", line 837, in restart_on_change_helper
+    r = lambda_f()
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/contrib/openstack/utils.py", line 1868, in <lambda>
+    (lambda: f(*args, **kwargs)),
+  File "hooks/shared-db-relation-changed", line 415, in db_changed
+    leader_init_db_if_ready(use_current_context=True)
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/contrib/openstack/utils.py", line 1867, in wrapped_f
+    return restart_on_change_helper(
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/core/host.py", line 837, in restart_on_change_helper
+    r = lambda_f()
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/contrib/openstack/utils.py", line 1868, in <lambda>
+    (lambda: f(*args, **kwargs)),
+  File "hooks/shared-db-relation-changed", line 380, in leader_init_db_if_ready
+    update_all_identity_relation_units()
+  File "hooks/shared-db-relation-changed", line 340, in update_all_identity_relation_units
+    identity_changed(relation_id=rid, remote_unit=unit)
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/contrib/openstack/utils.py", line 1867, in wrapped_f
+    return restart_on_change_helper(
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/core/host.py", line 837, in restart_on_change_helper
+    r = lambda_f()
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/contrib/openstack/utils.py", line 1868, in <lambda>
+    (lambda: f(*args, **kwargs)),
+  File "hooks/shared-db-relation-changed", line 457, in identity_changed
+    add_service_to_keystone(relation_id, remote_unit)
+  File "/var/lib/juju/agents/unit-keystone-0/charm/hooks/keystone_utils.py", line 2056, in add_service_to_keystone
+    _list_services_result = manager.list_services()
+  File "/var/lib/juju/agents/unit-keystone-0/charm/hooks/keystone_utils.py", line 1231, in __call__
+    return _proxy_manager_call(self._path, self.api_version, args, kwargs)
+  File "/var/lib/juju/agents/unit-keystone-0/charm/charmhelpers/core/decorators.py", line 40, in _retry_on_exception_inner_2
+    return f(*args, **kwargs)
+  File "/var/lib/juju/agents/unit-keystone-0/charm/hooks/keystone_utils.py", line 1275, in _proxy_manager_call
+    raise e
+  File "/var/lib/juju/agents/unit-keystone-0/charm/hooks/keystone_utils.py", line 1269, in _proxy_manager_call
+    raise RuntimeError(s)
+RuntimeError: The call within manager.py failed with the error: 'Unable to establish connection to http://localhost:35347/v3/auth/tokens: HTTPConnectionPool(host='localhost', port=35347): Max retries exceeded with url: /v3/auth/tokens (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f8aa7faec40>: Failed to establish a new connection: [Errno 111] Connection refused'))'. The call was: path=['list_services'], args=(), kwargs={}, api_version=None
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/urllib3/connection.py", line 159, in _new_conn
+    conn = connection.create_connection(
+  File "/usr/lib/python3/dist-packages/urllib3/util/connection.py", line 84, in create_connection
+    raise err
+  File "/usr/lib/python3/dist-packages/urllib3/util/connection.py", line 74, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 666, in urlopen
+    httplib_response = self._make_request(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 388, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/usr/lib/python3.8/http/client.py", line 1256, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1302, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1251, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.8/http/client.py", line 1011, in _send_output
+    self.send(msg)
+  File "/usr/lib/python3.8/http/client.py", line 951, in send
+    self.connect()
+  File "/usr/lib/python3/dist-packages/urllib3/connection.py", line 187, in connect
+    conn = self._new_conn()
+  File "/usr/lib/python3/dist-packages/urllib3/connection.py", line 171, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7f8aa7faec40>: Failed to establish a new connection: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 720, in urlopen
+    retries = retries.increment(
+  File "/usr/lib/python3/dist-packages/urllib3/util/retry.py", line 438, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=35347): Max retries exceeded with url: /v3/auth/tokens (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f8aa7faec40>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/keystoneauth1/session.py", line 1004, in _send_request
+    resp = self.session.request(method, url, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 535, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 648, in send
+    r = adapter.send(request, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=35347): Max retries exceeded with url: /v3/auth/tokens (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f8aa7faec40>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/var/lib/juju/agents/unit-keystone-0/charm/hooks/manager.py", line 716, in <module>
+    manager = get_manager(
+  File "/var/lib/juju/agents/unit-keystone-0/charm/hooks/manager.py", line 647, in get_manager
+    _keystone_manager['manager'] = get_keystone_manager(
+  File "/var/lib/juju/agents/unit-keystone-0/charm/hooks/manager.py", line 105, in _retry_on_exception_inner_2
+    return f(*args, **kwargs)
+  File "/var/lib/juju/agents/unit-keystone-0/charm/hooks/manager.py", line 156, in get_keystone_manager
+    for svc in manager.api.services.list():
+  File "/usr/lib/python3/dist-packages/keystoneclient/v3/services.py", line 90, in list
+    return super(ServiceManager, self).list(
+  File "/usr/lib/python3/dist-packages/keystoneclient/base.py", line 86, in func
+    return f(*args, **new_kwargs)
+  File "/usr/lib/python3/dist-packages/keystoneclient/base.py", line 448, in list
+    list_resp = self._list(url_query, self.collection_key)
+  File "/usr/lib/python3/dist-packages/keystoneclient/base.py", line 141, in _list
+    resp, body = self.client.get(url, **kwargs)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/adapter.py", line 386, in get
+    return self.request(url, 'GET', **kwargs)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/adapter.py", line 545, in request
+    resp = super(LegacyJsonAdapter, self).request(*args, **kwargs)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/adapter.py", line 248, in request
+    return self.session.request(url, method, **kwargs)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/session.py", line 772, in request
+    auth_headers = self.get_auth_headers(auth)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/session.py", line 1183, in get_auth_headers
+    return auth.get_headers(self, **kwargs)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/plugin.py", line 95, in get_headers
+    token = self.get_token(session)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/identity/base.py", line 88, in get_token
+    return self.get_access(session).auth_token
+  File "/usr/lib/python3/dist-packages/keystoneauth1/identity/base.py", line 134, in get_access
+    self.auth_ref = self.get_auth_ref(session)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/identity/v3/base.py", line 183, in get_auth_ref
+    resp = session.post(token_url, json=body, headers=headers,
+  File "/usr/lib/python3/dist-packages/keystoneauth1/session.py", line 1131, in post
+    return self.request(url, 'POST', **kwargs)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/session.py", line 913, in request
+    resp = send(**kwargs)
+  File "/usr/lib/python3/dist-packages/keystoneauth1/session.py", line 1020, in _send_request
+    raise exceptions.ConnectFailure(msg)
+keystoneauth1.exceptions.connection.ConnectFailure: Unable to establish connection to http://localhost:35347/v3/auth/tokens: HTTPConnectionPool(host='localhost', port=35347): Max retries exceeded with url: /v3/auth/tokens (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f8aa7faec40>: Failed to establish a new connection: [Errno 111] Connection refused'))
+ERROR the following task failed:
+ - id "12" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ ^C
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "systemctl status apache2; ss -tlnp | grep 35347; cat /etc/apache2/ports.conf | grep 35347"
+● apache2.service - The Apache HTTP Server
+     Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)
+     Active: failed (Result: exit-code) since Tue 2026-03-03 20:46:49 UTC; 32min ago
+       Docs: https://httpd.apache.org/docs/2.4/
+    Process: 132574 ExecStart=/usr/sbin/apachectl start (code=exited, status=1/FAILURE)
+
+Mar 03 20:46:49 juju-23d286-0-lxd-1 systemd[1]: Starting The Apache HTTP Server...
+Mar 03 20:46:49 juju-23d286-0-lxd-1 apachectl[132577]: AH00526: Syntax error on line 7 of /etc/apache2/sites-en>
+Mar 03 20:46:49 juju-23d286-0-lxd-1 apachectl[132577]: Invalid command 'WSGIDaemonProcess', perhaps misspelled >
+Mar 03 20:46:49 juju-23d286-0-lxd-1 apachectl[132574]: Action 'start' failed.
+Mar 03 20:46:49 juju-23d286-0-lxd-1 apachectl[132574]: The Apache error log may have more information.
+Mar 03 20:46:49 juju-23d286-0-lxd-1 systemd[1]: apache2.service: Control process exited, code=exited, status=1/>
+Mar 03 20:46:49 juju-23d286-0-lxd-1 systemd[1]: apache2.service: Failed with result 'exit-code'.
+Mar 03 20:46:49 juju-23d286-0-lxd-1 systemd[1]: Failed to start The Apache HTTP Server.
+Connection to 10.10.10.206 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "sudo apt install -y libapache2-mod-wsgi-py3 && sudo a2enmod wsgi && sudo systemctl restart apache2"
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+libapache2-mod-wsgi-py3 is already the newest version (4.6.8-1ubuntu3.1).
+The following packages were automatically installed and are no longer required:
+  libfreetype6 libimagequant0 libjbig0 libjpeg-turbo8 libjpeg8 liblcms2-2 libtiff5 libwebp6 libwebpdemux2
+  libwebpmux3
+Use 'sudo apt autoremove' to remove them.
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Enabling module wsgi.
+To activate the new configuration, you need to run:
+  systemctl restart apache2
+Connection to 10.10.10.206 closed.
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ERROR unit "keystone/0" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "sudo systemctl restart apache2; systemctl status apache2 | head -10"
+● apache2.service - The Apache HTTP Server
+     Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2026-03-03 21:21:29 UTC; 34ms ago
+       Docs: https://httpd.apache.org/docs/2.4/
+    Process: 169791 ExecStart=/usr/sbin/apachectl start (code=exited, status=0/SUCCESS)
+   Main PID: 169795 (apache2)
+      Tasks: 7 (limit: 314572)
+     Memory: 6.5M
+     CGroup: /system.slice/apache2.service
+             ├─169795 /usr/sbin/apache2 -k start
+Connection to 10.10.10.206 closed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit keystone/0 "hooks/config-changed"
+ERROR timed out waiting for results from: unit keystone/0
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "keystone|error|active" | head -15
+ceph-mon                16.2.15  active       3  ceph-mon                pacific/stable  217  no       Unit is ready and clustered
+ceph-osd                16.2.15  active       3  ceph-osd                pacific/stable  615  no       Unit is ready (1 OSD)
+cinder-ceph             16.4.2   active       1  cinder-ceph             ussuri/stable   518  no       Unit is ready
+cinder-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone                17.0.1   waiting      1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   active       3  mysql-innodb-cluster    8.0/stable      159  no       Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-compute            23.2.2   active       3  nova-compute            ussuri/stable   779  no       Unit is ready
+nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+ovn-central             22.03.3  active       3  ovn-central             22.03/stable    245  no       Unit is ready (northd: active)
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "keystone|error|active" | head -15
+     Unit is ready
+dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone                17.0.1   waiting      1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   active       3  mysql-innodb-cluster    8.0/stable      159  no       Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-compute            23.2.2   active       3  nova-compute            ussuri/stable   779  no       Unit is ready
+nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+ovn-central             22.03.3  active       3  ovn-central             22.03/stable    245  no       Unit is ready (northd: active)
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+ubuntu@vm1-orchestrator:~$ubuntu@vm1-orchestrator:~$ ceph-mon                16.2.15  active       3  ceph-mon                pacific/stable  217  no       Unit is ready and clustered
+
+Command 'ceph-mon' not found, but can be installed with:
+
+sudo apt install ceph-mon
+
+ubuntu@vm1-orchestrator:~$ ceph-osd                16.2.15  active       3  ceph-osd                pacific/stable  615  no       Unit is ready (1 OSD)
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ cinder-ceph             16.4.2   active       1  cinder-ceph             ussuri/stable   518  no       Unit is ready
+cinder-ceph: command not found
+ubuntu@vm1-orchestrator:~$ cinder-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+cinder-mysql-router: command not found
+ubuntu@vm1-orchestrator:~$ dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+dashboard-mysql-router: command not found
+ubuntu@vm1-orchestrator:~$ glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance-mysql-router: command not found
+ubuntu@vm1-orchestrator:~$ keystone                17.0.1   waiting      1  keystone                ussuri/stable   691  no       Allowed_units list provided but this unit not present
+
+Command 'keystone' not found, did you mean:
+
+  command 'xkeystone' from deb x11-xserver-utils (7.7+8)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm1-orchestrator:~$ keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone-mysql-router: command not found
+ubuntu@vm1-orchestrator:~$ mysql-innodb-cluster    8.0.42   active       3  mysql-innodb-cluster    8.0/stable      159  no       Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+mysql-innodb-cluster: command not found
+ubuntu@vm1-orchestrator:~$ neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+neutron-mysql-router: command not found
+ubuntu@vm1-orchestrator:~$ nova-compute            23.2.2   active       3  nova-compute            ussuri/stable   779  no       Unit is ready
+
+Command 'nova-compute' not found, but can be installed with:
+
+sudo apt install python3-nova
+
+ubuntu@vm1-orchestrator:~$ nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-mysql-router: command not found
+ubuntu@vm1-orchestrator:~$ ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+
+Command 'ntp' not found, but there are 20 similar ones.
+
+ubuntu@vm1-orchestrator:~$ ovn-central             22.03.3  active       3  ovn-central             22.03/stable    245  no       Unit is ready (northd: active)
+-bash: syntax error near unexpected token `('
+ubuntu@vm1-orchestrator:~$ ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+ovn-chassis: command not found
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$^C
+ubuntu@vm1-orchestrator:~$ juju remove-relation keystone:shared-db keystone-mysql-router:shared-db
+ubuntu@vm1-orchestrator:~$ sleep 10
+ubuntu@vm1-orchestrator:~$ juju relate keystone:shared-db keystone-mysql-router:shared-db
+ERROR cannot add relation "keystone:shared-db keystone-mysql-router:shared-db"
+relation keystone:shared-db keystone-mysql-router:shared-db is dying, but not yet removed (already exists):
+
+Use 'juju status --relations' to view the current relations.
+ubuntu@vm1-orchestrator:~$ watch -n 5 "juju status keystone 2>&1 | grep keystone/"
+ubuntu@vm1-orchestrator:~$ sleep 30
+ubuntu@vm1-orchestrator:~$ juju relate keystone:shared-db keystone
+ERROR no relations found
+ubuntu@vm1-orchestrator:~$ juju relate keystone:shared-db keystone-mysql-router:shared-db
+ERROR cannot add relation "keystone:shared-db keystone-mysql-router:shared-db"
+relation keystone:shared-db keystone-mysql-router:shared-db is dying, but not yet removed (already exists):
+
+Use 'juju status --relations' to view the current relations.
+ubuntu@vm1-orchestrator:~$ watch -n 5 "juju status --relations 2>&1 | grep 'keystone.*shared-db'"
+ubuntu@vm1-orchestrator:~$ juju relate keystone:shared-db keystone-mysql-router:shared-db
+ERROR cannot add relation "keystone:shared-db keystone-mysql-router:shared-db"
+relation keystone:shared-db keystone-mysql-router:shared-db is dying, but not yet removed (already exists):
+
+Use 'juju status --relations' to view the current relations.
+ubuntu@vm1-orchestrator:~$ juju remove-relation keystone:shared-db keystone-mysql-router:shared-db --force
+-mysql-router:shared-dbubuntu@vm1-orchestrator:~$ sleep 30
+ubuntu@vm1-orchestrator:~$ juju relate keystone:shared-db keystone-mysql-router:shared-db
+ERROR cannot add relation "keystone:shared-db keystone-mysql-router:shared-db"
+relation keystone:shared-db keystone-mysql-router:shared-db is dying, but not yet removed (already exists):
+
+Use 'juju status --relations' to view the current relations.
+ubuntu@vm1-orchestrator:~$ juju remove-application keystone-mysql-router --force
+WARNING This command will perform the following actions:
+will remove application keystone-mysql-router
+- will remove unit keystone-mysql-router/0
+
+Continue [y/N]? y
+ERROR application removal: aborted
+ubuntu@vm1-orchestrator:~$ juju remove-application keystone-mysql-router --force --no-prompt
+will remove application keystone-mysql-router
+- will remove unit keystone-mysql-router/0
+ubuntu@vm1-orchestrator:~$ sleep 60
+ubuntu@vm1-orchestrator:~$ juju status keystone-mysql-router 2>&1 | head -5
+Model      Controller     Cloud/Region     Version  SLA          Timestamp
+openstack  my-controller  my-maas/default  3.6.14   unsupported  21:34:56Z
+Nothing matched specified filter.
+ubuntu@vm1-orchestrator:~$ juju deploy mysql-router keystone-mysql-router --channel 8.0/stable
+ster:db-router
+juju relate keystone:shared-db keystone-mysql-router:shared-dbDeployed "keystone-mysql-router" from charm-hub charm "mysql-router", revision 257 in channel 8.0/stable on ubuntu@20.04/stable
+ubuntu@vm1-orchestrator:~$ juju relate keystone-mysql-router:db-router mysql-innodb-cluster:db-router
+ubuntu@vm1-orchestrator:~$ juju relate keystone:shared-db keystone-mysql-router:shared-db
+ubuntu@vm1-orchestrator:~$ watch -n 10 "juju status 2>&1 | grep -E 'keystone|error' | head -10"
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/0
+assis/1
+juju resolved ovn-chassis/2ERROR unit "ovn-chassis/0" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/1
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/2
+ERROR unit "ovn-chassis/2" is not in an error state
+ubuntu@vm1-orchestrator:~$ watch -n 15 "juju status 2>&1 | grep -E 'keystone|error' | head -10"
+ubuntu@vm1-orchestrator:~$ juju status --relations 2>&1 | grep "keystone-mysql-router.*db-router"
+mysql-innodb-cluster:db-router         keystone-mysql-router:db-router              mysql-router                    regular
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/1 "mysql -u clusteradmin -e 'SHOW DATABASES;'" 2>&1 | head -20
+ERROR 1045 (28000): Access denied for user 'clusteradmin'@'localhost' (using password: NO)
+ERROR the following task failed:
+ - id "16" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju debug-log --replay --no-tail --include keystone-mysql-router/1 2>&1 | tail -10
+unit-keystone-mysql-router-1: 21:35:56 INFO juju.worker.apicaller [9fce65] "unit-keystone-mysql-router-1" successfully connected to "wss://10.115.30.214:17070"
+unit-keystone-mysql-router-1: 21:35:56 INFO juju.worker.migrationminion migration migration phase is now: NONE
+unit-keystone-mysql-router-1: 21:35:56 INFO juju.worker.logger logger worker started
+unit-keystone-mysql-router-1: 21:35:56 INFO juju.worker.upgrader no waiter, upgrader is done
+unit-keystone-mysql-router-1: 21:35:56 INFO juju.worker.uniter unit "keystone-mysql-router/1" started
+unit-keystone-mysql-router-1: 21:35:56 INFO juju.worker.uniter resuming charm install
+unit-keystone-mysql-router-1: 21:35:56 INFO juju.worker.uniter.charm downloading ch:amd64/mysql-router-257 from API server
+unit-keystone-mysql-router-1: 21:35:58 INFO juju.worker.uniter hooks are retried true
+unit-keystone-mysql-router-1: 21:35:58 INFO juju.worker.uniter.storage initial storage attachments ready
+unit-keystone-mysql-router-1: 21:35:58 INFO juju.worker.uniter found queued "install" hook
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "ps aux | grep -E 'mysql|pip|apt|dpkg' | grep -v grep"
+mysql     279474  0.0  0.2 829256 10172 ?        Sl   21:47   0:05 /usr/bin/mysqlrouter -c /var/lib/mysql/keystone-mysql-router/mysqlrouter.conf
+Connection to 10.10.10.206 closed.
+ubuntu@vm1-orchestrator:~$ juju status keystone-mysql-router/1
+Model      Controller     Cloud/Region     Version  SLA          Timestamp
+openstack  my-controller  my-maas/default  3.6.14   unsupported  21:50:16Z
+
+App                    Version  Status   Scale  Charm         Channel        Rev  Exposed  Message
+keystone               17.0.1   waiting      1  keystone      ussuri/stable  691  no       Allowed_units list provided but this unit not present
+keystone-mysql-router  8.0.42   active       1  mysql-router  8.0/stable     257  no       Unit is ready
+
+Unit                        Workload     Agent      Machine  Public address  Ports     Message
+keystone/0*                 maintenance  executing  0/lxd/1  10.10.10.206    5000/tcp  Updating endpoint for glance
+  keystone-mysql-router/1*  active       idle                10.10.10.206              Unit is ready
+
+Machine  State    Address       Inst id              Base          AZ       Message
+0        started  10.10.10.113  os-compute01         ubuntu@20.04  default  Deployed
+0/lxd/1  started  10.10.10.206  juju-23d286-0-lxd-1  ubuntu@20.04  default  Container started
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked|active" | head -25
+ceph-mon                16.2.15  active       3  ceph-mon                pacific/stable  217  no       Unit is ready and clustered
+ceph-osd                16.2.15  active       3  ceph-osd                pacific/stable  615  no       Unit is ready (1 OSD)
+cinder-ceph             16.4.2   active       1  cinder-ceph             ussuri/stable   518  no       Unit is ready
+cinder-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance                  20.2.0   active       1  glance                  ussuri/stable   589  no       Unit is ready
+glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   active       3  mysql-innodb-cluster    8.0/stable      159  no       Unit is ready: Mode: R/O, Cluster is ONLINE and can tolerate up to ONE failure.
+neutron-api             16.4.2   active       1  neutron-api             ussuri/stable   588  no       Unit is ready
+neutron-api-plugin-ovn  16.4.2   active       1  neutron-api-plugin-ovn  ussuri/stable    98  no       Unit is ready
+neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-cloud-controller   21.2.4   active       1  nova-cloud-controller   ussuri/stable   748  no       Unit is ready
+nova-compute            23.2.2   active       3  nova-compute            ussuri/stable   779  no       Unit is ready
+nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+openstack-dashboard     18.3.5   active       1  openstack-dashboard     ussuri/stable   723  no       Unit is ready
+ovn-central             22.03.3  active       3  ovn-central             22.03/stable    245  no       Unit is ready (northd: active)
+ovn-chassis             22.03.3  error        3  ovn-chassis             22.03/stable    324  no       hook failed: "ovsdb-relation-changed"
+placement               3.0.1    active       1  placement               ussuri/stable    99  no       Unit is ready
+placement-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+rabbitmq-server         3.8.3    active       1  rabbitmq-server         3.9/stable      246  no       Unit is ready
+vault                   1.7.9    active       1  vault                   1.7/stable      371  no       Unit is ready (active: true, mlock: disabled)
+vault-mysql-router      8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ceph-mon/0                   active       idle       0/lxd/0  10.10.10.217                    Unit is ready and clustered
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/0
+ resolved ovn-chassis/1
+juju resolved ovn-chassis/2ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/1
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/2
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep ovn-chassis/
+  ovn-chassis/0              waiting      executing           10.10.10.113                    'ovsdb' incomplete
+  ovn-chassis/2*             waiting      executing           10.10.10.108                    'ovsdb' incomplete
+  ovn-chassis/1              waiting      executing           10.10.10.107                    'ovsdb' incomplete
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep ovn-chassis/
+  ovn-chassis/0              error        idle                10.10.10.113                    hook failed: "ovsdb-relation-changed"
+  ovn-chassis/2*             waiting      executing           10.10.10.108                    'ovsdb' incomplete
+  ovn-chassis/1              waiting      executing           10.10.10.107                    'ovsdb' incomplete
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep ovn-chassis/
+  ovn-chassis/0              waiting      executing           10.10.10.113                    'ovsdb' incomplete
+  ovn-chassis/2*             error        idle                10.10.10.108                    hook failed: "ovsdb-relation-changed"
+  ovn-chassis/1              waiting      executing           10.10.10.107                    'ovsdb' incomplete
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep ovn-chassis/
+  ovn-chassis/0              waiting      executing           10.10.10.113                    'ovsdb' incomplete
+  ovn-chassis/2*             waiting      executing           10.10.10.108                    'ovsdb' incomplete
+  ovn-chassis/1              waiting      executing           10.10.10.107                    'ovsdb' incomplete
+ubuntu@vm1-orchestrator:~$ juju debug-log --replay --no-tail --include ovn-chassis/0 2>&1 | grep -i "error\|fail\|traceback" | tail -10
+unit-ovn-chassis-0: 21:27:36 ERROR unit.ovn-chassis/0.juju-log ovsdb:58: Hook error:
+Traceback (most recent call last):
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['ip', 'link', 'set', 'ens3', 'up']' returned non-zero exit status 1.
+unit-ovn-chassis-0: 21:27:36 WARNING unit.ovn-chassis/0.ovsdb-relation-changed Traceback (most recent call last):
+unit-ovn-chassis-0: 21:27:36 WARNING unit.ovn-chassis/0.ovsdb-relation-changed     raise CalledProcessError(retcode, cmd)
+unit-ovn-chassis-0: 21:27:36 WARNING unit.ovn-chassis/0.ovsdb-relation-changed subprocess.CalledProcessError: Command '['ip', 'link', 'set', 'ens3', 'up']' returned non-zero exit status 1.
+unit-ovn-chassis-0: 21:27:36 ERROR juju.worker.uniter.operation hook "ovsdb-relation-changed" (via explicit, bespoke hook script) failed: exit status 1
+unit-ovn-chassis-0: 21:27:36 INFO juju.worker.uniter awaiting error resolution for "relation-changed" hook
+unit-ovn-chassis-0: 21:28:57 INFO juju.worker.uniter awaiting error resolution for "relation-changed" hook
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "ip link show | grep -E '^[0-9]'"
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel master br-eth0 state UP mode DEFAULT group default qlen 1000
+5: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+6: br-int: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+7: br-eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+31: vethb9cd405f@if30: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master br-eth0 state UP mode DEFAULT group default qlen 1000
+33: veth97384dfb@if32: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master br-eth0 state UP mode DEFAULT group default qlen 1000
+35: vethbf91f46b@if34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master br-eth0 state UP mode DEFAULT group default qlen 1000
+37: vethbef489d2@if36: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master br-eth0 state UP mode DEFAULT group default qlen 1000
+39: veth7f7ec08d@if38: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master br-eth0 state UP mode DEFAULT group default qlen 1000
+40: br-ex: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju config ovn-chassis bridge-interface-mappings
+br-ex:ens3
+ubuntu@vm1-orchestrator:~$ juju config ovn-chassis bridge-interface-mappings="br-ex:eth0"
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/0
+ resolved ovn-chassis/1
+juju resolved ovn-chassis/2ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/1
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/2
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep ovn-chassis/
+  ovn-chassis/0              waiting      executing           10.10.10.113                    'ovsdb' incomplete
+  ovn-chassis/2*             waiting      executing           10.10.10.108                    'ovsdb' incomplete
+  ovn-chassis/1              waiting      executing           10.10.10.107                    'ovsdb' incomplete
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep ovn-chassis/
+  ovn-chassis/0              waiting      executing           10.10.10.113                    'ovsdb' incomplete
+  ovn-chassis/2*             error        idle                10.10.10.108                    hook failed: "ovsdb-relation-changed"
+  ovn-chassis/1              error        idle                10.10.10.107                    hook failed: "ovsdb-relation-changed"
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep ovn-chassis/
+  ovn-chassis/0              active       executing           10.10.10.113                    (config-changed) Unit is ready
+  ovn-chassis/2*             waiting      executing           10.10.10.108                    'ovsdb' incomplete
+  ovn-chassis/1              error        idle                10.10.10.107                    hook failed: "ovsdb-relation-changed"
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/1
+ERROR unit "ovn-chassis/1" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju resolved ovn-chassis/2
+ERROR unit "ovn-chassis/2" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep ovn-chassis/
+  ovn-chassis/0              active    idle                10.10.10.113                    Unit is ready
+  ovn-chassis/2*             active    executing           10.10.10.108                    (config-changed) Unit is ready
+  ovn-chassis/1              active    executing           10.10.10.107                    (config-changed) Unit is ready
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep active | wc -l
+65
+ubuntu@vm1-orchestrator:~$ juju exec --unit keystone/0 "leader-get admin_passwd"
+admin
+ubuntu@vm1-orchestrator:~$ juju status openstack-dashboard 2>&1 | grep "openstack-dashboard/"
+openstack-dashboard/0*       active    idle   0/lxd/3  10.10.10.201    80,443/tcp  Unit is ready
+ubuntu@vm1-orchestrator:~$ curl -s http://10.10.10.201/horizon | head -5
+ubuntu@vm1-orchestrator:~$ curl -sI http://10.10.10.201/horizon
+HTTP/1.1 302 Found
+Date: Tue, 03 Mar 2026 22:00:43 GMT
+Server: Apache/2.4.41 (Ubuntu)
+Location: http://10.10.10.201/horizon/auth/login/?next=/horizon/
+X-Frame-Options: sameorigin
+Vary: Accept-Language,Cookie
+Content-Language: en
+Content-Security-Policy: frame-ancestors 'self';
+Content-Type: text/html; charset=utf-8
+
+ubuntu@vm1-orchestrator:~$ curl -sI http://10.10.10.201/
+HTTP/1.1 200 OK
+Date: Tue, 03 Mar 2026 22:00:48 GMT
+Server: Apache/2.4.41 (Ubuntu)
+X-Frame-Options: sameorigin
+Content-Security-Policy: frame-ancestors 'self';
+Content-Type: text/html;charset=UTF-8
+
+ubuntu@vm1-orchestrator:~$ client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$

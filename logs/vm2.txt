@@ -1,0 +1,781 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Wed Feb 25 07:03:35 UTC 2026
+
+  System load:  0.31              Users logged in:         0
+  Usage of /:   2.5% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 1%                IPv4 address for ens3:   192.168.66.243
+  Swap usage:   0%                IPv4 address for virbr0: 192.168.122.1
+  Processes:    266
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+93 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Wed Feb 25 01:35:37 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ history
+    1  exit
+    2  # 1. Instalăm hypervizorul KVM și utilitarele
+    3  sudo apt-get update
+    4  sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst
+    5  sudo virt-install   --name os-compute01   --ram 4096   --vcpus 2   --disk path=/var/lib/libvirt/images/os-compute01.qcow2,size=20   --os-variant ubuntu20.04   --network bridge=br0,model=virtio   --pxe   --boot network,hd   --noautoconsole
+    6  ip a
+    7  sudo bash -c 'cat > /etc/netplan/99-bridge.yaml <<EOF
+    8  network:
+    9    version: 2
+   10    ethernets:
+   11      ens4:
+   12        dhcp4: false
+   13        dhcp6: false
+   14    bridges:
+   15      br0:
+   16        interfaces: [ens4]
+   17        dhcp4: true
+   18        parameters:
+   19          stp: false
+   20          forward-delay: 0
+   21  EOF'
+   22  sudo netplan apply
+   23  sudo virt-install   --name os-compute01   --ram 4096   --vcpus 2   --disk path=/var/lib/libvirt/images/os-compute01.qcow2,size=20   --os-variant ubuntu20.04   --network bridge=br0,model=virtio   --pxe   --boot network,hd   --noautoconsole
+   24  exit
+   25  sudo maas init --mode region+rack --database-uri maas-test-db:///
+   26  exit
+   27  history
+ubuntu@vm2-services-hypervisor:~$ ^C
+ubuntu@vm2-services-hypervisor:~$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether fa:16:3e:f2:d4:b0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.66.243/24 metric 100 brd 192.168.66.255 scope global dynamic ens3
+       valid_lft 39883sec preferred_lft 39883sec
+    inet6 fe80::f816:3eff:fef2:d4b0/64 scope link
+       valid_lft forever preferred_lft forever
+3: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq master br0 state UP group default qlen 1000
+    link/ether fa:16:3e:ee:c8:cd brd ff:ff:ff:ff:ff:ff
+4: virbr0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+    link/ether 52:54:00:fe:a1:50 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.122.1/24 brd 192.168.122.255 scope global virbr0
+       valid_lft forever preferred_lft forever
+5: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN group default qlen 1000
+    link/ether 52:54:00:fe:a1:50 brd ff:ff:ff:ff:ff:ff
+7: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether fa:16:3e:ee:c8:cd brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.104/24 metric 100 brd 10.10.10.255 scope global dynamic br0
+       valid_lft 18284sec preferred_lft 18284sec
+    inet6 fe80::f816:3eff:feee:c8cd/64 scope link
+       valid_lft forever preferred_lft forever
+13: vnet0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel master br0 state UNKNOWN group default qlen 1000
+    link/ether fe:54:00:31:a1:67 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::fc54:ff:fe31:a167/64 scope link
+       valid_lft forever preferred_lft forever
+14: vnet1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel master br0 state UNKNOWN group default qlen 1000
+    link/ether fe:54:00:63:be:bc brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::fc54:ff:fe63:bebc/64 scope link
+       valid_lft forever preferred_lft forever
+15: vnet2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel master br0 state UNKNOWN group default qlen 1000
+    link/ether fe:54:00:63:ae:ac brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::fc54:ff:fe63:aeac/64 scope link
+       valid_lft forever preferred_lft forever
+16: vnet3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel master br0 state UNKNOWN group default qlen 1000
+    link/ether fe:54:00:63:be:bd brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::fc54:ff:fe63:bebd/64 scope link
+       valid_lft forever preferred_lft forever
+17: vnet4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel master br0 state UNKNOWN group default qlen 1000
+    link/ether fe:54:00:63:ae:ad brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::fc54:ff:fe63:aead/64 scope link
+       valid_lft forever preferred_lft forever
+ubuntu@vm2-services-hypervisor:~$ ip a | grep ens
+2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.66.243/24 metric 100 brd 192.168.66.255 scope global dynamic ens3
+3: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq master br0 state UP group default qlen 1000
+ubuntu@vm2-services-hypervisor:~$ brctl show
+bridge name     bridge id               STP enabled     interfaces
+br0             8000.fa163eeec8cd       no              ens4
+                                                        vnet0
+                                                        vnet1
+                                                        vnet2
+                                                        vnet3
+                                                        vnet4
+virbr0          8000.525400fea150       yes             virbr0-nic
+ubuntu@vm2-services-hypervisor:~$ virsh net-list --all
+ Name          State    Autostart   Persistent
+------------------------------------------------
+ default       active   yes         yes
+ host-bridge   active   yes         yes
+
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name           State
+------------------------------
+ 5    os-compute01   running
+ 6    os-compute03   running
+ 7    os-compute02   running
+
+ubuntu@vm2-services-hypervisor:~$ journalctl -u maas-regiond -n 100 --no-pager
+-- Logs begin at Tue 2026-02-24 23:30:19 UTC, end at Wed 2026-02-25 07:50:08 UTC. --
+-- No entries --
+ubuntu@vm2-services-hypervisor:~$ virsh console os-compute01
+Connected to domain os-compute01
+Escape character is ^]
+
+ubuntu@vm2-services-hypervisor:~$ sudo ssh-copy-id -i /var/snap/maas/current/root/.ssh/id_rsa.pub ubuntu@192.168.66.243
+
+/usr/bin/ssh-copy-id: ERROR: failed to open ID file '/var/snap/maas/current/root/.ssh/id_rsa.pub': No such file
+ubuntu@vm2-services-hypervisor:~$ ssh ubuntu@192.168.66.243 "virsh list --all"
+The authenticity of host '192.168.66.243 (192.168.66.243)' can't be established.
+ECDSA key fingerprint is SHA256:nOJcgIHT+yH/iWI3rnLxPN8TreoBX5i9nber5rbzh7Q.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.66.243' (ECDSA) to the list of known hosts.
+ubuntu@192.168.66.243: Permission denied (publickey).
+ubuntu@vm2-services-hypervisor:~$ ssh ubuntu@192.168.66.243 "sudo virsh list --all"
+ubuntu@192.168.66.243: Permission denied (publickey).
+ubuntu@vm2-services-hypervisor:~$ ssh ubuntu@192.168.66.243 "sudo usermod -aG libvirt ubuntu && sudo usermod -aG kvm ubuntu"
+ubuntu@192.168.66.243: Permission denied (publickey).
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name           State
+------------------------------
+ 8    os-compute01   running
+ 9    os-compute02   running
+ 10   os-compute03   running
+
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n -e port 67 or port 68 2>/dev/null | head -20
+^C
+ubuntu@vm2-services-hypervisor:~$ sudo snap logs maas -n 200 2>&1 | grep -E "virsh|qemu|ssh|error|ERROR|compute"
+error: snap "maas" not found
+ubuntu@vm2-services-hypervisor:~$ sudo virsh console os-compute01
+Connected to domain os-compute01
+Escape character is ^]
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dumpxml os-compute01 | grep -A5 "boot"
+    <boot dev='network'/>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <vmport state='off'/>
+--
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dumpxml os-compute01 | grep -E "interface|mac|source"
+  <resource>
+    <partition>/machine</partition>
+  </resource>
+    <type arch='x86_64' machine='pc-q35-4.2'>hvm</type>
+      <source file='/var/lib/libvirt/images/os-compute01.qcow2' index='1'/>
+    <interface type='bridge'>
+      <mac address='52:54:00:31:a1:67'/>
+      <source bridge='br0'/>
+    </interface>
+      <source path='/dev/pts/0'/>
+      <source path='/dev/pts/0'/>
+      <source mode='bind' path='/var/lib/libvirt/qemu/channel/target/domain-8-os-compute01/org.qemu.guest_agent.0'/>
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n -c 20
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br0, link-type EN10MB (Ethernet), capture size 262144 bytes
+ssh ubuntu@192.168.66.243 "virsh list --all"^Z
+[1]+  Stopped                 sudo tcpdump -i br0 -n -c 20
+ubuntu@vm2-services-hypervisor:~$ ssh ubuntu@192.168.66.243 "virsh list --all"
+ubuntu@192.168.66.243: Permission denied (publickey).
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name           State
+-------------------------------
+ -    os-compute01   shut off
+ -    os-compute02   shut off
+ -    os-compute03   shut off
+
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n -c 30 2>/dev/null
+08:56:37.233900 IP6 fe80::f816:3eff:feee:c8cd > ff02::2: ICMP6, router solicitation, length 16
+09:02:51.059055 ARP, Request who-has 10.10.10.1 tell 10.10.10.10, length 28
+09:02:52.080313 ARP, Request who-has 10.10.10.1 tell 10.10.10.10, length 28
+09:02:53.104284 ARP, Request who-has 10.10.10.1 tell 10.10.10.10, length 28
+09:03:26.312012 IP6 fe80::fc16:3eff:feee:c8cd > ff02::2: ICMP6, router solicitation, length 16
+^C
+ubuntu@vm2-services-hypervisor:~$ ip a show br0
+7: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether fa:16:3e:ee:c8:cd brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.104/24 metric 100 brd 10.10.10.255 scope global dynamic br0
+       valid_lft 13792sec preferred_lft 13792sec
+    inet6 fe80::f816:3eff:feee:c8cd/64 scope link
+       valid_lft forever preferred_lft forever
+ubuntu@vm2-services-hypervisor:~$ ip a | grep -E "lxdbr0|ens|10.10"
+2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.66.243/24 metric 100 brd 192.168.66.255 scope global dynamic ens3
+3: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq master br0 state UP group default qlen 1000
+    inet 10.10.10.104/24 metric 100 brd 10.10.10.255 scope global dynamic br0
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n port 67 or port 68 or port 69
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br0, link-type EN10MB (Ethernet), capture size 262144 bytes
+09:16:02.206490 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:16:05.264072 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:16:06.260506 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:16:06.270863 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:16:08.292487 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:16:10.288376 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:16:11.282295 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:16:12.356891 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:16:13.314313 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:16:17.378929 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+^C
+10 packets captured
+10 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo apt install isc-dhcp-relay -y
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  libirs-export161 libisccfg-export163
+The following NEW packages will be installed:
+  isc-dhcp-relay libirs-export161 libisccfg-export163
+0 upgraded, 3 newly installed, 0 to remove and 44 not upgraded.
+Need to get 257 kB of archives.
+After this operation, 954 kB of additional disk space will be used.
+Get:1 http://nova.clouds.archive.ubuntu.com/ubuntu focal-updates/main amd64 libisccfg-export163 amd64 1:9.11.16+dfsg-3~ubuntu1 [45.9 kB]
+Get:2 http://nova.clouds.archive.ubuntu.com/ubuntu focal-updates/main amd64 libirs-export161 amd64 1:9.11.16+dfsg-3~ubuntu1 [18.6 kB]
+Get:3 http://nova.clouds.archive.ubuntu.com/ubuntu focal-updates/universe amd64 isc-dhcp-relay amd64 4.4.1-2.1ubuntu5.20.04.5 [193 kB]
+Fetched 257 kB in 1s (271 kB/s)
+Preconfiguring packages ...
+Selecting previously unselected package libisccfg-export163.
+(Reading database ... 112100 files and directories currently installed.)
+Preparing to unpack .../libisccfg-export163_1%3a9.11.16+dfsg-3~ubuntu1_amd64.deb ...
+Unpacking libisccfg-export163 (1:9.11.16+dfsg-3~ubuntu1) ...
+Selecting previously unselected package libirs-export161.
+Preparing to unpack .../libirs-export161_1%3a9.11.16+dfsg-3~ubuntu1_amd64.deb ...
+Unpacking libirs-export161 (1:9.11.16+dfsg-3~ubuntu1) ...
+Selecting previously unselected package isc-dhcp-relay.
+Preparing to unpack .../isc-dhcp-relay_4.4.1-2.1ubuntu5.20.04.5_amd64.deb ...
+Unpacking isc-dhcp-relay (4.4.1-2.1ubuntu5.20.04.5) ...
+Setting up libisccfg-export163 (1:9.11.16+dfsg-3~ubuntu1) ...
+Setting up libirs-export161 (1:9.11.16+dfsg-3~ubuntu1) ...
+Setting up isc-dhcp-relay (4.4.1-2.1ubuntu5.20.04.5) ...
+Generating /etc/default/isc-dhcp-relay...
+Created symlink /etc/systemd/system/multi-user.target.wants/isc-dhcp-relay.service → /lib/systemd/system/isc-dhcp-relay.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/isc-dhcp-relay6.service → /lib/systemd/system/isc-dhcp-relay6.service.
+Processing triggers for systemd (245.4-4ubuntu3.24) ...
+Processing triggers for man-db (2.9.1-1) ...
+Processing triggers for libc-bin (2.31-0ubuntu9.18) ...
+ubuntu@vm2-services-hypervisor:~$ sudo nano /etc/default/isc-dhcp-relay
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl restart isc-dhcp-relay
+mctl enable isc-dhcp-relayubuntu@vm2-services-hypervisor:~$ sudo systemctl enable isc-dhcp-relay
+Synchronizing state of isc-dhcp-relay.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable isc-dhcp-relay
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl status isc-dhcp-relay
+● isc-dhcp-relay.service - ISC DHCP IPv4 relay
+     Loaded: loaded (/lib/systemd/system/isc-dhcp-relay.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-02-25 09:17:44 UTC; 6s ago
+       Docs: man:dhcrelay(8)
+   Main PID: 97210 (dhcrelay)
+      Tasks: 4 (limit: 77127)
+     Memory: 1.6M
+     CGroup: /system.slice/isc-dhcp-relay.service
+             └─97210 /usr/sbin/dhcrelay -d -4 -i br0 10.115.30.1
+
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Listening on LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Listening on LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Sending on   LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Sending on   LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Listening on LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Listening on LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Sending on   LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Sending on   LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Sending on   Socket/fallback
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Sending on   Socket/fallback
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br0, link-type EN10MB (Ethernet), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n port 67 or port 68 or port 69
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br0, link-type EN10MB (Ethernet), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl status isc-dhcp-relay
+● isc-dhcp-relay.service - ISC DHCP IPv4 relay
+     Loaded: loaded (/lib/systemd/system/isc-dhcp-relay.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-02-25 09:17:44 UTC; 1min 2s ago
+       Docs: man:dhcrelay(8)
+   Main PID: 97210 (dhcrelay)
+      Tasks: 4 (limit: 77127)
+     Memory: 1.6M
+     CGroup: /system.slice/isc-dhcp-relay.service
+             └─97210 /usr/sbin/dhcrelay -d -4 -i br0 10.115.30.1
+
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Listening on LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Listening on LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Sending on   LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Sending on   LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Listening on LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Listening on LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Sending on   LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Sending on   LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:17:44 vm2-services-hypervisor dhcrelay[97210]: Sending on   Socket/fallback
+Feb 25 09:17:44 vm2-services-hypervisor sh[97210]: Sending on   Socket/fallback
+ubuntu@vm2-services-hypervisor:~$ cat /etc/default/isc-dhcp-relay
+# Defaults for isc-dhcp-relay initscript
+# sourced by /etc/init.d/isc-dhcp-relay
+# installed at /etc/default/isc-dhcp-relay by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# What servers should the DHCP relay forward requests to?
+SERVERS="10.115.30.1"
+
+# On what interfaces should the DHCP relay (dhrelay) serve DHCP requests?
+INTERFACES="br0"
+
+# Additional options that are passed to the DHCP relay daemon?
+OPTIONS=""
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br0, link-type EN10MB (Ethernet), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i ens3 -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on ens3, link-type EN10MB (Ethernet), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i any -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 262144 bytes
+09:21:36.604546 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:36.604613 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:36.604619 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:36.604624 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:36.604546 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:36.605115 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:37.640925 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:37.640972 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:37.640981 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:37.640988 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:37.640925 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:37.641375 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:39.672962 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:39.672988 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:39.672994 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:39.673000 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:39.672962 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:39.673331 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.737485 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.737543 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.737548 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.737551 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.737556 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.737562 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.737485 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.738162 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:21:43.819426 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:43.819513 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:43.819520 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:43.819524 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:43.819530 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:43.819543 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:43.819426 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:43.819929 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:44.812581 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:44.812615 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:44.812621 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:44.812627 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:44.812632 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:44.812644 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:44.812581 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:44.813389 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:46.844698 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:46.844726 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:46.844731 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:46.844734 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:46.844738 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:46.844747 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:46.844698 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:46.845054 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:47.898242 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:47.898293 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:47.898298 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:47.898302 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:47.898311 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:47.898325 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:47.898242 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:47.898785 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:48.915436 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:48.915460 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:48.915466 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:48.915469 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:48.915483 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:48.915498 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:48.915436 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:48.915812 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:50.909229 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:50.909265 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:50.909271 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:50.909279 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:50.909285 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:50.909301 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:50.909229 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:50.909570 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:21:50.947366 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:50.947384 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:50.947388 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:50.947392 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:50.947402 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:50.947420 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:50.947366 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:50.947553 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:55.011870 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:55.011892 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:55.011896 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:55.011900 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:55.011910 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:55.011924 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:55.011870 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:21:55.012888 IP 192.168.66.243.67 > 10.115.30.1.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+^C
+90 packets captured
+90 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i any -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo nano /etc/default/isc-dhcp-relay
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl restart isc-dhcp-relay
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i ens3 -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on ens3, link-type EN10MB (Ethernet), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl status isc-dhcp-relay
+● isc-dhcp-relay.service - ISC DHCP IPv4 relay
+     Loaded: loaded (/lib/systemd/system/isc-dhcp-relay.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-02-25 09:24:58 UTC; 58s ago
+       Docs: man:dhcrelay(8)
+   Main PID: 99497 (dhcrelay)
+      Tasks: 4 (limit: 77127)
+     Memory: 1.7M
+     CGroup: /system.slice/isc-dhcp-relay.service
+             └─99497 /usr/sbin/dhcrelay -d -4 -i br0 -i ens3 192.168.66.27
+
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Listening on LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Listening on LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Sending on   LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Sending on   LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Listening on LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Listening on LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Sending on   LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Sending on   LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Sending on   Socket/fallback
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Sending on   Socket/fallback
+ubuntu@vm2-services-hypervisor:~$ sudo journalctl -u isc-dhcp-relay -f
+-- Logs begin at Tue 2026-02-24 23:30:19 UTC. --
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Listening on LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Listening on LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Sending on   LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Sending on   LPF/ens3/fa:16:3e:f2:d4:b0
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Listening on LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Listening on LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Sending on   LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Sending on   LPF/br0/fa:16:3e:ee:c8:cd
+Feb 25 09:24:58 vm2-services-hypervisor dhcrelay[99497]: Sending on   Socket/fallback
+Feb 25 09:24:58 vm2-services-hypervisor sh[99497]: Sending on   Socket/fallback
+cat /etc/default/isc-dhcp-relay
+^C
+ubuntu@vm2-services-hypervisor:~$ cat /etc/default/isc-dhcp-relay
+# Defaults for isc-dhcp-relay initscript
+# sourced by /etc/init.d/isc-dhcp-relay
+# installed at /etc/default/isc-dhcp-relay by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# What servers should the DHCP relay forward requests to?
+SERVERS="192.168.66.27"
+
+# On what interfaces should the DHCP relay (dhrelay) serve DHCP requests?
+INTERFACES="br0 ens3"
+
+# Additional options that are passed to the DHCP relay daemon?
+OPTIONS=""
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br0, link-type EN10MB (Ethernet), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ sudo virsh destroy os-compute01 && sudo virsh start os-compute01
+tart os-compute02
+sudo virsh destroy os-compute03 && sudo virsh start os-compute03Domain os-compute01 destroyed
+
+Domain os-compute01 started
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh destroy os-compute02 && sudo virsh start os-compute02
+Domain os-compute02 destroyed
+
+Domain os-compute02 started
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh destroy os-compute03 && sudo virsh start os-compute03
+Domain os-compute03 destroyed
+
+^[[ADomain os-compute03 started
+
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br0, link-type EN10MB (Ethernet), capture size 262144 bytes
+09:27:10.643225 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:27:11.656545 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:27:12.046842 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:27:13.688815 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:27:14.788863 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:27:15.798024 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:27:17.753197 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:27:17.830010 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:27:21.894459 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+^C
+9 packets captured
+9 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i any -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 262144 bytes
+09:32:26.747752 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:26.747769 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:26.747776 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:26.747780 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:26.747785 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:26.747752 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:26.748024 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:28.779943 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:28.779972 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:28.779980 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:28.779987 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:28.779993 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:28.780000 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:28.779943 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:28.780291 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:32.148085 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:32.148192 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:32.148202 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:32.148213 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:32.148220 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:32.148244 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:32.148085 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:32.149429 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:32.844488 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:32.844546 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:32.844558 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:32.844569 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:32.844580 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:32.844611 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:32.844488 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:32.845203 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:31:a1:67, length 403
+09:32:33.141722 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:33.141754 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:33.141759 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:33.141764 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:33.141769 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:33.141776 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:33.141722 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:33.142351 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:34.825050 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:34.825179 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:34.825192 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:34.825202 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:34.825222 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:34.825245 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:34.825050 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:34.825948 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:35.173902 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:35.173952 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:35.173962 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:35.173984 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:35.173993 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:35.174015 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:35.173902 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:35.174411 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:35.819711 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:35.819744 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:35.819752 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:35.819757 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:35.819773 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:35.819787 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:35.819711 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:35.820182 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:37.851739 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:37.851813 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:37.851820 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:37.851824 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:37.851839 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:37.851862 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:37.851739 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:37.852112 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:39.238187 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:39.238221 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:39.238227 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:39.238237 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:39.238242 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:39.238255 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:39.238187 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:39.238513 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:63:ae:ac, length 403
+09:32:41.916289 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:41.916343 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:41.916352 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:41.916358 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:41.916378 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:41.916403 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:41.916289 IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+09:32:41.916973 IP 192.168.66.243.67 > 192.168.66.27.67: BOOTP/DHCP, Request from 52:54:00:63:be:bc, length 403
+^C
+87 packets captured
+87 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo snap run --shell maas -c "cat /var/snap/maas/current/dhcpd.conf"
+error: snap "maas" is not installed
+ubuntu@vm2-services-hypervisor:~$ sudo ip route add 10.115.30.0/24 via 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ sudo nano /etc/default/isc-dhcp-relay
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl restart isc-dhcp-relay
+ubuntu@vm2-services-hypervisor:~$ sudo snap logs maas -f 2>&1 | grep -E "OFFER|offer|52:54:00|DISCOVER|ACK|ack|10\.10\.10"
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i any -n port 67 or port 68
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo virsh list --all
+ Id   Name           State
+------------------------------
+ 23   os-compute01   running
+ 24   os-compute02   running
+ 25   os-compute03   running
+
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i any -n port 69
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dumpxml os-compute01 | grep -A10 "boot"
+    <boot dev='network'/>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <vmport state='off'/>
+  </features>
+  <cpu mode='custom' match='exact' check='full'>
+    <model fallback='forbid'>EPYC-Milan</model>
+    <vendor>AMD</vendor>
+    <feature policy='require' name='x2apic'/>
+--
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/os-compute01.qcow2' index='1'/>
+ubuntu@vm2-services-hypervisor:~$ sudo virsh dumpxml os-compute02 | grep -A10 "boot"
+    <boot dev='network'/>
+    <boot dev='hd'/>
+    <bootmenu enable='yes'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <cpu mode='custom' match='exact' check='full'>
+    <model fallback='forbid'>EPYC-Milan</model>
+    <vendor>AMD</vendor>
+    <feature policy='require' name='x2apic'/>
+    <feature policy='require' name='tsc-deadline'/>
+--
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native'/>
+      <source file='/home/VMs/compute02/compute02d1.img' index='1'/>
+ubuntu@vm2-services-hypervisor:~$ sudo virsh destroy os-compute01
+ os-compute01 --paused
+sudo virsh domxml-to-native qemu-argv os-compute01Domain os-compute01 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh start os-compute01 --paused
+Domain os-compute01 started
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh domxml-to-native qemu-argv os-compute01
+error: Failed to open file 'os-compute01': No such file or directory
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh edit os-compute01
+
+Select an editor.  To change later, run 'select-editor'.
+  1. /bin/nano        <---- easiest
+  2. /usr/bin/vim.basic
+  3. /usr/bin/vim.tiny
+  4. /bin/ed
+
+Choose 1-4 [1]: 1
+Domain os-compute01 XML configuration not changed.
+
+ubuntu@vm2-services-hypervisor:~$ sudo virsh console os-compute01
+Connected to domain os-compute01
+Escape character is ^]
+
+ubuntu@vm2-services-hypervisor:~$

@@ -1,0 +1,220 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Wed Mar  4 06:29:16 UTC 2026
+
+  System load:  0.03                Users logged in:         0
+  Usage of /:   100.0% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 23%                 IPv4 address for br0:    10.10.10.1
+  Swap usage:   0%                  IPv4 address for ens3:   192.168.66.243
+  Processes:    263                 IPv4 address for virbr0: 192.168.122.1
+
+  => / is using 100.0% of 96.73GB
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+96 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Wed Mar  4 06:13:48 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ virsh list --all | grep compute01
+ 57   os-compute01      paused
+ubuntu@vm2-services-hypervisor:~$ virsh resume os-compute01
+Domain os-compute01 resumed
+
+ubuntu@vm2-services-hypervisor:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G   97G     0 100% /
+ubuntu@vm2-services-hypervisor:~$ ubuntu@vm2-services-hypervisor:~$ virsh resume os-compute01
+ubuntu@vm2-services-hypervisor:~$: command not found
+ubuntu@vm2-services-hypervisor:~$ Domain os-compute01 resumed
+Domain: command not found
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ ubuntu@vm2-services-hypervisor:~$ df -h /
+ubuntu@vm2-services-hypervisor:~$: command not found
+ubuntu@vm2-services-hypervisor:~$ Filesystem      Size  Used Avail Use% Mounted on
+Filesystem: command not found
+ubuntu@vm2-services-hypervisor:~$ /dev/vda1        97G   97G     0 100% /
+-bash: /dev/vda1: Permission denied
+ubuntu@vm2-services-hypervisor:~$ ubuntu@vm2-services-hypervisor:~$^C
+ubuntu@vm2-services-hypervisor:~$ sudo du -sh /var/lib/libvirt/images/*
+du: cannot access '/var/lib/libvirt/images/*': No such file or directory
+ubuntu@vm2-services-hypervisor:~$ sudo du -sh /home/VMs/*/*
+4.0K    /home/VMs/compute01/compute01d1.img
+3.0M    /home/VMs/compute02/compute02-osd.qcow2
+37G     /home/VMs/compute02/compute02d1.img
+3.1M    /home/VMs/compute03/compute03-osd.qcow2
+32G     /home/VMs/compute03/compute03d1.img
+4.0K    /home/VMs/juju-controller/juju-controller.img
+ubuntu@vm2-services-hypervisor:~$ sudo du -sh /var/log/*
+0       /var/log/alternatives.log
+12K     /var/log/alternatives.log.1
+68K     /var/log/apt
+2.7M    /var/log/auth.log
+3.2M    /var/log/auth.log.1
+0       /var/log/btmp
+0       /var/log/btmp.1
+8.0K    /var/log/cloud-init-output.log
+196K    /var/log/cloud-init.log
+4.0K    /var/log/dist-upgrade
+48K     /var/log/dmesg
+48K     /var/log/dmesg.0
+4.0K    /var/log/dpkg.log
+248K    /var/log/dpkg.log.1
+4.0K    /var/log/fontconfig.log
+193M    /var/log/journal
+100K    /var/log/kern.log
+224K    /var/log/kern.log.1
+4.0K    /var/log/landscape
+12K     /var/log/lastlog
+288K    /var/log/libvirt
+4.0K    /var/log/private
+220K    /var/log/syslog
+652K    /var/log/syslog.1
+48K     /var/log/syslog.2.gz
+80K     /var/log/syslog.3.gz
+84K     /var/log/syslog.4.gz
+84K     /var/log/syslog.5.gz
+84K     /var/log/syslog.6.gz
+140K    /var/log/syslog.7.gz
+12K     /var/log/ubuntu-advantage.log
+24K     /var/log/ubuntu-advantage.log.1
+20K     /var/log/unattended-upgrades
+40K     /var/log/wtmp
+ubuntu@vm2-services-hypervisor:~$ sudo du -sh /tmp/*
+4.0K    /tmp/host-bridge.xml
+12K     /tmp/snap-private-tmp
+8.0K    /tmp/systemd-private-205cf64c144e41b68c41c28c0fe1295a-ModemManager.service-IOcflh
+8.0K    /tmp/systemd-private-205cf64c144e41b68c41c28c0fe1295a-systemd-logind.service-EYtNMf
+8.0K    /tmp/systemd-private-205cf64c144e41b68c41c28c0fe1295a-systemd-resolved.service-Zskb1e
+8.0K    /tmp/systemd-private-205cf64c144e41b68c41c28c0fe1295a-systemd-timesyncd.service-7DtOFg
+4.0K    /tmp/tmp.y1g2iym2Yd
+ubuntu@vm2-services-hypervisor:~$ sudo du -sh /var/lib/libvirt/images/*
+du: cannot access '/var/lib/libvirt/images/*': No such file or directory
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute01
+ Target   Source
+----------------------------------------------------------
+ vda      /var/lib/libvirt/images/os-compute01.qcow2
+ vdb      /var/lib/libvirt/images/os-compute01-osd.qcow2
+
+ubuntu@vm2-services-hypervisor:~$ sudo du -sh $(virsh domblklist os-compute01 | grep vda | awk '{print $2}')
+26G     /var/lib/libvirt/images/os-compute01.qcow2
+ubuntu@vm2-services-hypervisor:~$ sudo du -sh $(virsh domblklist os-compute01 | grep vdb | awk '{print $2}')
+3.1M    /var/lib/libvirt/images/os-compute01-osd.qcow2
+ubuntu@vm2-services-hypervisor:~$ lsblk
+NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+loop0     7:0    0 63.5M  1 loop /snap/core20/2015
+loop1     7:1    0 91.9M  1 loop /snap/lxd/24061
+loop2     7:2    0 40.9M  1 loop /snap/snapd/19993
+loop3     7:3    0 48.1M  1 loop /snap/snapd/25935
+loop4     7:4    0 63.8M  1 loop /snap/core20/2717
+loop5     7:5    0 91.9M  1 loop /snap/lxd/36554
+vda     252:0    0  100G  0 disk
+├─vda1  252:1    0 99.9G  0 part /
+├─vda14 252:14   0    4M  0 part
+└─vda15 252:15   0  106M  0 part /boot/efi
+vdb     252:16   0  100G  0 disk
+ubuntu@vm2-services-hypervisor:~$ sudo mkfs.ext4 /dev/vdb
+mke2fs 1.45.5 (07-Jan-2020)
+Discarding device blocks: done
+Creating filesystem with 26214400 4k blocks and 6553600 inodes
+Filesystem UUID: f42b01c8-2a6d-4c90-955b-4fc60c6e5153
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+        4096000, 7962624, 11239424, 20480000, 23887872
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (131072 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+ubuntu@vm2-services-hypervisor:~$ sudo mkdir -p /mnt/newdisk
+mkdir: cannot create directory ‘/mnt/newdisk’: No space left on device
+ubuntu@vm2-services-hypervisor:~$ sudo mount /dev/vdb /mnt/newdisk
+mount: /mnt/newdisk: mount point does not exist.
+ubuntu@vm2-services-hypervisor:~$ sudo mount /dev/vdb /mnt
+ubuntu@vm2-services-hypervisor:~$ df -h / /mnt
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G   97G     0 100% /
+/dev/vdb         98G   24K   93G   1% /mnt
+ubuntu@vm2-services-hypervisor:~$ sudo mv /home/VMs/compute02 /mnt/
+ubuntu@vm2-services-hypervisor:~$ sudo mv /home/VMs/compute03 /mnt/
+ubuntu@vm2-services-hypervisor:~$ sudo ln -s /mnt/compute02 /home/VMs/compute02
+ubuntu@vm2-services-hypervisor:~$ sudo ln -s /mnt/compute03 /home/VMs/compute03
+ubuntu@vm2-services-hypervisor:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G   97G     0 100% /
+ubuntu@vm2-services-hypervisor:~$ df -h / /mnt
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G   97G     0 100% /
+/dev/vdb         98G   69G   25G  74% /mnt
+ubuntu@vm2-services-hypervisor:~$ sudo du -sh /home/VMs/*
+8.0K    /home/VMs/compute01
+0       /home/VMs/compute02
+0       /home/VMs/compute03
+8.0K    /home/VMs/juju-controller
+ubuntu@vm2-services-hypervisor:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G   97G     0 100% /
+ubuntu@vm2-services-hypervisor:~$ sudo lsof +D /home/VMs/ 2>/dev/null | head -10
+COMMAND      PID         USER   FD   TYPE DEVICE    SIZE/OFF   NODE NAME
+qemu-syst 461272 libvirt-qemu   25u   REG  252,1 42949672960 549357 /home/VMs/juju-controller/juju-controller.img
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute02
+Domain os-compute02 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute03
+Domain os-compute03 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ sudo mv /home/VMs/juju-controller /mnt/
+ubuntu@vm2-services-hypervisor:~$ sudo ln -s /mnt/juju-controller /home/VMs/juju-controller
+ubuntu@vm2-services-hypervisor:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G   29G   69G  30% /
+ubuntu@vm2-services-hypervisor:~$ virsh list
+ Id   Name              State
+---------------------------------
+ 30   juju-controller   running
+ 57   os-compute01      paused
+
+ubuntu@vm2-services-hypervisor:~$ virsh resume os-compute01
+Domain os-compute01 resumed
+
+ubuntu@vm2-services-hypervisor:~$ virsh start os-compute02
+
+Domain os-compute02 started
+
+ubuntu@vm2-services-hypervisor:~$ virsh start os-compute03
+Domain os-compute03 started
+
+ubuntu@vm2-services-hypervisor:~$ virsh list
+ Id   Name              State
+---------------------------------
+ 30   juju-controller   running
+ 57   os-compute01      running
+ 60   os-compute02      running
+ 61   os-compute03      running
+
+ubuntu@vm2-services-hypervisor:~$ echo '/dev/vdb /mnt ext4 defaults 0 2' | sudo tee -a /etc/fstab
+/dev/vdb /mnt ext4 defaults 0 2
+ubuntu@vm2-services-hypervisor:~$ client_loop: send disconnect: Broken pipe
+client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$

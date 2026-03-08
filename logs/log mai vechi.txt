@@ -1,0 +1,151 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sun Mar  1 15:21:32 UTC 2026
+
+  System load:  1.09              Users logged in:         1
+  Usage of /:   2.8% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 1%                IPv4 address for ens3:   192.168.66.243
+  Swap usage:   0%                IPv4 address for virbr0: 192.168.122.1
+  Processes:    274
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+93 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Sun Mar  1 14:58:32 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ exit
+logout
+Connection to 192.168.66.243 closed.
+alex@DESKTOP-8JOK6E1:~$ ssh -i ~/.ssh/id_rsa ubuntu@130.195.57.249
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sun Mar  1 15:21:40 UTC 2026
+
+  System load:             0.35
+  Usage of /:              17.0% of 96.73GB
+  Memory usage:            30%
+  Swap usage:              0%
+  Processes:               288
+  Users logged in:         1
+  IPv4 address for ens3:   192.168.66.27
+  IPv4 address for ens3:   10.10.10.1
+  IPv4 address for lxdbr0: 10.115.30.1
+  IPv6 address for lxdbr0: fd42:3738:6497:8f07::1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+54 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+94 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Sun Mar  1 15:00:14 2026 from 100.69.250.0
+ubuntu@vm1-orchestrator:~$ sudo snap logs maas -f 2>&1 | grep -E "DHCP|commission|error|failed|ACK|OFFER|52:54:00"
+2026-03-01T15:24:39Z dhcpd[1775846]: Internet Systems Consortium DHCP Server 4.3.5
+2026-03-01T15:24:43Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:24:43Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:24:45Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:24:45Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:24:47Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:24:47Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:24:51Z dhcpd[1775983]: Internet Systems Consortium DHCP Server 4.3.5
+2026-03-01T15:24:51Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:24:51Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:34:32Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:34:32Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:34:34Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:34:34Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:34:36Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:34:36Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:34:40Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:34:40Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:44:32Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:44:32Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:44:34Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:44:34Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:44:36Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:44:36Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:44:40Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:44:40Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:54:32Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:54:32Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:54:34Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:54:34Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:54:36Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:54:36Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:54:40Z dhcpd[1775846]: DHCPDISCOVER from fa:16:3e:f4:85:c8 via ens3
+2026-03-01T15:54:40Z dhcpd[1775846]: DHCPOFFER on 192.168.66.27 to fa:16:3e:f4:85:c8 via ens3
+^C
+ubuntu@vm1-orchestrator:~$ ls -la ~/bundle.yaml
+-rw-rw-r-- 1 ubuntu ubuntu 6120 Nov 21 09:38 /home/ubuntu/bundle.yaml
+ubuntu@vm1-orchestrator:~$ cat ~/bundle.yaml | head -30
+series: jammy
+machines:
+  "0":
+    constraints: tags=compute
+  "1":
+    constraints: tags=compute
+  "2":
+    constraints: tags=compute
+applications:
+  ceph-mon:
+    charm: ceph-mon
+    channel: quincy/stable
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      expected-osd-count: 3
+      monitor-count: 3
+  ceph-osd:
+    charm: ceph-osd
+    channel: quincy/stable
+    num_units: 3
+    to:
+    - "0"
+    - "1"
+    - "2"
+    options:
+      osd-devices: /dev/vdb
+ubuntu@vm1-orchestrator:~$ client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$

@@ -1,0 +1,1521 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Wed Mar  4 06:13:47 UTC 2026
+
+  System load:  2.91               Users logged in:         0
+  Usage of /:   99.3% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 23%                IPv4 address for br0:    10.10.10.1
+  Swap usage:   0%                 IPv4 address for ens3:   192.168.66.243
+  Processes:    259                IPv4 address for virbr0: 192.168.122.1
+
+  => / is using 99.3% of 96.73GB
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+96 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Mar  3 20:57:50 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ watch -n 30 "juju status 2>&1 | grep -E 'error|blocked|maintenance' | head -15"
+ubuntu@vm2-services-hypervisor:~$ juju ssh 2/lxd/3 "nova-manage --version"
+juju: command not found
+ubuntu@vm2-services-hypervisor:~$ exit
+logout
+Connection to 192.168.66.243 closed.
+alex@DESKTOP-8JOK6E1:~$ ssh ubuntu@130.195.57.249
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Wed Mar  4 06:17:30 UTC 2026
+
+  System load:             0.24
+  Usage of /:              19.8% of 96.73GB
+  Memory usage:            44%
+  Swap usage:              0%
+  Processes:               270
+  Users logged in:         0
+  IPv4 address for ens3:   192.168.66.27
+  IPv4 address for ens3:   10.10.10.1
+  IPv4 address for lxdbr0: 10.115.30.1
+  IPv6 address for lxdbr0: fd42:3738:6497:8f07::1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+54 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+94 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Mar  3 22:05:07 2026 from 192.168.66.27
+ubuntu@vm1-orchestrator:~$ juju ssh 2/lxd/3 "nova-manage --version"
+23.2.2
+Connection to 10.10.10.205 closed.
+ubuntu@vm1-orchestrator:~$ watch -n 15 "juju status nova-cloud-controller 2>&1 | grep nova-cloud-controller/"
+ubuntu@vm1-orchestrator:~$ juju config keystone openstack-origin=cloud:focal-wallaby
+nder openstack-origin=cloud:focal-wallaby
+juju config neutron-api openstack-origin=cloud:focal-wallaby
+juju config placement openstack-origin=cloud:focal-wallaby
+juju config openstack-dashboard openstack-origin=cloud:focal-wallaby
+juju config nova-compute openstack-origin=cloud:focal-wallabyubuntu@vm1-orchestrator:~$ juju config glance openstack-origin=cloud:focal-wallaby
+ubuntu@vm1-orchestrator:~$ juju config cinder openstack-origin=cloud:focal-wallaby
+ubuntu@vm1-orchestrator:~$ juju config neutron-api openstack-origin=cloud:focal-wallaby
+ubuntu@vm1-orchestrator:~$ juju config placement openstack-origin=cloud:focal-wallaby
+ubuntu@vm1-orchestrator:~$ juju config openstack-dashboard openstack-origin=cloud:focal-wallaby
+ubuntu@vm1-orchestrator:~$ juju config nova-compute openstack-origin=cloud:focal-wallaby
+ubuntu@vm1-orchestrator:~$ juju config glance openstack-origin=cloud:focal-wallaby
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo systemctl restart nova-compute"
+> done
+Connection to 10.10.10.113 closed.
+Connection to 10.10.10.108 closed.
+Connection to 10.10.10.107 closed.
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+nova-compute            21.2.4   blocked          3  nova-compute            ussuri/stable   779  no       Services not running that should be: nova-api-metadata, nova-compute
+keystone/0*                  error        idle       0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+nova-compute/0               blocked      idle       0        10.10.10.113                    Services not running that should be: nova-api-metadata, nova-compute
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+nova-compute            21.2.4   blocked          3  nova-compute            ussuri/stable   779  no       Services not running that should be: nova-api-metadata, nova-compute
+keystone/0*                  error        idle       0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+nova-compute/0               blocked      idle       0        10.10.10.113                    Services not running that should be: nova-api-metadata, nova-compute
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "dpkg -l nova-compute | tail -1; nova-compute --version 2>&1"
+ii  nova-compute   2:21.2.4-0ubuntu2.14 all          OpenStack Compute - compute node base
+Traceback (most recent call last):
+  File "/usr/bin/nova-compute", line 6, in <module>
+    from nova.cmd.compute import main
+  File "/usr/lib/python3/dist-packages/nova/cmd/__init__.py", line 16, in <module>
+    import nova.monkey_patch  # noqa
+  File "/usr/lib/python3/dist-packages/nova/monkey_patch.py", line 108, in <module>
+    _monkey_patch()
+  File "/usr/lib/python3/dist-packages/nova/monkey_patch.py", line 78, in _monkey_patch
+    eventlet.hubs.use_hub("oslo_service:service_hub")
+  File "/usr/lib/python3/dist-packages/eventlet/hubs/__init__.py", line 96, in use_hub
+    hubclass = getattr(mod, classname or 'Hub')
+AttributeError: module 'oslo_service' has no attribute 'service_hub'
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo apt update && sudo apt install -y nova-compute nova-compute-kvm nova-compute-libvirt nova-common python3-nova 2>&1 | tail -5"
+> done
+Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease
+Get:2 http://archive.ubuntu.com/ubuntu focal-updates InRelease [128 kB]
+Get:3 http://archive.ubuntu.com/ubuntu focal-security InRelease [128 kB]
+Get:4 http://archive.ubuntu.com/ubuntu focal-backports InRelease [128 kB]
+Fetched 383 kB in 1s (368 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+All packages are up to date.
+nova-compute is already the newest version (2:21.2.4-0ubuntu2.14).
+nova-compute-kvm is already the newest version (2:21.2.4-0ubuntu2.14).
+nova-compute-libvirt is already the newest version (2:21.2.4-0ubuntu2.14).
+python3-nova is already the newest version (2:21.2.4-0ubuntu2.14).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Connection to 10.10.10.113 closed.
+Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease
+Get:2 http://archive.ubuntu.com/ubuntu focal-updates InRelease [128 kB]
+Get:3 http://archive.ubuntu.com/ubuntu focal-security InRelease [128 kB]
+Get:4 http://archive.ubuntu.com/ubuntu focal-backports InRelease [128 kB]
+Fetched 383 kB in 2s (233 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+All packages are up to date.
+nova-compute-kvm is already the newest version (3:23.2.2-0ubuntu1~cloud4).
+nova-compute-libvirt is already the newest version (3:23.2.2-0ubuntu1~cloud4).
+nova-compute-libvirt set to manually installed.
+python3-nova is already the newest version (3:23.2.2-0ubuntu1~cloud4).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Connection to 10.10.10.108 closed.
+Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease
+Get:2 http://archive.ubuntu.com/ubuntu focal-updates InRelease [128 kB]
+Get:3 http://archive.ubuntu.com/ubuntu focal-security InRelease [128 kB]
+Get:4 http://archive.ubuntu.com/ubuntu focal-backports InRelease [128 kB]
+Fetched 383 kB in 1s (273 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+All packages are up to date.
+nova-compute-kvm is already the newest version (3:23.2.2-0ubuntu1~cloud4).
+nova-compute-libvirt is already the newest version (3:23.2.2-0ubuntu1~cloud4).
+nova-compute-libvirt set to manually installed.
+python3-nova is already the newest version (3:23.2.2-0ubuntu1~cloud4).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Connection to 10.10.10.107 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh "cat /etc/apt/sources.list.d/ -la"
+hostname contains invalid characters
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "cat /etc/apt/sources.list.d/ -la"
+ERROR cannot connect to any address: [10.10.10.113:22]
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "sudo add-apt-repository -y 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby main' && sudo apt update && sudo apt install -y nova-compute nova-compute-kvm nova-compute-libvirt nova-common python3-nova 2>&1 | tail -10"
+ERROR cannot connect to any address: [10.10.10.113:22]
+ubuntu@vm1-orchestrator:~$ virsh list --all | grep compute01
+error: failed to connect to the hypervisor
+error: Failed to connect socket to '/var/run/libvirt/libvirt-sock': No such file or directory
+ubuntu@vm1-orchestrator:~$ virsh start os-compute01
+error: failed to connect to the hypervisor
+error: Failed to connect socket to '/var/run/libvirt/libvirt-sock': No such file or directory
+
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "sudo add-apt-repository -y 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby main' && sudo apt update && sudo apt install -y nova-compute nova-compute-kvm nova-common python3-nova 2>&1 | tail -10"
+Reading package lists... Done
+E: Could not get lock /var/lib/apt/lists/lock. It is held by process 1812362 (apt-get)
+N: Be aware that removing the lock file is not a solution and may break your system.
+E: Unable to lock directory /var/lib/apt/lists/
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ sleep 60
+
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "sudo apt install -y nova-compute nova-compute-kvm nova-common python3-nova 2>&1 | tail -10"
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+nova-common is already the newest version (2:21.2.4-0ubuntu2.14).
+nova-compute is already the newest version (2:21.2.4-0ubuntu2.14).
+nova-compute-kvm is already the newest version (2:21.2.4-0ubuntu2.14).
+python3-nova is already the newest version (2:21.2.4-0ubuntu2.14).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "sudo add-apt-repository -y 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby main' && sudo apt update && sudo apt install -y --allow-downgrades nova-compute nova-compute-kvm nova-compute-libvirt nova-common python3-nova 2>&1 | tail -10"
+Reading package lists... Done
+E: Could not get lock /var/lib/apt/lists/lock. It is held by process 1823675 (apt-get)
+N: Be aware that removing the lock file is not a solution and may break your system.
+E: Unable to lock directory /var/lib/apt/lists/
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "ps aux | grep apt | grep -v grep"
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju status nova-compute/0
+Model      Controller     Cloud/Region     Version  SLA          Timestamp
+openstack  my-controller  my-maas/default  3.6.14   unsupported  07:21:39Z
+
+App           Version  Status   Scale  Charm         Channel         Rev  Exposed  Message
+ceph-osd               blocked      0  ceph-osd      pacific/stable  615  no       No block devices detected using current configuration
+nova-compute  21.2.4   blocked      1  nova-compute  ussuri/stable   779  no       Services not running that should be: nova-compute, nova-api-metadata
+ntp           3.5      active       1  ntp           latest/stable    52  no       chrony: Ready
+ovn-chassis   22.03.3  active       1  ovn-chassis   22.03/stable    324  no       Unit is ready
+
+Unit              Workload  Agent      Machine  Public address  Ports    Message
+nova-compute/0*   blocked   idle       0        10.10.10.113             Services not running that should be: nova-compute, nova-api-metadata
+  ntp/0*          active    idle                10.10.10.113    123/udp  chrony: Ready
+  ovn-chassis/0*  active    executing           10.10.10.113             (leader-elected) Unit is ready
+
+Machine  State    Address       Inst id       Base          AZ       Message
+0        started  10.10.10.113  os-compute01  ubuntu@20.04  default  Deployed
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "sudo add-apt-repository -y 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby main' && sudo apt update && sudo apt install -y nova-compute nova-compute-kvm nova-compute-libvirt nova-common python3-nova && sudo systemctl restart nova-compute 2>&1 | tail -10"
+Get:1 http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby InRelease [8952 B]
+Get:2 http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/ovn-22.03 InRelease [7697 B]
+Hit:3 http://archive.ubuntu.com/ubuntu focal InRelease
+Hit:4 http://archive.ubuntu.com/ubuntu focal-updates InRelease
+Hit:5 http://archive.ubuntu.com/ubuntu focal-security InRelease
+Hit:6 http://archive.ubuntu.com/ubuntu focal-backports InRelease
+Reading package lists... Done
+E: Release file for http://ubuntu-cloud.archive.canonical.com/ubuntu/dists/focal-updates/wallaby/InRelease is not valid yet (invalid for another 15min 24s). Updates for this repository will not be applied.
+E: Release file for http://ubuntu-cloud.archive.canonical.com/ubuntu/dists/focal-updates/ovn-22.03/InRelease is not valid yet (invalid for another 15min 52s). Updates for this repository will not be applied.
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "sudo timedatectl set-ntp true; sudo chronyc makestep; date; sudo apt update && sudo apt install -y nova-compute nova-compute-kvm nova-compute-libvirt nova-common python3-nova && sudo systemctl restart nova-compute 2>&1 | tail -10"
+200 OK
+Wed Mar  4 07:23:41 UTC 2026
+Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease
+Get:2 http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby InRelease [8952 B]
+Hit:3 http://archive.ubuntu.com/ubuntu focal-updates InRelease
+Get:4 http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/ovn-22.03 InRelease [7697 B]
+Hit:5 http://archive.ubuntu.com/ubuntu focal-security InRelease
+Hit:6 http://archive.ubuntu.com/ubuntu focal-backports InRelease
+Get:7 http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby/main amd64 Packages [195 kB]
+Get:8 http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/ovn-22.03/main amd64 Packages [38.0 kB]
+Fetched 249 kB in 4s (70.6 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+12 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1839341 (apt-get).Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1839341 (apt-get).Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1839341 (apt-get).Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1841468 (unattendeWaiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1841468 (unattendeWaiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1841468 (unattendeWaiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1841468 (unattendeWaiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1841468 (unattendeWaiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1841468 (unattendeWaiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1841468 (unattended-upgr)
+Reading package lists... 0%                                                                                     Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Suggested packages:
+  guestmount sysfsutils
+The following packages will be upgraded:
+  nova-common nova-compute nova-compute-kvm nova-compute-libvirt python3-nova
+5 upgraded, 0 newly installed, 0 to remove and 7 not upgraded.
+Need to get 0 B/3189 kB of archives.
+After this operation, 909 kB disk space will be freed.
+(Reading database ... 116928 files and directories currently installed.)
+Preparing to unpack .../nova-compute-kvm_3%3a23.2.2-0ubuntu1~cloud4_all.deb ...
+Unpacking nova-compute-kvm (3:23.2.2-0ubuntu1~cloud4) over (2:21.2.4-0ubuntu2.14) ...
+Preparing to unpack .../nova-compute_3%3a23.2.2-0ubuntu1~cloud4_all.deb ...
+Unpacking nova-compute (3:23.2.2-0ubuntu1~cloud4) over (2:21.2.4-0ubuntu2.14) ...
+Preparing to unpack .../python3-nova_3%3a23.2.2-0ubuntu1~cloud4_all.deb ...
+Unpacking python3-nova (3:23.2.2-0ubuntu1~cloud4) over (2:21.2.4-0ubuntu2.14) ...
+Preparing to unpack .../nova-common_3%3a23.2.2-0ubuntu1~cloud4_all.deb ...
+Unpacking nova-common (3:23.2.2-0ubuntu1~cloud4) over (2:21.2.4-0ubuntu2.14) ...
+Preparing to unpack .../nova-compute-libvirt_3%3a23.2.2-0ubuntu1~cloud4_all.deb ...
+Unpacking nova-compute-libvirt (3:23.2.2-0ubuntu1~cloud4) over (2:21.2.4-0ubuntu2.14) ...
+Setting up nova-common (3:23.2.2-0ubuntu1~cloud4) ...
+
+Configuration file '/etc/nova/nova.conf'
+ ==> Modified (by you or by a script) since installation.
+ ==> Package distributor has shipped an updated version.
+   What would you like to do about it ?  Your options are:
+    Y or I  : install the package maintainer's version
+    N or O  : keep your currently-installed version
+      D     : show the differences between the versions
+      Z     : start a shell to examine the situation
+ The default action is to keep your current version.
+*** nova.conf (Y/I/N/O/D/Z) [default=N] ? N
+Setting up python3-nova (3:23.2.2-0ubuntu1~cloud4) ...
+Setting up nova-compute-libvirt (3:23.2.2-0ubuntu1~cloud4) ...
+Setting up nova-compute-kvm (3:23.2.2-0ubuntu1~cloud4) ...
+Setting up nova-compute (3:23.2.2-0ubuntu1~cloud4) ...
+Installing new version of config file /etc/init.d/nova-compute ...
+Processing triggers for man-db (2.9.1-1) ...
+Processing triggers for systemd (245.4-4ubuntu3.24) ...
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "sudo systemctl restart nova-compute; systemctl status nova-compute | head -5"
+● nova-compute.service - OpenStack Compute
+     Loaded: loaded (/lib/systemd/system/nova-compute.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-03-04 07:26:03 UTC; 28ms ago
+   Main PID: 1847980 (nova-compute)
+      Tasks: 2 (limit: 314572)
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+ceph-osd                16.2.15  blocked      3  ceph-osd                pacific/stable  615  no       No block devices detected using current configuration
+cinder-mysql-router     8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+dashboard-mysql-router  8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+glance-mysql-router     8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+keystone-mysql-router   8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       MySQL InnoDB Cluster not healthy: Cluster has no quorum as visible from '10.10.10.202:3306' and cannot process write ...
+neutron-mysql-router    8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+nova-compute            23.2.2   blocked      3  nova-compute            ussuri/stable   779  no       Services not running that should be: nova-api-metadata
+nova-mysql-router       8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+placement-mysql-router  8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+ubuntu@vm1-orchestrator:~$ juju status mysql-innodb-cluster 2>&1 | grep "mysql-innodb"
+mysql-innodb-cluster  8.0.42   blocked      3  mysql-innodb-cluster  8.0/stable  159  no       MySQL InnoDB Cluster not healthy: Cluster has no quorum as visible from '10.10.10.202:3306' and cannot process write ...
+mysql-innodb-cluster/0*  blocked   idle   0/lxd/2  10.10.10.202           MySQL InnoDB Cluster not healthy: Cluster has no quorum as visible from '10.10.10.202:3306' and cannot process write ...
+mysql-innodb-cluster/1   blocked   idle   1/lxd/2  10.10.10.207           Cluster is inaccessible from this instance. Please check logs for details.
+mysql-innodb-cluster/2   blocked   idle   2/lxd/2  10.10.10.204           Cluster is inaccessible from this instance. Please check logs for details.
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "lxc list" 2>&1 | head -20
+0juju ssh 1 "lxc list" 2>&1 | head -20
+juju ssh 2 "lxc list" 2>&1 | head -20If this is your first time running LXD on this machine, you should also run: lxd init
+To start your first container, try: lxc launch ubuntu:22.04
+Or for a virtual machine: lxc launch ubuntu:22.04 --vm
+
+Error: LXD unix socket "/var/snap/lxd/common/lxd/unix.socket" not accessible: permission denied
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1 "lxc list" 2>&1 | head -20
+If this is your first time running LXD on this machine, you should also run: lxd init
+To start your first container, try: lxc launch ubuntu:22.04
+Or for a virtual machine: lxc launch ubuntu:22.04 --vm
+
+Error: LXD unix socket "/var/snap/lxd/common/lxd/unix.socket" not accessible: permission denied
+Connection to 10.10.10.117 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 2 "lxc list" 2>&1 | head -20
+If this is your first time running LXD on this machine, you should also run: lxd init
+To start your first container, try: lxc launch ubuntu:22.04
+Or for a virtual machine: lxc launch ubuntu:22.04 --vm
+
+Error: LXD unix socket "/var/snap/lxd/common/lxd/unix.socket" not accessible: permission denied
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo snap start lxd; sudo lxd waitready; sudo lxc list 2>&1 | head -10"
+> done
+Started.
+To start your first container, try: lxc launch ubuntu:22.04
+Or for a virtual machine: lxc launch ubuntu:22.04 --vm
+
++---------------------+---------+---------------------+------+-----------+-----------+
+|        NAME         |  STATE  |        IPV4         | IPV6 |   TYPE    | SNAPSHOTS |
++---------------------+---------+---------------------+------+-----------+-----------+
+| juju-23d286-0-lxd-0 | RUNNING | 10.10.10.217 (eth0) |      | CONTAINER | 0         |
++---------------------+---------+---------------------+------+-----------+-----------+
+| juju-23d286-0-lxd-1 | RUNNING | 10.10.10.206 (eth0) |      | CONTAINER | 0         |
++---------------------+---------+---------------------+------+-----------+-----------+
+Connection to 10.10.10.113 closed.
+Started.
+To start your first container, try: lxc launch ubuntu:22.04
+Or for a virtual machine: lxc launch ubuntu:22.04 --vm
+
++---------------------+---------+---------------------+------+-----------+-----------+
+|        NAME         |  STATE  |        IPV4         | IPV6 |   TYPE    | SNAPSHOTS |
++---------------------+---------+---------------------+------+-----------+-----------+
+| juju-23d286-1-lxd-0 | RUNNING | 10.10.10.216 (eth0) |      | CONTAINER | 0         |
++---------------------+---------+---------------------+------+-----------+-----------+
+| juju-23d286-1-lxd-1 | RUNNING | 10.10.10.213 (eth0) |      | CONTAINER | 0         |
++---------------------+---------+---------------------+------+-----------+-----------+
+Connection to 10.10.10.117 closed.
+Started.
+To start your first container, try: lxc launch ubuntu:22.04
+Or for a virtual machine: lxc launch ubuntu:22.04 --vm
+
++---------------------+---------+---------------------+------+-----------+-----------+
+|        NAME         |  STATE  |        IPV4         | IPV6 |   TYPE    | SNAPSHOTS |
++---------------------+---------+---------------------+------+-----------+-----------+
+| juju-23d286-2-lxd-0 | RUNNING | 10.10.10.209 (eth0) |      | CONTAINER | 0         |
++---------------------+---------+---------------------+------+-----------+-----------+
+| juju-23d286-2-lxd-1 | RUNNING | 10.10.10.212 (eth0) |      | CONTAINER | 0         |
++---------------------+---------+---------------------+------+-----------+-----------+
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0 "sudo lxc list | grep lxd-2"
+juju ssh 1 "sudo lxc list | grep lxd-2"
+juju ssh 2 "sudo lxc list | grep lxd-2"| juju-23d286-0-lxd-2 | RUNNING | 10.10.10.202 (eth0) |      | CONTAINER | 0         |
+Connection to 10.10.10.113 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1 "sudo lxc list | grep lxd-2"
+| juju-23d286-1-lxd-2 | RUNNING | 10.10.10.207 (eth0) |      | CONTAINER | 0         |
+Connection to 10.10.10.117 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 3 "sudo lxc list | grep lxd-2"
+ERROR machine 3 not found
+ubuntu@vm1-orchestrator:~$ juju ssh 2 "sudo lxc list | grep lxd-2"
+| juju-23d286-2-lxd-2 | RUNNING | 10.10.10.204 (eth0) |      | CONTAINER | 0         |
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ juju status mysql-innodb-cluster 2>&1 | grep "mysql-innodb-cluster/"
+mysql-innodb-cluster/0*  blocked   idle   0/lxd/2  10.10.10.202           MySQL InnoDB Cluster not healthy: Cluster has no quorum as visible from '10.10.10.202:3306' and cannot process write ...
+mysql-innodb-cluster/1   blocked   idle   1/lxd/2  10.10.10.207           Cluster is inaccessible from this instance. Please check logs for details.
+mysql-innodb-cluster/2   blocked   idle   2/lxd/2  10.10.10.204           Cluster is inaccessible from this instance. Please check logs for details.
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteradmin@localhost -- dba reboot-cluster-from-complete-outage"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+MySQL Error 1045: Access denied for user 'clusteradmin'@'127.0.0.1' (using password: NO)
+ERROR the following task failed:
+ - id "46" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju run mysql-innodb-cluster/0 reboot-cluster-from-complete-outage
+Running operation 47 with 1 task
+  - task 48 on unit-mysql-innodb-cluster-0
+
+Waiting for task 48...
+Action id 48 failed: Reboot cluster from complete outage failed.
+output: |+
+  Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+  Restoring the default cluster from complete outage...
+
+  Traceback (most recent call last):
+    File "<string>", line 2, in <module>
+  RuntimeError: Dba.reboot_cluster_from_complete_outage: The MySQL instance '10.10.10.202:3306' belongs to an InnoDB Cluster and is reachable. Please use <Cluster>.force_quorum_using_partition_of() to restore from the quorum loss.
+
+traceback: |
+  Traceback (most recent call last):
+    File "/var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/actions/reboot-cluster-from-complete-outage", line 183, in reboot_cluster_from_complete_outage
+      output = instance.reboot_cluster_from_complete_outage()
+    File "/var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/lib/charm/openstack/mysql_innodb_cluster.py", line 946, in reboot_cluster_from_complete_outage
+      raise e
+    File "/var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/lib/charm/openstack/mysql_innodb_cluster.py", line 934, in reboot_cluster_from_complete_outage
+      output = self.run_mysqlsh_script(_script).decode("UTF-8")
+    File "/var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/lib/charm/openstack/mysql_innodb_cluster.py", line 1731, in run_mysqlsh_script
+      return subprocess.check_output(cmd, stderr=subprocess.PIPE)
+    File "/usr/lib/python3.8/subprocess.py", line 415, in check_output
+      return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+    File "/usr/lib/python3.8/subprocess.py", line 516, in run
+      raise CalledProcessError(retcode, process.args,
+  subprocess.CalledProcessError: Command '['/snap/bin/mysqlsh', '--no-wizard', '--python', '-f', '/root/snap/mysql-shell/common/tmpl51d2v0c.py']' returned non-zero exit status 1.
+
+ubuntu@vm1-orchestrator:~$ juju run mysql-innodb-cluster/0 cluster-rescan
+Running operation 49 with 1 task
+  - task 50 on unit-mysql-innodb-cluster-0
+
+Waiting for task 50...
+Action id 50 failed: Cluster rescan failed.
+output: "Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory\n\e[33mWARNING:
+  \e[0mCluster has no quorum and cannot process write transactions: Group has no quorum\nTraceback
+  (most recent call last):\n  File \"<string>\", line 3, in <module>\nmysqlsh.Error:
+  Shell Error (51011): Cluster.rescan: There is no quorum to perform the operation\n"
+traceback: |
+  Traceback (most recent call last):
+    File "/var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/actions/cluster-rescan", line 215, in cluster_rescan
+      output = instance.cluster_rescan()
+    File "/var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/lib/charm/openstack/mysql_innodb_cluster.py", line 1061, in cluster_rescan
+      raise e
+    File "/var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/lib/charm/openstack/mysql_innodb_cluster.py", line 1051, in cluster_rescan
+      output = self.run_mysqlsh_script(_script).decode("UTF-8")
+    File "/var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/lib/charm/openstack/mysql_innodb_cluster.py", line 1731, in run_mysqlsh_script
+      return subprocess.check_output(cmd, stderr=subprocess.PIPE)
+    File "/usr/lib/python3.8/subprocess.py", line 415, in check_output
+      return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+    File "/usr/lib/python3.8/subprocess.py", line 516, in run
+      raise CalledProcessError(retcode, process.args,
+  subprocess.CalledProcessError: Command '['/snap/bin/mysqlsh', '--no-wizard', '--python', '-f', '/root/snap/mysql-shell/common/tmp77tx6yiz.py']' returned non-zero exit status 1.
+
+ubuntu@vm1-orchestrator:~$ juju run mysql-innodb-cluster/0 rejoin-cluster
+
+Operation 51 failed to schedule any tasks:
+action "rejoin-cluster" not defined on unit "mysql-innodb-cluster/0"
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo cat /var/lib/mysql/mysql-keyring/cluster-password"
+cat: /var/lib/mysql/mysql-keyring/cluster-password: No such file or directory
+ERROR the following task failed:
+ - id "54" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju run mysql-innodb-cluster/0 force-quorum --params <(echo '{}')
+
+Operation 55 failed to schedule any tasks:
+action "force-quorum" not defined on unit "mysql-innodb-cluster/0"
+ubuntu@vm1-orchestrator:~$ juju actions mysql-innodb-cluster
+Action                               Description
+add-instance                         Configure and add an instance to the cluster. *Note* This action must be
+                                     run on an instance that is a functioning member of the cluster.
+cluster-rescan                       Clean up cluster metadata by rescanning the cluster.
+                                     See https://dev.mysql.com/doc/refman/8.0/en/mysql-innodb-cluster-working-with-cluster.html#rescan-cluster
+cluster-status                       JSON dump of the cluster schema and status. This action can be used to
+                                     determine the RW and RO instances.
+list-service-usernames               List the usernames of the passwords that have been provided on the
+                                     shared-db and router-db relations. The service username passed to
+                                     'rotate-service-user-password' needs to be on this list.
+mysqldump                            MySQL dump of databases. Action will return mysqldump-file location of the
+                                     requested backup in the results. If the databases parameter is unset all
+                                     databases will be dumped. If the databases parameter is set only the
+                                     databases specified will be dumped.
+pause                                Pause services.
+                                     If the deployment is clustered using the hacluster charm, the
+                                     corresponding hacluster unit on the node must first be paused as well.
+                                     Not doing so may lead to an interruption of service.
+reboot-cluster-from-complete-outage  In the case of a complete outage, reboot the cluster from this instance's
+                                     GTID superset.
+rejoin-instance                      Rejoin an instance to the cluster. *Note* This action must be run on an
+                                     instance that is a functioning member of the cluster. For example, after a
+                                     complete outage the unit which ran reboot-cluster-from-complete-outage.
+remove-instance                      Remove an instance from the cluster. *Note* This action must be run on an
+                                     instance that is a functioning member of the cluster preferrably the the
+                                     juju leader to guarantee charm related flags are cleared.
+restart-services                     Restart services.
+                                     Restart the services the charm manages.
+restore-mysqldump                    Restore a MySQL dump of database(s).
+                                     WARNING This is a desctructive action. It may overwrite existing database(s) data.
+resume                               Resume services.
+                                     If the deployment is clustered using the hacluster charm, the
+                                     corresponding hacluster unit on the node must be resumed as well.
+rotate-service-user-password         Rotate the specified mysql user's password. The current password is
+                                     replaced with a randomly generated password. The password is changed on the
+                                     relation to the user's units. This may result in a control plane outage for
+                                     the duration of the password changing process.
+set-cluster-option                   Set an option on the cluster.
+update-unit-acls                     This action should only be needed if a unit was added to the cluster on a
+                                     new subnet. In this case *group_replication_ip_allowlist* need updating to
+                                     include the subnet. Run *add-instance* to add in the new unit once this
+                                     action succesfully completes.
+                                     WARNING When this action is run, group replication is stopped, the acls
+                                     updated and the group replication is started again. Group replication
+                                     should be running after this action has completed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo grep password /var/lib/mysql-keyring/* 2>/dev/null; leader-get cluster-password 2>/dev/null; cat /var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/.mylogin.cnf 2>/dev/null"
+8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns
+ERROR the following task failed:
+ - id "58" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteradmin@localhost --password=\$(sudo cat /var/lib/mysql/mysql-keyring/mysql:clusteradmin 2>/dev/null || echo '') -e 'var c=dba.getCluster(); c.forceQuorumUsingPartitionOf(\"clusteradmin@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+MySQL Error 1045: Access denied for user 'clusteradmin'@'127.0.0.1' (using password: NO)
+ERROR the following task failed:
+ - id "60" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "relation-get -r \$(relation-ids cluster | head -1) cluster-password \$(unit-get private-address) 2>/dev/null"
+ERROR the following task failed:
+ - id "62" with return code 2
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteradmin@localhost --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -e 'var c=dba.getCluster(); c.forceQuorumUsingPartitionOf(\"clusteradmin@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+MySQL Error 1045: Access denied for user 'clusteradmin'@'127.0.0.1' (using password: YES)
+ERROR the following task failed:
+ - id "64" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo ls -la /var/lib/mysql-keyring/"
+total 8
+drwx------  2 mysql mysql 4096 Mar  3 10:09 .
+drwxr-xr-x 44 root  root  4096 Mar  3 10:09 ..
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo cat /var/lib/mysql-keyring/mysql\\:clusteradmin"
+cat: '/var/lib/mysql-keyring/mysql:clusteradmin': No such file or directory
+ERROR the following task failed:
+ - id "68" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo find / -name '*.cnf' -path '*/mysql*' -exec grep -l password {} \; 2>/dev/null | head -5"
+/etc/mysql/debian.cnf
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo cat /etc/mysql/debian.cnf"
+# Automatically generated for Debian scripts. DO NOT TOUCH!
+[client]
+host     = localhost
+user     = debian-sys-maint
+password = EOTIc3e7Jx2mGRxo
+socket   = /var/run/mysqld/mysqld.sock
+[mysql_upgrade]
+host     = localhost
+user     = debian-sys-maint
+password = EOTIc3e7Jx2mGRxo
+socket   = /var/run/mysqld/mysqld.sock
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "leader-get mysql.passwd 2>/dev/null; leader-get cluster-password 2>/dev/null; leader-get clusteradmin-password 2>/dev/null"
+F44HG75sR95jZzzJXqr4kNFyhkBWsxZrFtfh
+8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteradmin@localhost --password='F44HG75sR95jZzzJXqr4kNFyhkBWsxZrFtfh' -e 'var c=dba.getCluster(); c.forceQuorumUsingPartitionOf(\"clusteradmin@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+MySQL Error 1045: Access denied for user 'clusteradmin'@'127.0.0.1' (using password: YES)
+ERROR the following task failed:
+ - id "76" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteradmin@localhost --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --socket=/var/run/mysqld/mysqld.sock -e 'var c=dba.getCluster(); c.forceQuorumUsingPartitionOf(\"clusteradmin@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+MySQL Error 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (13)
+ERROR the following task failed:
+ - id "78" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysql -u root -e \"SELECT user,host FROM mysql.user WHERE user='clusteradmin'\""
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR the following task failed:
+ - id "80" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysql -u debian-sys-maint -p'EOTIc3e7Jx2mGRxo' -e \"SELECT user,host,authentication_string FROM mysql.user WHERE user='clusteradmin'\""
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'debian-sys-maint'@'localhost' (using password: YES)
+ERROR the following task failed:
+ - id "82" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysql -e 'SELECT 1'"
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR the following task failed:
+ - id "84" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "systemctl status mysql; ls -la /var/run/mysqld/"
+● mysql.service - MySQL Community Server
+     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2026-03-03 10:11:54 UTC; 21h ago
+    Process: 25465 ExecStartPre=/usr/share/mysql/mysql-systemd-start pre (code=exited, status=0/SUCCESS)
+   Main PID: 25474 (mysqld)
+     Status: "Server is operational"
+      Tasks: 59 (limit: 314572)
+     Memory: 258.9M
+     CGroup: /system.slice/mysql.service
+             └─25474 /usr/sbin/mysqld
+
+Mar 03 10:11:51 juju-23d286-0-lxd-2 systemd[1]: mysql.service: Scheduled restart job, restart counter is at 1.
+Mar 03 10:11:51 juju-23d286-0-lxd-2 systemd[1]: Stopped MySQL Community Server.
+Mar 03 10:11:51 juju-23d286-0-lxd-2 systemd[1]: Starting MySQL Community Server...
+Mar 03 10:11:54 juju-23d286-0-lxd-2 systemd[1]: Started MySQL Community Server.
+total 12
+drwxr-xr-x  2 mysql mysql 140 Mar  3 10:11 .
+drwxr-xr-x 28 root  root  840 Mar  4 06:20 ..
+-rw-r-----  1 mysql mysql   6 Mar  3 10:11 mysqld.pid
+srwxrwxrwx  1 mysql mysql   0 Mar  3 10:11 mysqld.sock
+-rw-------  1 mysql mysql   6 Mar  3 10:11 mysqld.sock.lock
+srwxrwxrwx  1 mysql mysql   0 Mar  3 10:11 mysqlx.sock
+-rw-------  1 mysql mysql   6 Mar  3 10:11 mysqlx.sock.lock
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo -u mysql mysql -u root --socket=/var/run/mysqld/mysqld.sock -e 'SELECT 1'"
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR the following task failed:
+ - id "88" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteradmin@10.10.10.202 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -e 'print(\"connected\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+MySQL Error 1045: Access denied for user 'clusteradmin'@'10.10.10.202' (using password: YES)
+ERROR the following task failed:
+ - id "90" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql && sudo mysqld_safe --skip-grant-tables --skip-networking &"
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo mysql -u root -e \"ALTER USER 'clusteradmin'@'%' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; FLUSH PRIVILEGES;\""
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo killall mysqld mysqld_safe; sleep 5; sudo systemctl start mysql"
+mysqld_safe: no process found
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteradmin@localhost --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -e 'var c=dba.getCluster(); c.forceQuorumUsingPartitionOf(\"clusteradmin@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+MySQL Error 1045: Access denied for user 'clusteradmin'@'127.0.0.1' (using password: YES)
+ERROR the following task failed:
+ - id "92" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sleep 2; sudo mysqld --skip-grant-tables --skip-networking --user=mysql &"
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "mysql -u root -e \"FLUSH PRIVILEGES; ALTER USER 'clusteradmin'@'%' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; FLUSH PRIVILEGES; SELECT user,host FROM mysql.user WHERE user='clusteradmin';\""
+mysql: File '/etc/mysql/mysql.conf.d/mysqld.cnf' not found (OS errno 13 - Permission denied)
+mysql: [ERROR] Stopped processing the 'includedir' directive in file /etc/mysql/my.cnf at line 21.
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo mysql -u root -e \"FLUSH PRIVILEGES; ALTER USER 'clusteradmin'@'%' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; FLUSH PRIVILEGES; SELECT user,host FROM mysql.user WHERE user='clusteradmin';\""
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "ps aux | grep mysql | grep -v grep; sudo ls -la /var/run/mysqld/"
+root       13469  0.4  0.3 896360 13828 ?        Ssl  Mar03   5:48 snapfuse /var/lib/snapd/snaps/mysql-shell_29.snap /snap/mysql-shell/29 -o ro,nodev,allow_other,suid
+ls: cannot access '/var/run/mysqld/': No such file or directory
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo killall -9 mysqld 2>/dev/null; sleep 2; sudo systemctl start mysql; sleep 3; sudo ls -la /var/run/mysqld/mysqld.sock"
+srwxrwxrwx 1 mysql mysql 0 Mar  4 07:49 /var/run/mysqld/mysqld.sock
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo killall -9 mysqld 2>/dev/null; sleep 2; sudo systemctl start mysql; sleep 3; sudo ls -la /var/run/mysqld/mysqld.sock"
+srwxrwxrwx 1 mysql mysql 0 Mar  4 07:50 /var/run/mysqld/mysqld.sock
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sleep 2; sudo mkdir -p /var/run/mysqld; sudo chown mysql:mysql /var/run/mysqld; sudo mysqld --skip-grant-tables --skip-networking --user=mysql &"
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ sleep 5
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo mysql -u root -e \"FLUSH PRIVILEGES; ALTER USER 'clusteradmin'@'%' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; FLUSH PRIVILEGES; SELECT user,host FROM mysql.user WHERE user='clusteradmin';\""
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sleep 2; sudo mkdir -p /var/run/mysqld; sudo chown mysql:mysql /var/run/mysqld; sudo mysqld --skip-grant-tables --skip-networking --user=mysql & sleep 8; sudo mysql -u root -e \"FLUSH PRIVILEGES; ALTER USER 'clusteradmin'@'%' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; FLUSH PRIVILEGES; SELECT user,host FROM mysql.user WHERE user='clusteradmin';\"; sudo killall mysqld; sleep 3; sudo systemctl start mysql"
+ERROR 1290 (HY000) at line 1: The MySQL server is running with the --super-read-only option so it cannot execute this statement
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sleep 2; sudo mkdir -p /var/run/mysqld; sudo chown mysql:mysql /var/run/mysqld; sudo mysqld --skip-grant-tables --skip-networking --skip-super-read-only --user=mysql & sleep 8; sudo mysql -u root -e \"FLUSH PRIVILEGES; ALTER USER 'clusteradmin'@'%' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; FLUSH PRIVILEGES; SELECT user,host FROM mysql.user WHERE user='clusteradmin';\"; sudo killall mysqld; sleep 3; sudo systemctl start mysql"
+ERROR 1290 (HY000) at line 1: The MySQL server is running with the --super-read-only option so it cannot execute this statement
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sleep 2; sudo sed -i 's/super_read_only.*=.*ON/super_read_only = OFF/' /etc/mysql/mysql.conf.d/mysqld.cnf; sudo sed -i 's/super-read-only/# super-read-only/' /etc/mysql/mysql.conf.d/mysqld.cnf; sudo mkdir -p /var/run/mysqld; sudo chown mysql:mysql /var/run/mysqld; sudo mysqld --skip-grant-tables --skip-networking --user=mysql & sleep 8; sudo mysql -u root -e \"SET GLOBAL super_read_only=0; FLUSH PRIVILEGES; ALTER USER 'clusteradmin'@'%' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; FLUSH PRIVILEGES; SELECT user,host FROM mysql.user WHERE user='clusteradmin';\"; sudo killall mysqld; sleep 3; sudo systemctl start mysql"
+ERROR 1396 (HY000) at line 1: Operation ALTER USER failed for 'clusteradmin'@'%'
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sleep 2; sudo mkdir -p /var/run/mysqld; sudo chown mysql:mysql /var/run/mysqld; sudo mysqld --skip-grant-tables --skip-networking --user=mysql & sleep 8; sudo mysql -u root -e \"SET GLOBAL super_read_only=0; FLUSH PRIVILEGES; SELECT user,host FROM mysql.user WHERE user LIKE '%cluster%' OR user LIKE '%admin%';\"; sudo killall mysqld; sleep 3; sudo systemctl start mysql"
++---------------------------+--------------+
+| user                      | host         |
++---------------------------+--------------+
+| mysql_innodb_cluster_1000 | %            |
+| mysql_innodb_cluster_1001 | %            |
+| mysql_innodb_cluster_1002 | %            |
+| clusteruser               | 10.10.10.202 |
+| clusteruser               | 10.10.10.204 |
+| clusteruser               | 10.10.10.207 |
+| clusteruser               | localhost    |
++---------------------------+--------------+
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sleep 2; sudo mkdir -p /var/run/mysqld; sudo chown mysql:mysql /var/run/mysqld; sudo mysqld --skip-grant-tables --skip-networking --user=mysql & sleep 8; sudo mysql -u root -e \"SET GLOBAL super_read_only=0; FLUSH PRIVILEGES; ALTER USER 'clusteruser'@'localhost' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; ALTER USER 'clusteruser'@'10.10.10.202' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; ALTER USER 'clusteruser'@'10.10.10.204' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; ALTER USER 'clusteruser'@'10.10.10.207' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; FLUSH PRIVILEGES; SELECT 'OK';\"; sudo killall mysqld; sleep 3; sudo systemctl start mysql"
++----+
+| OK |
++----+
+| OK |
++----+
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteruser@localhost --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -e 'var c=dba.getCluster(); c.forceQuorumUsingPartitionOf(\"clusteruser@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+MySQL Error 1045: Access denied for user 'clusteruser'@'127.0.0.1' (using password: YES)
+ERROR the following task failed:
+ - id "94" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sleep 2; sudo mkdir -p /var/run/mysqld; sudo chown mysql:mysql /var/run/mysqld; sudo mysqld --skip-grant-tables --skip-networking --user=mysql & sleep 8; sudo mysql -u root -e \"SET GLOBAL super_read_only=0; FLUSH PRIVILEGES; CREATE USER IF NOT EXISTS 'clusteruser'@'127.0.0.1' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; ALTER USER 'clusteruser'@'127.0.0.1' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; GRANT ALL PRIVILEGES ON *.* TO 'clusteruser'@'127.0.0.1' WITH GRANT OPTION; FLUSH PRIVILEGES; SELECT 'OK';\"; sudo killall mysqld; sleep 3; sudo systemctl start mysql"
++----+
+| OK |
++----+
+| OK |
++----+
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteruser@127.0.0.1 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -e 'var c=dba.getCluster(); c.forceQuorumUsingPartitionOf(\"clusteruser@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+  File "<string>", line 1
+    var c=dba.getCluster(); c.forceQuorumUsingPartitionOf("clusteruser@10.10.10.202:3306")
+        ^
+SyntaxError: invalid syntax
+ERROR the following task failed:
+ - id "96" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteruser@127.0.0.1 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --js -e 'var c=dba.getCluster(); c.forceQuorumUsingPartitionOf(\"clusteruser@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+JavaScript is not supported.
+ERROR the following task failed:
+ - id "98" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteruser@127.0.0.1 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --py -e 'c=dba.get_cluster(); c.force_quorum_using_partition_of(\"clusteruser@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+mysqlsh.DBError: MySQL Error (2003): Dba.get_cluster: Can't connect to MySQL server on '127.0.0.1' (111)
+ERROR the following task failed:
+ - id "100" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl start mysql; sleep 3; sudo systemctl status mysql | head -5"
+● mysql.service - MySQL Community Server
+     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-03-04 08:04:46 UTC; 2min 1s ago
+    Process: 269694 ExecStartPre=/usr/share/mysql/mysql-systemd-start pre (code=exited, status=0/SUCCESS)
+   Main PID: 269702 (mysqld)
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteruser@127.0.0.1 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --py -e 'c=dba.get_cluster(); c.force_quorum_using_partition_of(\"clusteruser@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+mysqlsh.DBError: MySQL Error (2003): Dba.get_cluster: Can't connect to MySQL server on '127.0.0.1' (111)
+ERROR the following task failed:
+ - id "102" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo ss -tlnp | grep mysql; sudo grep bind-address /etc/mysql/mysql.conf.d/mysqld.cnf"
+LISTEN    0         600           10.10.10.202:3306             0.0.0.0:*        users:(("mysqld",pid=269702,fd=23))
+LISTEN    0         70                       *:33060                  *:*        users:(("mysqld",pid=269702,fd=21))
+bind-address = 10.10.10.202
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteruser@10.10.10.202 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --py -e 'c=dba.get_cluster(); c.force_quorum_using_partition_of(\"clusteruser@10.10.10.202:3306\")'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+mysqlsh.Error: Shell Error (51314): Dba.get_cluster: This function is not available through a session to a standalone instance (metadata exists, instance belongs to that metadata, but GR is not active)
+ERROR the following task failed:
+ - id "104" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteruser@10.10.10.202 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --py -e 'dba.reboot_cluster_from_complete_outage()'"
+ERROR timed out waiting for results from: unit mysql-innodb-cluster/0
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "sudo mysqlsh --uri clusteruser@10.10.10.202 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --py -e 'c=dba.get_cluster(); print(c.status())'" 2>&1 | head -30
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+mysqlsh.Error: Shell Error (51314): Dba.get_cluster: This function is not available through a session to a standalone instance (metadata exists, instance belongs to that metadata, but GR is not active)
+ERROR the following task failed:
+ - id "108" with return code 1
+
+use 'juju show-task' to inspect the failure
+
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "sudo systemctl status mysql | head -3"
+juju ssh 2/lxd/2 "sudo systemctl status mysql | head -3"● mysql.service - MySQL Community Server
+     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-03-04 07:18:17 UTC; 59min ago
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 2/lxd/2 "sudo systemctl status mysql | head -3"
+● mysql.service - MySQL Community Server
+     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-03-04 07:18:07 UTC; 1h 0min ago
+Connection to 10.10.10.204 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo mysqlsh --uri clusteruser@10.10.10.202 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --py << 'EOF'
+> try:
+>     dba.reboot_cluster_from_complete_outage()
+>     print('SUCCESS')
+> except Exception as e:
+>     print('ERROR:', str(e))
+> EOF"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "timeout 120 sudo mysqlsh --uri clusteruser@10.10.10.202 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --no-wizard --py -f /dev/stdin << 'PYEOF'
+> try:
+>     c = dba.reboot_cluster_from_complete_outage()
+>     print('SUCCESS')
+>     print(dba.get_cluster().status())
+> except Exception as e:
+>     print('ERROR: ' + str(e))
+> PYEOF"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Failed to open file '/dev/stdin', error: Permission denied
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "echo 'try:
+>     c = dba.reboot_cluster_from_complete_outage()
+>     print(\"SUCCESS\")
+> except Exception as e:
+>     print(\"ERROR: \" + str(e))' | sudo tee /tmp/fix.py; timeout 120 sudo mysqlsh --uri clusteruser@10.10.10.202 --password='8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' --no-wizard --py -f /tmp/fix.py"
+try:
+    c = dba.reboot_cluster_from_complete_outage()
+    print("SUCCESS")
+except Exception as e:
+    print("ERROR: " + str(e))
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Failed to open file '/tmp/fix.py', error: No such file or directory
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo bash -c 'cat > /root/fix.py << PYEOF
+> try:
+>     c = dba.reboot_cluster_from_complete_outage()
+>     print(\"SUCCESS\")
+> except Exception as e:
+>     print(\"ERROR: \" + str(e))
+> PYEOF
+> chmod 644 /root/fix.py; timeout 120 mysqlsh --uri clusteruser@10.10.10.202 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /root/fix.py'"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Failed to open file '/root/fix.py', error: Permission denied
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo bash -c 'cat > /tmp/fix.py << PYEOF
+> try:
+>     c = dba.reboot_cluster_from_complete_outage()
+>     print(\"SUCCESS\")
+> except Exception as e:
+>     print(\"ERROR: \" + str(e))
+> PYEOF
+> chmod 666 /tmp/fix.py; ls -la /tmp/fix.py'"
+-rw-rw-rw- 1 root root 129 Mar  4 08:22 /tmp/fix.py
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo timeout 120 mysqlsh --uri clusteruser@10.10.10.202 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /tmp/fix.py"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Failed to open file '/tmp/fix.py', error: No such file or directory
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo cp /tmp/fix.py /root/snap/mysql-shell/common/fix.py; sudo chmod 666 /root/snap/mysql-shell/common/fix.py; sudo timeout 120 mysqlsh --uri clusteruser@10.10.10.202 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /root/snap/mysql-shell/common/fix.py"
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Restoring the default cluster from complete outage...
+
+ERROR: Conflicting transaction sets between 10.10.10.202:3306 and 10.10.10.207:3306
+ERROR: Shell Error (51152): Dba.reboot_cluster_from_complete_outage: Conflicting transaction sets between 10.10.10.202:3306 and 10.10.10.207:3306
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo mysql -u clusteruser -p'8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -h 10.10.10.202 -e 'SELECT @@gtid_executed\G'"
+mysql: [Warning] Using a password on the command line interface can be insecure.
+*************************** 1. row ***************************
+@@gtid_executed: 080c5fd5-16e9-11f1-8a04-00163e6dac34:1-15,
+190c1662-16e8-11f1-912b-00163ee1ec34:1-16,
+44503388-16e9-11f1-8027-00163ee1ec34:1-113013
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "sudo mysql -u clusteruser -p'8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -h 10.10.10.207 -e 'SELECT @@gtid_executed\G'" 2>/dev/null
+mysql: [Warning] Using a password on the command line interface can be insecure.
+*************************** 1. row ***************************
+@@gtid_executed: 190c1662-16e8-11f1-912b-00163ee1ec34:1-16,
+44503388-16e9-11f1-8027-00163ee1ec34:1-113046
+ubuntu@vm1-orchestrator:~$ juju ssh 2/lxd/2 "sudo mysql -u clusteruser -p'8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -h 10.10.10.204 -e 'SELECT @@gtid_executed\G'" 2>/dev/null
+mysql: [Warning] Using a password on the command line interface can be insecure.
+*************************** 1. row ***************************
+@@gtid_executed: 190c1662-16e8-11f1-912b-00163ee1ec34:1-16,
+44503388-16e9-11f1-8027-00163ee1ec34:1-113046
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "sudo cp /tmp/fix.py /root/snap/mysql-shell/common/fix.py 2>/dev/null; echo 'try:
+>     c = dba.reboot_cluster_from_complete_outage()
+>     print(\"SUCCESS\")
+> except Exception as e:
+>     print(\"ERROR: \" + str(e))' | sudo tee /root/snap/mysql-shell/common/fix.py; sudo timeout 120 mysqlsh --uri clusteruser@10.10.10.207 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /root/snap/mysql-shell/common/fix.py"
+try:
+    c = dba.reboot_cluster_from_complete_outage()
+    print("SUCCESS")
+except Exception as e:
+    print("ERROR: " + str(e))
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Restoring the default cluster from complete outage...
+
+ERROR: Conflicting transaction sets between 10.10.10.207:3306 and 10.10.10.202:3306
+ERROR: Shell Error (51152): Dba.reboot_cluster_from_complete_outage: Conflicting transaction sets between 10.10.10.207:3306 and 10.10.10.202:3306
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "echo 'try:
+>     c = dba.reboot_cluster_from_complete_outage(removeInstances=[\"10.10.10.202:3306\"])
+>     print(\"SUCCESS\")
+> except Exception as e:
+>     print(\"ERROR: \" + str(e))' | sudo tee /root/snap/mysql-shell/common/fix2.py; sudo timeout 120 mysqlsh --uri clusteruser@10.10.10.207 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /root/snap/mysql-shell/common/fix2.py"
+try:
+    c = dba.reboot_cluster_from_complete_outage(removeInstances=["10.10.10.202:3306"])
+    print("SUCCESS")
+except Exception as e:
+    print("ERROR: " + str(e))
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Restoring the default cluster from complete outage...
+
+10.10.10.207:3306 was restored.
+The cluster was successfully rebooted.
+
+SUCCESS
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sudo bash -c 'cat > /var/lib/mysql/auto.cnf << EOF
+> [auto]
+> server-uuid=$(cat /proc/sys/kernel/random/uuid)
+> EOF'; sudo systemctl start mysql"
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo systemctl stop mysql; sudo bash -c 'cat > /var/lib/mysql/auto.cnf << EOF
+> [auto]
+> server-uuid=$(cat /proc/sys/kernel/random/uuid)
+> EOF'; sudo systemctl start mysql"
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "echo 'try:
+>     c = dba.get_cluster()
+>     c.remove_instance(\"clusteruser@10.10.10.202:3306\", {\"force\": True})
+> except:
+>     pass
+> try:
+>     c = dba.get_cluster()
+>     c.add_instance(\"clusteruser@10.10.10.202:3306\", {\"recoveryMethod\": \"clone\"})
+>     print(\"SUCCESS\")
+> except Exception as e:
+>     print(\"ERROR: \" + str(e))' | sudo tee /root/snap/mysql-shell/common/fix3.py; sudo timeout 180 mysqlsh --uri clusteruser@10.10.10.207 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /root/snap/mysql-shell/common/fix3.py"
+try:
+    c = dba.get_cluster()
+    c.remove_instance("clusteruser@10.10.10.202:3306", {"force": True})
+except:
+    pass
+try:
+    c = dba.get_cluster()
+    c.add_instance("clusteruser@10.10.10.202:3306", {"recoveryMethod": "clone"})
+    print("SUCCESS")
+except Exception as e:
+    print("ERROR: " + str(e))
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+ERROR: The instance 10.10.10.202:3306 does not belong to the cluster.
+
+WARNING: A GTID set check of the MySQL instance at '10.10.10.202:3306' determined that it contains transactions that do not originate from the cluster, which must be discarded before it can join the cluster.
+
+10.10.10.202:3306 has the following errant GTIDs that do not exist in the cluster:
+080c5fd5-16e9-11f1-8a04-00163e6dac34:1-15
+
+WARNING: Discarding these extra GTID events can either be done manually or by completely overwriting the state of 10.10.10.202:3306 with a physical snapshot from an existing cluster member. To use this method by default, set the 'recoveryMethod' option to 'clone'.
+
+Having extra GTID events is not expected, and it is recommended to investigate this further and ensure that the data can be removed prior to choosing the clone recovery method.
+Clone based recovery selected through the recoveryMethod option
+
+Validating instance configuration at 10.10.10.202:3306...
+
+This instance reports its own address as 10.10.10.202:3306
+
+Instance configuration is suitable.
+NOTE: Group Replication will communicate with other members using '10.10.10.202:33061'. Use the localAddress option to override.
+
+A new instance will be added to the InnoDB cluster. Depending on the amount of
+data on the cluster this might take from a few seconds to several hours.
+
+Adding instance to the cluster...
+
+NOTE: User 'mysql_innodb_cluster_1000'@'%' already existed at instance '10.10.10.207:3306'. It will be deleted and created again with a new password.
+Monitoring recovery process of the new cluster member. Press ^C to stop monitoring and let it continue in background.
+Clone based state recovery is now in progress.
+
+NOTE: A server restart is expected to happen as part of the clone process. If the
+server does not support the RESTART command or does not come back after a
+while, you may need to manually start it back.
+
+* Waiting for clone to finish...
+NOTE: 10.10.10.202:3306 is being cloned from 10.10.10.207:3306
+** Stage DROP DATA: Completed
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "echo 'try:
+>     c = dba.get_cluster()
+>     print(c.status())
+> except Exception as e:
+>     print(\"ERROR: \" + str(e))' | sudo tee /root/snap/mysql-shell/common/status.py; sudo timeout 60 mysqlsh --uri clusteruser@10.10.10.207 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /root/snap/mysql-shell/common/status.py"
+try:
+    c = dba.get_cluster()
+    print(c.status())
+except Exception as e:
+    print("ERROR: " + str(e))
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+{"clusterName": "jujuCluster", "defaultReplicaSet": {"name": "default", "primary": "10.10.10.207:3306", "ssl": "REQUIRED", "status": "OK_NO_TOLERANCE", "statusText": "Cluster is NOT tolerant to any failures.", "topology": {"10.10.10.202:3306": {"address": "10.10.10.202:3306", "instanceErrors": ["WARNING: Instance is not managed by InnoDB cluster. Use cluster.rescan() to repair."], "mode": "R/O", "readReplicas": {}, "replicationLag": null, "role": "HA", "status": "ONLINE", "version": "8.0.42"}, "10.10.10.204:3306": {"address": "10.10.10.204:3306", "instanceErrors": ["NOTE: group_replication is stopped."], "memberState": "OFFLINE", "mode": "R/O", "readReplicas": {}, "role": "HA", "status": "(MISSING)", "version": "8.0.42"}, "10.10.10.207:3306": {"address": "10.10.10.207:3306", "mode": "R/W", "readReplicas": {}, "replicationLag": null, "role": "HA", "status": "ONLINE", "version": "8.0.42"}}, "topologyMode": "Single-Primary"}, "groupInformationSourceMember": "10.10.10.207:3306"}
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "echo 'try:
+>     c = dba.get_cluster()
+>     c.rejoin_instance(\"clusteruser@10.10.10.204:3306\")
+>     print(\"SUCCESS\")
+> except Exception as e:
+>     print(\"ERROR: \" + str(e))' | sudo tee /root/snap/mysql-shell/common/rejoin.py; sudo timeout 120 mysqlsh --uri clusteruser@10.10.10.207 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /root/snap/mysql-shell/common/rejoin.py"
+try:
+    c = dba.get_cluster()
+    c.rejoin_instance("clusteruser@10.10.10.204:3306")
+    print("SUCCESS")
+except Exception as e:
+    print("ERROR: " + str(e))
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Rejoining instance '10.10.10.204:3306' to cluster 'jujuCluster'...
+The instance '10.10.10.204:3306' was successfully rejoined to the cluster.
+
+SUCCESS
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "echo 'c = dba.get_cluster()
+> c.rescan()
+> print(c.status())' | sudo tee /root/snap/mysql-shell/common/rescan.py; sudo timeout 60 mysqlsh --uri clusteruser@10.10.10.207 --password=8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns --no-wizard --py -f /root/snap/mysql-shell/common/rescan.py"
+c = dba.get_cluster()
+c.rescan()
+print(c.status())
+Cannot set LC_ALL to locale en_US.UTF-8: No such file or directory
+WARNING: Using a password on the command line interface can be insecure.
+Rescanning the cluster...
+
+Result of the rescanning operation for the 'jujuCluster' cluster:
+{
+    "name": "jujuCluster",
+    "newTopologyMode": null,
+    "newlyDiscoveredInstances": [
+        {
+            "host": "10.10.10.202:3306",
+            "member_id": "785d97b0-3f1e-48c5-8638-11f22913c376",
+            "name": null,
+            "version": "8.0.42"
+        }
+    ],
+    "unavailableInstances": [],
+    "updatedInstances": []
+}
+
+A new instance '10.10.10.202:3306' was discovered in the cluster.
+{"clusterName": "jujuCluster", "defaultReplicaSet": {"name": "default", "primary": "10.10.10.207:3306", "ssl": "REQUIRED", "status": "OK", "statusText": "Cluster is ONLINE and can tolerate up to ONE failure.", "topology": {"10.10.10.202:3306": {"address": "10.10.10.202:3306", "instanceErrors": ["WARNING: Instance is not managed by InnoDB cluster. Use cluster.rescan() to repair."], "mode": "R/O", "readReplicas": {}, "replicationLag": null, "role": "HA", "status": "ONLINE", "version": "8.0.42"}, "10.10.10.204:3306": {"address": "10.10.10.204:3306", "mode": "R/O", "readReplicas": {}, "replicationLag": null, "role": "HA", "status": "ONLINE", "version": "8.0.42"}, "10.10.10.207:3306": {"address": "10.10.10.207:3306", "mode": "R/W", "readReplicas": {}, "replicationLag": null, "role": "HA", "status": "ONLINE", "version": "8.0.42"}}, "topologyMode": "Single-Primary"}, "groupInformationSourceMember": "10.10.10.207:3306"}
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked|active" | head -20
+ceph-mon                16.2.15  active       3  ceph-mon                pacific/stable  217  no       Unit is ready and clustered
+ceph-osd                16.2.15  blocked      3  ceph-osd                pacific/stable  615  no       No block devices detected using current configuration
+cinder                  18.2.1   active       1  cinder                  ussuri/stable   670  no       Unit is ready
+cinder-ceph             18.2.1   active       1  cinder-ceph             ussuri/stable   518  no       Unit is ready
+cinder-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance                  22.1.1   active       1  glance                  ussuri/stable   589  no       Unit is ready
+glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone                17.0.1   active       1  keystone                ussuri/stable   691  no       Application Ready
+keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+neutron-api             18.6.0   active       1  neutron-api             ussuri/stable   588  no       Unit is ready
+neutron-api-plugin-ovn  18.6.0   active       1  neutron-api-plugin-ovn  ussuri/stable    98  no       Unit is ready
+neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-cloud-controller   23.2.2   active       1  nova-cloud-controller   ussuri/stable   748  no       Unit is ready
+nova-compute            23.2.2   blocked      3  nova-compute            ussuri/stable   779  no       Services not running that should be: nova-api-metadata
+nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+openstack-dashboard     19.4.0   active       1  openstack-dashboard     ussuri/stable   723  no       Unit is ready
+ovn-central             22.03.3  active       3  ovn-central             22.03/stable    245  no       Unit is ready (leader: ovnnb_db, ovnsb_db northd: active)
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "hooks/update-status"
+x`active
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/1 "hooks/update-status"
+
+active
+ubuntu@vm1-orchestrator:~$ jujux`
+> ^C
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/2 "hooks/update-status"
+active
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo vgdisplay | grep ceph"
+> done
+  VG Name               ceph-3ca7c785-c798-4657-80f8-e526ff3e07b0
+Connection to 10.10.10.113 closed.
+  VG Name               ceph-24118f59-f87c-457a-8593-210f015cf04b
+Connection to 10.10.10.117 closed.
+  VG Name               ceph-35e90f41-d5fc-49f0-9e2e-b4ba39dfc0c1
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo systemctl restart nova-api-metadata nova-compute"
+> done
+Failed to restart nova-api-metadata.service: Unit nova-api-metadata.service is masked.
+Connection to 10.10.10.113 closed.
+Connection to 10.10.10.117 closed.
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo systemctl unmask nova-api-metadata; sudo systemctl restart nova-api-metadata nova-compute 2>&1 | tail -2"
+> done
+Removed /etc/systemd/system/nova-api-metadata.service.
+Connection to 10.10.10.113 closed.
+Connection to 10.10.10.117 closed.
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo systemctl restart ceph-osd.target"
+> done
+Connection to 10.10.10.113 closed.
+Connection to 10.10.10.117 closed.
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo systemctl restart ceph-osd.target"
+> done
+Connection to 10.10.10.113 closed.
+Connection to 10.10.10.117 closed.
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+ceph-osd                16.2.15  blocked      3  ceph-osd                pacific/stable  615  no       No block devices detected using current configuration
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+nova-compute            23.2.2   blocked      3  nova-compute            ussuri/stable   779  no       Services not running that should be: nova-api-metadata
+vault                   1.7.9    error        1  vault                   1.7/stable      371  no       hook failed: "start"
+ceph-osd/1                   blocked   idle   1        10.10.10.117                    No block devices detected using current configuration
+ceph-osd/2                   blocked   idle   2        10.10.10.114                    No block devices detected using current configuration
+keystone/0*                  error     idle   0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+mysql-innodb-cluster/0*      blocked   idle   0/lxd/2  10.10.10.202                    Cluster is inaccessible from this instance. Please check logs for details.
+nova-compute/0*              blocked   idle   0        10.10.10.113                    Services not running that should be: nova-api-metadata
+vault/0*                     error     idle   1/lxd/5  10.10.10.211    8200/tcp        hook failed: "start"
+ubuntu@vm1-orchestrator:~$ Connection to 10.10.10.114 closed.
+ "sudo systemctl unmask nova-api-metadata; sudo systemctl restart nova-api-metadata nova-compute 2>&1 | tail -2"
+> done
+Removed /etc/systemd/system/nova-api-metadata.service.
+Connection to 10.10.10.113 closed.
+Connection to 10.10.10.117 closed.
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo systemctl restart ceph-osd.target"
+> done
+Connection to 10.10.10.113 closed.
+Connection to 10.10.10.117 closed.
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+>   juju ssh $m "sudo systemctl restart ceph-osd.target"
+> done
+Connection to 10.10.10.113 closed.
+Connection to 10.10.10.117 closed.
+Connection to 10.10.10.114 closed.
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+ceph-osd                16.2.15  blocked      3  ceph-osd                pacific/stable  615  no       No block devices detected using current configuration
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+nova-compute            23.2.2   blocked      3  nova-compute            ussuri/stable   779  no       Services not running that should be: nova-api-metadata
+vault                   1.7.9    error        1  vault                   1.7/stable      371  no       hook failed: "start"
+ceph-osd/1                   blocked   idle   1        10.10.10.117                    No block devices detected using current configuration
+ceph-osd/2                   blocked   idle   2        10.10.10.114                    No block devices detected using current configuration
+keystone/0*                Connection: command not found
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ for m in 0 1 2; do
+-bash: syntax error near unexpected token `do'
+ubuntu@vm1-orchestrator:~$ >   juju ssh $m "sudo systemctl unmask nova-api-metadata; sudo systemctl restart nova-api-metadata nova-compute 2>&1 | tail -2"
+  error     idle   0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+mysql-innodb-cluster/0*      blocked   idle   0/lxd/2  10.10.10.202                    Cluster is inaccessible from this instance. Please check logs for details.
+nova-compute/0*              blocked   idle   0        10.10.10.113                    Services not running that should be: nova-api-metadata
+vault/0*                     error     idle   1/lxd/5  10.10.10.211    8200/tcp        hook failed: "start"
+ubuntu@vm1-orchestrator:~$
+
+Show more
+11:04 AM
+Vault e sealed din nou (după reboot). Unseal-ează și rezolvă:
+
+bash
+export VAULT_ADDR="http://10.10.10.211:8200"
+vault operator unseal yzge62n6nOZjGRnl2xAO7AteazluYTVjjc7gf20m2bkW
+vault operator unseal 28ZSYm08bMI+39b8ZPTzYxiyxKWCMshr8d4ZArgTEv8g
+vault operator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+
+juju resolved vault/0
+juju resolved keystone/0
+^C
+ubuntu@vm1-orchestrator:~$ export VAULT_ADDR="http://10.10.10.211:8200"
+ubuntu@vm1-orchestrator:~$ vault operator unseal yzge62n6nOZjGRnl2xAO7AteazluYTVjjc7gf20m2bkW
+ator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+ubuntu@vm1-orchestrator:~$ vault operator unseal 28ZSYm08bMI+39b8ZPTzYxiyxKWCMshr8d4ZArgTEv8g
+Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+ubuntu@vm1-orchestrator:~$ vault operator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ export VAULT_ADDR="http://10.10.10.211:8200"
+eazluYTVjjc7gf20m2bkW
+ator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+ubuntu@vm1-orchestrator:~$ vault operator unseal 28ZSYm08bMI+39b8ZPTzYxiyxKWCMshr8d4ZArgTEv8g
+Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+ubuntu@vm1-orchestrator:~$ vault operator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+ubuntu@vm1-orchestrator:~$ubuntu@vm1-orchestrator:~$: command not found
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ vault operator unseal yzge62n6nOZjGRnl2xAO7AteazluYTVjjc7gf20m2bkW
+ubuntu@vm1-orchestrator:~$: command not found
+ubuntu@vm1-orchestrator:~$ ator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+
+Command 'ator' not found, did you mean:
+
+  command 'atop' from deb atop (2.4.0-3)
+  command 'attr' from deb attr (1:2.4.48-5)
+  command 'tor' from deb tor (0.4.2.7-1)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm1-orchestrator:~$ Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+Error: command not found
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ vault operator unseal 28ZSYm08bMI+39b8ZPTzYxiyxKWCMshr8d4ZArgTEv8g
+ubuntu@vm1-orchestrator:~$: command not found
+ubuntu@vm1-orchestrator:~$ Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+Error: command not found
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$ vault operator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+ubuntu@vm1-orchestrator:~$: command not found
+ubuntu@vm1-orchestrator:~$ Error unsealing: Put "http://10.10.10.211:8200/v1/sys/unseal": dial tcp 10.10.10.211:8200: connect: connection refused
+Error: command not found
+ubuntu@vm1-orchestrator:~$ ubuntu@vm1-orchestrator:~$^C
+ubuntu@vm1-orchestrator:~$ juju ssh 1 "sudo lxc list | grep lxd-5"
+| juju-23d286-1-lxd-5 | RUNNING | 10.10.10.211 (eth0) |      | CONTAINER | 0         |
+Connection to 10.10.10.117 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/5 "sudo systemctl restart vault; sleep 3; sudo systemctl status vault | head -5"
+● vault.service - HashiCorp Vault
+     Loaded: loaded (/etc/systemd/system/vault.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-03-04 09:07:16 UTC; 3s ago
+   Main PID: 19566 (vault)
+      Tasks: 0 (limit: 314572)
+Connection to 10.10.10.211 closed.
+ubuntu@vm1-orchestrator:~$ vault operator unseal yzge62n6nOZjGRnl2xAO7AteazluYTVjjc7gf20m2bkW
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    1/3
+Unseal Nonce       c1109697-91d3-4847-22f0-bd6776d78fea
+Version            1.7.9
+Build Date         n/a
+Storage Type       mysql
+HA Enabled         false
+ubuntu@vm1-orchestrator:~$ vault operator unseal 28ZSYm08bMI+39b8ZPTzYxiyxKWCMshr8d4ZArgTEv8g
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    2/3
+Unseal Nonce       c1109697-91d3-4847-22f0-bd6776d78fea
+Version            1.7.9
+Build Date         n/a
+Storage Type       mysql
+HA Enabled         false
+ubuntu@vm1-orchestrator:~$ vault operator unseal 7sagedtXGmk+BcDDtoySIwYFg1wifRVGxXUnXvNCu2+5
+Key             Value
+---             -----
+Seal Type       shamir
+Initialized     true
+Sealed          false
+Total Shares    5
+Threshold       3
+Version         1.7.9
+Build Date      n/a
+Storage Type    mysql
+Cluster Name    vault-cluster-1048e864
+Cluster ID      97730b44-f196-e0bc-4045-4b123818794c
+HA Enabled      false
+ubuntu@vm1-orchestrator:~$ juju resolved vault/0
+ERROR unit "vault/0" is not in an error state
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+keystone/0*                  error     idle   0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+mysql-innodb-cluster/0*      blocked   idle   0/lxd/2  10.10.10.202                    Cluster is inaccessible from this instance. Please check logs for details.
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "hooks/update-status"
+
+active
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/1 "hooks/update-status"
+active
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/2 "hooks/update-status"
+active
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+keystone/0*                  error     idle       0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+mysql-innodb-cluster/0*      blocked   executing  0/lxd/2  10.10.10.202                    (juju-exec) Cluster is inaccessible from this instance. Please check logs for details.
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ubuntu@vm1-orchestrator:~$ sleep 60
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+keystone/0*                  error     idle   0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+mysql-innodb-cluster/0*      blocked   idle   0/lxd/2  10.10.10.202                    Cluster is inaccessible from this instance. Please check logs for details.
+ubuntu@vm1-orchestrator:~$ juju debug-log --replay --no-tail --include mysql-innodb-cluster/0 2>&1 | tail -10
+unit-mysql-innodb-cluster-0: 08:04:29 INFO unit.mysql-innodb-cluster/0.juju-log Invoking reactive handler: reactive/layer_openstack.py:93:run_default_update_status
+unit-mysql-innodb-cluster-0: 08:04:29 INFO unit.mysql-innodb-cluster/0.juju-log Invoking reactive handler: hooks/relations/tls-certificates/requires.py:109:broken:certificates
+unit-mysql-innodb-cluster-0: 08:04:29 INFO unit.mysql-innodb-cluster/0.juju-log Invoking reactive handler: hooks/relations/mysql-innodb-cluster/peers.py:69:joined:cluster
+unit-mysql-innodb-cluster-0: 08:04:29 INFO unit.mysql-innodb-cluster/0.juju-log Invoking reactive handler: hooks/relations/mysql-innodb-cluster/peers.py:75:changed:cluster
+unit-mysql-innodb-cluster-0: 08:04:29 INFO unit.mysql-innodb-cluster/0.juju-log Invoking reactive handler: hooks/relations/mysql-router/provides.py:47:joined:db-router
+unit-mysql-innodb-cluster-0: 08:04:29 INFO unit.mysql-innodb-cluster/0.juju-log Invoking reactive handler: hooks/relations/mysql-router/provides.py:53:changed:db-router
+unit-mysql-innodb-cluster-0: 08:04:31 INFO unit.mysql-innodb-cluster/0.juju-log DEPRECATION WARNING: Function _ows_check_services_running is being removed on/around 2022-05 : use ows_check_services_running() instead
+unit-mysql-innodb-cluster-0: 08:04:31 INFO unit.mysql-innodb-cluster/0.juju-log coordinator.DelayedActionCoordinator Leader handling coordinator requests
+unit-mysql-innodb-cluster-0: 08:04:31 INFO unit.mysql-innodb-cluster/0.juju-log coordinator.DelayedActionCoordinator Publishing state
+unit-mysql-innodb-cluster-0: 08:04:31 INFO juju.worker.uniter.operation ran "update-status" hook (via explicit, bespoke hook script)
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo mysql -u clusteruser -p'8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -h 10.10.10.202 -e 'SELECT 1'"
+mysql: [Warning] Using a password on the command line interface can be insecure.
++---+
+| 1 |
++---+
+| 1 |
++---+
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju run mysql-innodb-cluster/0 restart-services
+Running operation 121 with 1 task
+  - task 122 on unit-mysql-innodb-cluster-0
+
+Waiting for task 122...
+
+ubuntu@vm1-orchestrator:~$ juju run mysql-innodb-cluster/1 restart-services
+Running operation 123 with 1 task
+  - task 124 on unit-mysql-innodb-cluster-1
+
+Waiting for task 124...
+ERROR timed out waiting for results from: unit mysql-innodb-cluster/1
+ubuntu@vm1-orchestrator:~$ juju run mysql-innodb-cluster/2 restart-services
+Running operation 125 with 1 task
+  - task 126 on unit-mysql-innodb-cluster-2
+
+Waiting for task 126...
+
+ubuntu@vm1-orchestrator:~$ juju run mysql-innodb-cluster/1 restart-services
+Running operation 127 with 1 task
+  - task 128 on unit-mysql-innodb-cluster-1
+
+Waiting for task 128...
+
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ubuntu@vm1-orchestrator:~$ sleep 30
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+cinder-mysql-router     8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+dashboard-mysql-router  8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+glance-mysql-router     8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+keystone-mysql-router   8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+neutron-mysql-router    8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+nova-mysql-router       8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+placement-mysql-router  8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+vault                   1.7.9    blocked      1  vault                   1.7/stable      371  no       Vault cannot authorize approle
+vault-mysql-router      8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+cinder-mysql-router     8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+dashboard-mysql-router  8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+glance-mysql-router     8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+keystone-mysql-router   8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+neutron-mysql-router    8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+nova-mysql-router       8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+placement-mysql-router  8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+vault                   1.7.9    blocked      1  vault                   1.7/stable      371  no       Vault cannot authorize approle
+vault-mysql-router      8.0.42   blocked      1  mysql-router            8.0/stable      257  no       Failed to connect to MySQL
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/1 "leader-get cluster-password"
+8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "sudo mysql -u clusteruser -p'8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -h 10.10.10.207 -e 'SELECT 1' 2>&1"
+mysql: [Warning] Using a password on the command line interface can be insecure.
++---+
+| 1 |
++---+
+| 1 |
++---+
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "sudo systemctl restart mysqlrouter" 2>/dev/null
+Failed to restart mysqlrouter.service: Unit mysqlrouter.service not found.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/1 "sudo systemctl restart mysqlrouter" 2>/dev/null
+Failed to restart mysqlrouter.service: Unit mysqlrouter.service not found.
+ubuntu@vm1-orchestrator:~$ juju ssh 2/lxd/1 "sudo systemctl restart mysqlrouter" 2>/dev/null
+Failed to restart mysqlrouter.service: Unit mysqlrouter.service not found.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "sudo systemctl list-units | grep mysql"
+  keystone-mysql-router.service           loaded active     running   MySQL Router
+Connection to 10.10.10.206 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/1 "sudo systemctl restart keystone-mysql-router"
+Connection to 10.10.10.206 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/1 "sudo systemctl restart cinder-mysql-router" 2>/dev/null
+ubuntu@vm1-orchestrator:~$ juju ssh 2/lxd/1 "sudo systemctl restart glance-mysql-router" 2>/dev/null
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep "mysql-router/" | head -10
+  cinder-mysql-router/0*     blocked   idle            10.10.10.213                    Failed to connect to MySQL
+  glance-mysql-router/0*     blocked   idle            10.10.10.212                    Failed to connect to MySQL
+  keystone-mysql-router/1*   blocked   idle            10.10.10.206                    Failed to connect to MySQL
+  neutron-mysql-router/0*    blocked   idle            10.10.10.208                    Failed to connect to MySQL
+  nova-mysql-router/0*       blocked   idle            10.10.10.205                    Failed to connect to MySQL
+  dashboard-mysql-router/0*  blocked   idle            10.10.10.201                    Failed to connect to MySQL
+  placement-mysql-router/0*  blocked   idle            10.10.10.214                    Failed to connect to MySQL
+  vault-mysql-router/0*      blocked   idle            10.10.10.211                    Failed to connect to MySQL
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "leader-get mysql.passwd"
+F44HG75sR95jZzzJXqr4kNFyhkBWsxZrFtfh
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "leader-get cluster-password"
+8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo grep -r 'clusteruser\|clusteradmin' /var/lib/juju/agents/unit-mysql-innodb-cluster-0/charm/lib/ 2>/dev/null | grep -i 'user.*=' | head -5"
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo mysql -u root -p'F44HG75sR95jZzzJXqr4kNFyhkBWsxZrFtfh' -h 10.10.10.202 -e 'SELECT 1' 2>&1"
+\mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'10.10.10.202' (using password: YES)
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo bash -c 'systemctl stop mysql; mkdir -p /var/run/mysqld; chown mysql:mysql /var/run/mysqld; mysqld --skip-grant-tables --skip-networking --skip-super-read-only --user=mysql & sleep 8; mysql -u root -e \"FLUSH PRIVILEGES; SELECT user,host FROM mysql.user WHERE user=\\\"root\\\";\"'"
++------+-----------+
+| user | host      |
++------+-----------+
+| root | localhost |
++------+-----------+
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "sudo mysql -u root -p'F44HG75sR95jZzzJXqr4kNFyhkBWsxZrFtfh' -h 10.10.10.207 -e 'SELECT 1' 2>&1"
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'10.10.10.207' (using password: YES)
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 1/lxd/2 "sudo mysql -u clusteruser -p'8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns' -h 10.10.10.207 -e \"CREATE USER IF NOT EXISTS 'clusteruser'@'127.0.0.1' IDENTIFIED BY '8F2dnwkpP92TWdrfmGkxJZrGgx7XHqTCZwcyns'; GRANT ALL PRIVILEGES ON *.* TO 'clusteruser'@'127.0.0.1' WITH GRANT OPTION; FLUSH PRIVILEGES; SELECT 'OK';\""
+mysql: [Warning] Using a password on the command line interface can be insecure.
++----+
+| OK |
++----+
+| OK |
++----+
+Connection to 10.10.10.207 closed.
+ubuntu@vm1-orchestrator:~$ juju ssh 0/lxd/2 "sudo killall mysqld; sleep 3; sudo systemctl start mysql; sleep 3; sudo systemctl status mysql | head -3"
+● mysql.service - MySQL Community Server
+     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-03-04 09:59:09 UTC; 3s ago
+Connection to 10.10.10.202 closed.
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "hooks/update-status"
+active
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/1 "hooks/update-status"
+active
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/2 "hooks/update-status"
+active
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+keystone/0*                  error     idle   0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+mysql-innodb-cluster/0*      blocked   idle   0/lxd/2  10.10.10.202                    Cluster is inaccessible from this instance. Please check logs for details.
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked" | head -10
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+keystone/0*                  error     idle   0/lxd/1  10.10.10.206    5000/tcp        hook failed: "identity-service-relation-changed"
+mysql-innodb-cluster/0*      blocked   idle   0/lxd/2  10.10.10.202                    Cluster is inaccessible from this instance. Please check logs for details.
+ubuntu@vm1-orchestrator:~$ juju resolved keystone/0
+ubuntu@vm1-orchestrator:~$ juju exec --unit mysql-innodb-cluster/0 "hooks/cluster-relation-changed"
+active
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "error|blocked|active" | head -20
+ceph-mon                16.2.15  active       3  ceph-mon                pacific/stable  217  no       Unit is ready and clustered
+ceph-osd                16.2.15  active       3  ceph-osd                pacific/stable  615  no       Unit is ready (1 OSD)
+cinder                  18.2.1   active       1  cinder                  ussuri/stable   670  no       Unit is ready
+cinder-ceph             18.2.1   active       1  cinder-ceph             ussuri/stable   518  no       Unit is ready
+cinder-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+dashboard-mysql-router  8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+glance                  22.1.1   active       1  glance                  ussuri/stable   589  no       Unit is ready
+glance-mysql-router     8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+keystone                17.0.1   active       1  keystone                ussuri/stable   691  no       Application Ready
+keystone-mysql-router   8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+mysql-innodb-cluster    8.0.42   blocked      3  mysql-innodb-cluster    8.0/stable      159  no       Cluster is inaccessible from this instance. Please check logs for details.
+neutron-api             18.6.0   active       1  neutron-api             ussuri/stable   588  no       Unit is ready
+neutron-api-plugin-ovn  18.6.0   active       1  neutron-api-plugin-ovn  ussuri/stable    98  no       Unit is ready
+neutron-mysql-router    8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+nova-cloud-controller   23.2.2   active       1  nova-cloud-controller   ussuri/stable   748  no       Unit is ready
+nova-compute            23.2.2   active       3  nova-compute            ussuri/stable   779  no       Unit is ready
+nova-mysql-router       8.0.42   active       1  mysql-router            8.0/stable      257  no       Unit is ready
+ntp                     3.5      active       3  ntp                     latest/stable    52  no       chrony: Ready
+openstack-dashboard     19.4.0   active       1  openstack-dashboard     ussuri/stable   723  no       Unit is ready
+ovn-central             22.03.3  active       3  ovn-central             22.03/stable    245  no       Unit is ready (leader: ovnnb_db, ovnsb_db northd: active)
+ubuntu@vm1-orchestrator:~$ client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$

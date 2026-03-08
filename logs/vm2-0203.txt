@@ -1,0 +1,647 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -L 5240:192.168.66.27:5240 ubuntu@130.195.57.249
+bind [127.0.0.1]:5240: Address already in use
+channel_setup_fwd_listener_tcpip: cannot listen to port: 5240
+Could not request local forwarding.
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Mon Mar  2 08:39:31 UTC 2026
+
+  System load:             0.1
+  Usage of /:              17.3% of 96.73GB
+  Memory usage:            33%
+  Swap usage:              0%
+  Processes:               271
+  Users logged in:         1
+  IPv4 address for ens3:   192.168.66.27
+  IPv4 address for ens3:   10.10.10.1
+  IPv4 address for lxdbr0: 10.115.30.1
+  IPv6 address for lxdbr0: fd42:3738:6497:8f07::1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+54 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+94 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Mon Mar  2 08:27:05 2026 from 100.69.250.0
+ubuntu@vm1-orchestrator:~$ exit
+logout
+Connection to 130.195.57.249 closed.
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Mon Mar  2 08:39:41 UTC 2026
+
+  System load:  0.1               Users logged in:         0
+  Usage of /:   2.8% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 2%                IPv4 address for ens3:   192.168.66.243
+  Swap usage:   0%                IPv4 address for virbr0: 192.168.122.1
+  Processes:    272
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+93 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Sun Mar  1 17:46:20 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ top -d 5
+top - 08:40:39 up 5 days,  8:56,  1 user,  load average: 0.04, 0.16, 0.08
+Tasks: 252 total,   1 running, 251 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.1 us,  0.1 sy,  0.0 ni, 99.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  64306.4 total,  60534.1 free,    721.9 used,   3050.3 buff/cache
+MiB Swap:      0.0 total,      0.0 free,      0.0 used.  62865.1 avail Mem
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 513138 libvirt+  20   0 4859728  52972  23404 S   0.8   0.1   0:36.63 qemu-system-x86
+ 513184 libvirt+  20   0 4733420  45012  21932 S   0.6   0.1   0:36.15 qemu-system-x86
+ 461272 libvirt+  20   0 4728764  45388  22104 S   0.4   0.1   5:12.16 qemu-system-x86
+ 513192 libvirt+  20   0 4728768  45164  21848 S   0.4   0.1   0:36.12 qemu-system-x86
+ 461286 root      20   0       0      0      0 S   0.2   0.0   0:36.32 kvm-pit/461272
+ 513826 ubuntu    20   0   11144   4048   3272 R   0.2   0.0   0:00.10 top
+      1 root      20   0  171612  13300   8540 S   0.0   0.0   1:43.77 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.73 kthreadd
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_par_gp
+      6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-events_highpri
+      8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 mm_percpu_wq
+      9 root      20   0       0      0      0 S   0.0   0.0   0:00.27 ksoftirqd/0
+     10 root      20   0       0      0      0 I   0.0   0.0   0:13.33 rcu_sched
+     11 root      rt   0       0      0      0 S   0.0   0.0   0:03.82 migration/0
+     12 root     -51   0       0      0      0 S   0.0   0.0   0:00.00 idle_inject/0
+     14 root      20   0       0      0      0 S   0.0   0.0   0:00.00 cpuhp/0
+     15 root      20   0       0      0      0 S   0.0   0.0   0:00.00 cpuhp/1
+     16 root     -51   0       0      0      0 S   0.0   0.0   0:00.00 idle_inject/1
+     17 root      rt   0       0      0      0 S   0.0   0.0   0:03.79 migration/1
+     18 root      20   0       0      0      0 S   0.0   0.0   0:00.25 ksoftirqd/1
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name              State
+---------------------------------
+ 30   juju-controller   running
+ 32   os-compute01      running
+ 33   os-compute02      running
+ 34   os-compute03      running
+
+ubuntu@vm2-services-hypervisor:~$ top -d 5
+top - 08:56:49 up 5 days,  9:12,  1 user,  load average: 0.00, 0.00, 0.00
+Tasks: 243 total,   1 running, 242 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.0 us,  0.1 sy,  0.0 ni, 99.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  64306.4 total,  60533.6 free,    722.1 used,   3050.8 buff/cache
+MiB Swap:      0.0 total,      0.0 free,      0.0 used.  62865.0 avail Mem
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 513138 libvirt+  20   0 4859728  52928  23404 S   1.0   0.1   0:46.41 qemu-system-x86
+ 513184 libvirt+  20   0 4733420  45012  21932 S   0.6   0.1   0:41.19 qemu-system-x86
+ 461272 libvirt+  20   0 4728764  45388  22104 S   0.4   0.1   5:16.99 qemu-system-x86
+ 513192 libvirt+  20   0 4728768  45164  21848 S   0.4   0.1   0:41.00 qemu-system-x86
+ 511396 root      20   0       0      0      0 I   0.2   0.0   0:00.58 kworker/11:0-events
+ 513211 root      20   0       0      0      0 S   0.2   0.0   0:00.81 kvm-pit/513192
+      1 root      20   0  171612  13300   8540 S   0.0   0.0   1:43.83 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.73 kthreadd
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_par_gp
+      6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-events_highpri
+      8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 mm_percpu_wq
+      9 root      20   0       0      0      0 S   0.0   0.0   0:00.27 ksoftirqd/0
+     10 root      20   0       0      0      0 I   0.0   0.0   0:13.37 rcu_sched
+     11 root      rt   0       0      0      0 S   0.0   0.0   0:03.83 migration/0
+     12 root     -51   0       0      0      0 S   0.0   0.0   0:00.00 idle_inject/0
+     14 root      20   0       0      0      0 S   0.0   0.0   0:00.00 cpuhp/0
+     15 root      20   0       0      0      0 S   0.0   0.0   0:00.00 cpuhp/1
+     16 root     -51   0       0      0      0 S   0.0   0.0   0:00.00 idle_inject/1
+     17 root      rt   0       0      0      0 S   0.0   0.0   0:03.80 migration/1
+     18 root      20   0       0      0      0 S   0.0   0.0   0:00.25 ksoftirqd/1
+ubuntu@vm2-services-hypervisor:~$ du -sh /home/VMs/*/
+8.0K    /home/VMs/compute01/
+12K     /home/VMs/compute02/
+12K     /home/VMs/compute03/
+8.0K    /home/VMs/juju-controller/
+ubuntu@vm2-services-hypervisor:~$ df -h /home/
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G  2.7G   95G   3% /
+ubuntu@vm2-services-hypervisor:~$ virsh list --all
+ Id   Name              State
+---------------------------------
+ 30   juju-controller   running
+ 32   os-compute01      running
+ 33   os-compute02      running
+ 34   os-compute03      running
+
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do
+>   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"
+> done
+os-compute01: CPU time:       47.3s
+os-compute02: CPU time:       41.6s
+os-compute03: CPU time:       41.4s
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute01
+ Target   Source
+------------------------------------------------------
+ vda      /var/lib/libvirt/images/os-compute01.qcow2
+
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute02
+ Target   Source
+-----------------------------------------------
+ vda      /home/VMs/compute02/compute02d1.img
+
+ubuntu@vm2-services-hypervisor:~$ brctl show
+bridge name     bridge id               STP enabled     interfaces
+br0             8000.fa163eeec8cd       no              ens4
+                                                        vnet0
+                                                        vnet1
+                                                        vnet2
+                                                        vnet3
+                                                        vnet4
+                                                        vnet5
+                                                        vnet6
+virbr0          8000.525400fea150       yes             virbr0-nic
+ubuntu@vm2-services-hypervisor:~$ ip a show br0
+7: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether fa:16:3e:ee:c8:cd brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.104/24 metric 100 brd 10.10.10.255 scope global dynamic br0
+       valid_lft 35701sec preferred_lft 35701sec
+    inet6 fe80::f816:3eff:feee:c8cd/64 scope link
+       valid_lft forever preferred_lft forever
+ubuntu@vm2-services-hypervisor:~$ sudo tcpdump -i br0 -n port 67 or port 68 -c 10
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on br0, link-type EN10MB (Ethernet), capture size 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ubuntu@vm2-services-hypervisor:~$ virsh dumpxml os-compute01 | grep -A5 "interface"
+    <interface type='bridge'>
+      <mac address='52:54:00:31:a1:67'/>
+      <source bridge='br0'/>
+      <target dev='vnet2'/>
+      <model type='virtio'/>
+      <alias name='net0'/>
+--
+    </interface>
+    <serial type='pty'>
+      <source path='/dev/pts/0'/>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+ubuntu@vm2-services-hypervisor:~$ virsh dumpxml os-compute01 | grep -A5 "boot"
+    <boot dev='network'/>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <vmport state='off'/>
+--
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+ubuntu@vm2-services-hypervisor:~$ virsh net-list --all
+ Name          State    Autostart   Persistent
+------------------------------------------------
+ default       active   yes         yes
+ host-bridge   active   yes         yes
+
+ubuntu@vm2-services-hypervisor:~$ virsh net-info host-bridge
+Name:           host-bridge
+UUID:           384163c6-39b3-4c82-b30a-11caeba7d459
+Active:         yes
+Persistent:     yes
+Autostart:      yes
+Bridge:         br0
+
+ubuntu@vm2-services-hypervisor:~$ virsh console os-compute01
+Connected to domain os-compute01
+Escape character is ^]
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img info /var/lib/libvirt/images/os-compute01.qcow2
+qemu-img: Could not open '/var/lib/libvirt/images/os-compute01.qcow2': Failed to get shared "write" lock
+Is another process using the image [/var/lib/libvirt/images/os-compute01.qcow2]?
+ubuntu@vm2-services-hypervisor:~$ sudo ls -lh /var/lib/libvirt/images/os-compute01.qcow2
+-rw------- 1 libvirt-qemu kvm 21G Feb 25 00:01 /var/lib/libvirt/images/os-compute01.qcow2
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute01
+Domain os-compute01 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /var/lib/libvirt/images/os-compute01.qcow2 21G
+Formatting '/var/lib/libvirt/images/os-compute01.qcow2', fmt=qcow2 size=22548578304 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ virsh start os-compute01
+Domain os-compute01 started
+
+ubuntu@vm2-services-hypervisor:~$ sleep 5
+ubuntu@vm2-services-hypervisor:~$ virsh console os-compute01
+Connected to domain os-compute01
+Escape character is ^]
+
+ubuntu@vm2-services-hypervisor:~$ sudo snap logs maas -f 2>&1 | grep -E "52:54:00"
+ubuntu@vm2-services-hypervisor:~$ virsh console os-compute01
+Connected to domain os-compute01
+Escape character is ^]
+
+ubuntu@vm2-services-hypervisor:~$ ^C
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute02
+compute02Domain os-compute02 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+Formatting '/home/VMs/compute02/compute02d1.img', fmt=qcow2 size=69793218560 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ virsh start os-compute02
+Domain os-compute02 started
+
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute03
+ Target   Source
+-----------------------------------------------
+ vda      /home/VMs/compute03/compute03d1.img
+
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute02
+Domain os-compute02 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+Formatting '/home/VMs/compute02/compute02d1.img', fmt=qcow2 size=69793218560 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ virsh start os-compute02
+Domain os-compute02 started
+
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute03
+ Target   Source
+-----------------------------------------------
+ vda      /home/VMs/compute03/compute03d1.img
+
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do
+>   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"
+> done
+os-compute01: CPU time:       37.3s
+os-compute02: CPU time:       15.4s
+os-compute03: CPU time:       44.3s
+ubuntu@vm2-services-hypervisor:~$ sleep 30
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do
+>   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"
+> done
+os-compute01: CPU time:       37.6s
+os-compute02: CPU time:       35.0s
+os-compute03: CPU time:       44.5s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       38.2s
+os-compute02: CPU time:       35.3s
+os-compute03: CPU time:       44.8s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       38.2s
+os-compute02: CPU time:       35.3s
+os-compute03: CPU time:       44.8s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       38.3s
+os-compute02: CPU time:       35.4s
+os-compute03: CPU time:       44.9s
+ubuntu@vm2-services-hypervisor:~$ sleep 30
+^[[A^[[A^[[A^[[B^[[B
+ubuntu@vm2-services-hypervisor:~$ sleep 30
+^C
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute01
+ Target   Source
+------------------------------------------------------
+ vda      /var/lib/libvirt/images/os-compute01.qcow2
+
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute02
+ Target   Source
+-----------------------------------------------
+ vda      /home/VMs/compute02/compute02d1.img
+
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute03
+ Target   Source
+-----------------------------------------------
+ vda      /home/VMs/compute03/compute03d1.img
+
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute01
+ destroy os-compute02
+virsh destroy os-compute03
+Domain os-compute01 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute02
+Domain os-compute02 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute03
+Domain os-compute03 destroyed
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /var/lib/libvirt/images/os-compute01.qcow2 21G
+Formatting '/var/lib/libvirt/images/os-compute01.qcow2', fmt=qcow2 size=22548578304 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+Formatting '/home/VMs/compute02/compute02d1.img', fmt=qcow2 size=69793218560 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ watch -n 30 'for vm in os-compute01 os-compute02 os-compute03; do echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep "CPU time")"; done'
+ubuntu@vm2-services-hypervisor:~$ sudo maas admin machines read | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> for m in data:
+>     print(m['hostname'], '|', m.get('distro_series',''))
+> "
+sudo: maas: command not found
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "/usr/lib/python3.8/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+  File "/usr/lib/python3.8/json/__init__.py", line 357, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.8/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.8/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+ubuntu@vm2-services-hypervisor:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G  2.7G   95G   3% /
+ubuntu@vm2-services-hypervisor:~$ du -sh /var/lib/libvirt/images/*
+du: cannot access '/var/lib/libvirt/images/*': No such file or directory
+ubuntu@vm2-services-hypervisor:~$ du -sh /home/VMs/*/*
+4.0K    /home/VMs/compute01/compute01d1.img
+200K    /home/VMs/compute02/compute02d1.img
+8.0K    /home/VMs/compute03/compute03d1.img
+4.0K    /home/VMs/juju-controller/juju-controller.img
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute01
+ Target   Source
+------------------------------------------------------
+ vda      /var/lib/libvirt/images/os-compute01.qcow2
+
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute02
+ Target   Source
+-----------------------------------------------
+ vda      /home/VMs/compute02/compute02d1.img
+
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute03
+ Target   Source
+-----------------------------------------------
+ vda      /home/VMs/compute03/compute03d1.img
+
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do
+>   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"
+> done
+os-compute01: CPU time:       59.9s
+os-compute02: CPU time:       47.4s
+os-compute03: CPU time:       47.8s
+ubuntu@vm2-services-hypervisor:~$ du -sh /var/lib/libvirt/images/os-compute01.qcow2
+200K    /var/lib/libvirt/images/os-compute01.qcow2
+ubuntu@vm2-services-hypervisor:~$ du -sh /home/VMs/compute02/compute02d1.img
+200K    /home/VMs/compute02/compute02d1.img
+ubuntu@vm2-services-hypervisor:~$ du -sh /home/VMs/compute03/compute03d1.img
+8.0K    /home/VMs/compute03/compute03d1.img
+ubuntu@vm2-services-hypervisor:~$ curl -s http://10.10.10.1:5248/ipxe.cfg | head -5
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ # Verifică consola
+ubuntu@vm2-services-hypervisor:~$ virsh console os-compute01
+Connected to domain os-compute01
+Escape character is ^]
+
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 10.10.10.1
+PING 10.10.10.1 (10.10.10.1) 56(84) bytes of data.
+From 10.10.10.104 icmp_seq=1 Destination Host Unreachable
+From 10.10.10.104 icmp_seq=2 Destination Host Unreachable
+
+--- 10.10.10.1 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 1023ms
+pipe 2
+ubuntu@vm2-services-hypervisor:~$ curl -v http://10.10.10.1:5248/ipxe.cfg 2>&1 | head -15
+*   Trying 10.10.10.1:5248...
+* TCP_NODELAY set
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0* connect to 10.10.10.1 port 5248 failed: No route to host
+* Failed to connect to 10.10.10.1 port 5248: No route to host
+  0     0    0     0    0     0      0      0 --:--:--  0:00:03 --:--:--     0
+* Closing connection 0
+curl: (7) Failed to connect to 10.10.10.1 port 5248: No route to host
+ubuntu@vm2-services-hypervisor:~$ curl -s http://192.168.66.27:5248/ipxe.cfg | head -5
+#!ipxe
+# MAAS iPXE pre-loader configuration file
+
+# Load based on MAC address first.
+chain http://${next-server}:5248/ipxe.cfg-${net0/mac} ||
+ubuntu@vm2-services-hypervisor:~$ ip a show ens3 | grep 10.10.10
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 10.10.10.104
+PING 10.10.10.104 (10.10.10.104) 56(84) bytes of data.
+64 bytes from 10.10.10.104: icmp_seq=1 ttl=64 time=0.090 ms
+64 bytes from 10.10.10.104: icmp_seq=2 ttl=64 time=0.072 ms
+
+--- 10.10.10.104 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1012ms
+rtt min/avg/max/mdev = 0.072/0.081/0.090/0.009 ms
+ubuntu@vm2-services-hypervisor:~$ sudo ip addr add 10.10.10.1/24 dev ens3 2>/dev/null; echo "done"
+done
+ubuntu@vm2-services-hypervisor:~$ ip a show ens3 | grep 10.10.10
+ing -c 2 10.10.10.104    inet 10.10.10.1/24 scope global ens3
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 10.10.10.104
+PING 10.10.10.104 (10.10.10.104) 56(84) bytes of data.
+64 bytes from 10.10.10.104: icmp_seq=1 ttl=64 time=0.136 ms
+64 bytes from 10.10.10.104: icmp_seq=2 ttl=64 time=0.106 ms
+
+--- 10.10.10.104 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1005ms
+rtt min/avg/max/mdev = 0.106/0.121/0.136/0.015 ms
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -L -n | grep -i drop
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -L FORWARD -n
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination
+LIBVIRT_FWX  all  --  0.0.0.0/0            0.0.0.0/0
+LIBVIRT_FWI  all  --  0.0.0.0/0            0.0.0.0/0
+LIBVIRT_FWO  all  --  0.0.0.0/0            0.0.0.0/0
+ubuntu@vm2-services-hypervisor:~$ sudo ip addr del 10.10.10.1/24 dev ens3
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 10.10.10.1
+PING 10.10.10.1 (10.10.10.1) 56(84) bytes of data.
+From 10.10.10.104 icmp_seq=1 Destination Host Unreachable
+From 10.10.10.104 icmp_seq=2 Destination Host Unreachable
+
+--- 10.10.10.1 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 1031ms
+pipe 2
+ubuntu@vm2-services-hypervisor:~$ curl -s http://10.10.10.1:5248/ipxe.cfg | head -3
+ubuntu@vm2-services-hypervisor:~$ ip a show br0 | grep 10.10.10
+    inet 10.10.10.104/24 metric 100 brd 10.10.10.255 scope global dynamic br0
+ubuntu@vm2-services-hypervisor:~$ ip route | grep 10.10.10
+default via 10.10.10.1 dev br0 proto dhcp src 10.10.10.104 metric 100
+10.10.10.0/24 dev br0 proto kernel scope link src 10.10.10.104 metric 100
+169.254.169.254 via 10.10.10.2 dev br0 proto dhcp src 10.10.10.104 metric 100
+ubuntu@vm2-services-hypervisor:~$ arp -n | grep 10.10.10
+
+Command 'arp' not found, but can be installed with:
+
+sudo apt install net-tools
+
+ubuntu@vm2-services-hypervisor:~$ bashsudo arping -I br0 -c 2 10.10.10.1
+rep 10.10.10
+bashsudo: command not found
+ubuntu@vm2-services-hypervisor:~$ ip neigh show dev br0 | grep 10.10.10
+10.10.10.106 lladdr 52:54:00:31:a1:67 STALE
+10.10.10.108 lladdr 52:54:00:63:be:bc STALE
+10.10.10.105 lladdr 52:54:00:63:dd:dc STALE
+10.10.10.107 lladdr 52:54:00:63:ae:ac STALE
+10.10.10.1  FAILED
+ubuntu@vm2-services-hypervisor:~$ sudo ip route add 10.10.10.1/32 via 192.168.66.27 dev ens3
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 10.10.10.1
+PING 10.10.10.1 (10.10.10.1) 56(84) bytes of data.
+64 bytes from 10.10.10.1: icmp_seq=1 ttl=64 time=6.97 ms
+64 bytes from 10.10.10.1: icmp_seq=2 ttl=64 time=3.51 ms
+
+--- 10.10.10.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 3.508/5.238/6.968/1.730 ms
+ubuntu@vm2-services-hypervisor:~$ curl -s http://10.10.10.1:5248/ipxe.cfg | head -3
+#!ipxe
+# MAAS iPXE pre-loader configuration file
+
+ubuntu@vm2-services-hypervisor:~$ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+ubuntu@vm2-services-hypervisor:~$ sudo sysctl -w net.ipv4.conf.br0.proxy_arp=1
+net.ipv4.conf.br0.proxy_arp = 1
+ubuntu@vm2-services-hypervisor:~$ sudo sysctl -w net.ipv4.conf.ens3.proxy_arp=1
+net.ipv4.conf.ens3.proxy_arp = 1
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 -I br0 10.10.10.1
+PING 10.10.10.1 (10.10.10.1) from 10.10.10.104 br0: 56(84) bytes of data.
+From 10.10.10.104 icmp_seq=1 Destination Host Unreachable
+From 10.10.10.104 icmp_seq=2 Destination Host Unreachable
+
+--- 10.10.10.1 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 1029ms
+pipe 2
+ubuntu@vm2-services-hypervisor:~$ sudo ip route del 10.10.10.1/32 via 192.168.66.27 dev ens3 2>/dev/null
+ubuntu@vm2-services-hypervisor:~$ sudo ip route add 10.10.10.1/32 via 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -d 10.10.10.1 -o ens3 -j MASQUERADE
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 -I br0 10.10.10.1
+PING 10.10.10.1 (10.10.10.1) from 10.10.10.104 br0: 56(84) bytes of data.
+From 10.10.10.104 icmp_seq=1 Destination Host Unreachable
+From 10.10.10.104 icmp_seq=2 Destination Host Unreachable
+
+--- 10.10.10.1 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 1006ms
+pipe 2
+ubuntu@vm2-services-hypervisor:~$ sudo ip route del 10.10.10.1/32 2>/dev/null
+ubuntu@vm2-services-hypervisor:~$ sudo ip addr add 10.10.10.1/32 dev br0
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -A PREROUTING -i br0 -d 10.10.10.1 -j DNAT --to-destination 192.168.66.27
+NG -d 192.168.66.27 -o ens3 -j MASQUERADE
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -A POSTROUTING -d 192.168.66.27 -o ens3 -j MASQUERADE
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 -I br0 10.10.10.1
+PING 10.10.10.1 (10.10.10.1) from 10.10.10.1 br0: 56(84) bytes of data.
+64 bytes from 10.10.10.1: icmp_seq=1 ttl=64 time=0.247 ms
+cfg | head -364 bytes from 10.10.10.1: icmp_seq=2 ttl=64 time=0.153 ms
+
+--- 10.10.10.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1024ms
+rtt min/avg/max/mdev = 0.153/0.200/0.247/0.047 ms
+ubuntu@vm2-services-hypervisor:~$ curl -s http://10.10.10.1:5248/ipxe.cfg | head -3
+ubuntu@vm2-services-hypervisor:~$ curl -s http://192.168.66.27:5248/ipxe.cfg | head -3
+#!ipxe
+# MAAS iPXE pre-loader configuration file
+
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -L -n -v | grep 5248
+ptables -t nat -L PREROUTING -n -vubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -L PREROUTING -n -v
+Chain PREROUTING (policy ACCEPT 4 packets, 1060 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 DNAT       all  --  br0    *       0.0.0.0/0            10.10.10.1           to:192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ udo apt install -y socat
+
+Command 'udo' not found, but can be installed with:
+
+sudo apt install udo
+
+ubuntu@vm2-services-hypervisor:~$ sudo socat TCP-LISTEN:5248,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5248 &
+[1] 524348
+ubuntu@vm2-services-hypervisor:~$ sudo: socat: command not found
+
+[1]+  Exit 1                  sudo socat TCP-LISTEN:5248,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5248
+ubuntu@vm2-services-hypervisor:~$ sudo apt install -y socat
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following NEW packages will be installed:
+  socat
+0 upgraded, 1 newly installed, 0 to remove and 44 not upgraded.
+Need to get 323 kB of archives.
+After this operation, 1394 kB of additional disk space will be used.
+Get:1 http://nova.clouds.archive.ubuntu.com/ubuntu focal/main amd64 socat amd64 1.7.3.3-2 [323 kB]
+Fetched 323 kB in 1s (323 kB/s)
+Selecting previously unselected package socat.
+(Reading database ... 112119 files and directories currently installed.)
+Preparing to unpack .../socat_1.7.3.3-2_amd64.deb ...
+Unpacking socat (1.7.3.3-2) ...
+Setting up socat (1.7.3.3-2) ...
+Processing triggers for man-db (2.9.1-1) ...
+ubuntu@vm2-services-hypervisor:~$ sudo socat TCP-LISTEN:5248,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5248 &
+[1] 524832
+ubuntu@vm2-services-hypervisor:~$ curl -s http://10.10.10.1:5248/ipxe.cfg | head -3
+#!ipxe
+# MAAS iPXE pre-loader configuration file
+
+ubuntu@vm2-services-hypervisor:~$ sudo socat TCP-LISTEN:5240,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5240 &
+[2] 524837
+ubuntu@vm2-services-hypervisor:~$ sudo socat UDP-LISTEN:69,fork,bind=10.10.10.1,reuseaddr UDP:192.168.66.27:69 &
+[3] 524838
+ubuntu@vm2-services-hypervisor:~$ curl -s http://10.10.10.1:5248/ipxe.cfg | head -1
+#!ipxe
+ubuntu@vm2-services-hypervisor:~$ C:\Users\Alex\AppData\Local\Packages\MicrosoftWindows.Client.Core_cw5n1h2txyewy\TempState\ScreenClip\{1FE557C6-1C86-47E6-A50F-3C44B90021F7}.png
+C:UsersAlexAppDataLocalPackagesMicrosoftWindows.Client.Core_cw5n1h2txyewyTempStateScreenClip{1FE557C6-1C86-47E6-A50F-3C44B90021F7}.png: command not found
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do
+>   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"
+> done
+os-compute01: CPU time:       131.9s
+os-compute02: CPU time:       97.6s
+os-compute03: CPU time:       129.8s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       143.0s
+os-compute02: CPU time:       97.8s
+os-compute03: CPU time:       138.8s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       149.8s
+os-compute02: CPU time:       98.0s
+os-compute03: CPU time:       144.9s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       156.8s
+os-compute02: CPU time:       98.2s
+os-compute03: CPU time:       150.8s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       167.9s
+os-compute02: CPU time:       101.1s
+os-compute03: CPU time:       160.5s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       182.5s
+os-compute02: CPU time:       105.5s
+os-compute03: CPU time:       173.5s
+ubuntu@vm2-services-hypervisor:~$ for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+os-compute01: CPU time:       190.2s
+os-compute02: CPU time:       109.2s
+os-compute03: CPU time:       180.0s
+ubuntu@vm2-services-hypervisor:~$ client_loop: send disconnect: Broken pipe
+client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$

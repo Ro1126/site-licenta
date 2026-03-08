@@ -1,0 +1,57 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Mar  3 20:57:49 UTC 2026
+
+  System load:  4.58               Users logged in:         0
+  Usage of /:   93.3% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 23%                IPv4 address for br0:    10.10.10.1
+  Swap usage:   0%                 IPv4 address for ens3:   192.168.66.243
+  Processes:    299                IPv4 address for virbr0: 192.168.122.1
+
+  => / is using 93.3% of 96.73GB
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+93 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Mar  3 08:30:55 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /var/lib/libvirt/images/os-compute01-osd.qcow2 20G
+Formatting '/var/lib/libvirt/images/os-compute01-osd.qcow2', fmt=qcow2 size=21474836480 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02-osd.qcow2 20G
+Formatting '/home/VMs/compute02/compute02-osd.qcow2', fmt=qcow2 size=21474836480 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /home/VMs/compute03/compute03-osd.qcow2 20G
+Formatting '/home/VMs/compute03/compute03-osd.qcow2', fmt=qcow2 size=21474836480 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ virsh attach-disk os-compute01 /var/lib/libvirt/images/os-compute01-osd.qcow2 vdb --driver qemu --subdriver qcow2 --persistent
+ute03 /home/VMs/compute03/compute03-osd.qcow2 vdb --driver qemu --subdriver qcow2 --persistentDisk attached successfully
+
+ubuntu@vm2-services-hypervisor:~$ virsh attach-disk os-compute02 /home/VMs/compute02/compute02-osd.qcow2 vdb --driver qemu --subdriver qcow2 --persistent
+Disk attached successfully
+
+
+ubuntu@vm2-services-hypervisor:~$ virsh attach-disk os-compute03 /home/VMs/compute03/compute03-osd.qcow2 vdb --driver qemu --subdriver qcow2 --persistent
+Disk attached successfully
+
+ubuntu@vm2-services-hypervisor:~$ client_loop: send disconnect: Broken pipe
+client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$

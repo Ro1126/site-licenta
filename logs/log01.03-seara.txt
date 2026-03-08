@@ -1,0 +1,1327 @@
+alex@DESKTOP-8JOK6E1:~$ ssh ubuntu@130.195.57.249
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sun Mar  1 20:43:52 UTC 2026
+
+  System load:             0.63
+  Usage of /:              13.0% of 96.73GB
+  Memory usage:            21%
+  Swap usage:              0%
+  Processes:               252
+  Users logged in:         1
+  IPv4 address for ens3:   192.168.66.27
+  IPv4 address for ens3:   10.10.10.1
+  IPv4 address for lxdbr0: 10.115.30.1
+  IPv6 address for lxdbr0: fd42:3738:6497:8f07::1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+54 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+94 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Sun Mar  1 20:34:14 2026 from 100.69.250.0
+ubuntu@vm1-orchestrator:~$ sudo chmod 600 /var/snap/maas/common/root-id_rsa
+ubuntu@vm1-orchestrator:~$ sudo chmod 644 /var/snap/maas/common/root-id_rsa.pub
+ubuntu@vm1-orchestrator:~$ sudo chown root:root /var/snap/maas/common/root-id_rsa*
+ubuntu@vm1-orchestrator:~$ sudo ssh -i /var/snap/maas/common/root-id_rsa -o StrictHostKeyChecking=no ubuntu@10.10.10.104 "virsh -c qemu:///system list --all"
+ Id   Name              State
+----------------------------------
+ 30   juju-controller   running
+ -    os-compute01      shut off
+ -    os-compute02      shut off
+ -    os-compute03      shut off
+
+ubuntu@vm1-orchestrator:~$ sudo maas admin machine query-power-state dx36ea
+3n
+Success.
+Machine-readable output follows:
+{
+    "state": "off"
+}
+ubuntu@vm1-orchestrator:~$ sudo maas admin machine query-power-state sdmfkq
+Success.
+Machine-readable output follows:
+{
+    "state": "off"
+}
+
+ubuntu@vm1-orchestrator:~$ sudo maas admin machine query-power-state cxaf3n
+
+Success.
+Machine-readable output follows:
+{
+    "state": "off"
+}
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ juju controllers
+ERROR No controllers registered.
+
+Please either create a new controller using "juju bootstrap" or connect to
+another controller that you have been given access to using "juju register".
+
+ubuntu@vm1-orchestrator:~$ juju models
+ERROR No controllers registered.
+
+Please either create a new controller using "juju bootstrap" or connect to
+another controller that you have been given access to using "juju register".
+
+ubuntu@vm1-orchestrator:~$  sudo maas admin tags create name=compute
+
+Success.
+Machine-readable output follows:
+{
+    "name": "compute",
+    "definition": "",
+    "comment": "",
+    "kernel_opts": "",
+    "resource_uri": "/MAAS/api/2.0/tags/compute/"
+}
+ubuntu@vm1-orchestrator:~$ sudo maas admin tag update-nodes compute add=dx36ea add=sdmfkq add=cxaf3n
+
+Success.
+Machine-readable output follows:
+{
+    "added": 3,
+    "removed": 0
+}
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ sudo maas admin machines read | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> for m in data:
+>     print(m['hostname'], '|', m['status_name'], '|', m['tag_names'])
+> "
+os-compute01 | Ready | ['virtual', 'pod-console-logging', 'compute']
+os-compute02 | Ready | ['virtual', 'pod-console-logging', 'compute']
+os-compute03 | Ready | ['virtual', 'pod-console-logging', 'compute']
+ubuntu@vm1-orchestrator:~$ lxc list
++------+-------+------+------+------+-----------+
+| NAME | STATE | IPV4 | IPV6 | TYPE | SNAPSHOTS |
++------+-------+------+------+------+-----------+
+ubuntu@vm1-orchestrator:~$ juju bootstrap localhost my-controller
+Creating Juju controller "my-controller" on localhost/localhost
+Looking for packaged Juju agent version 3.6.14 for amd64
+Located Juju agent version 3.6.14-ubuntu-amd64 at https://streams.canonical.com/juju/tools/agent/3.6.14/juju-3.6.14-linux-amd64.tgz
+To configure your system to better support LXD containers, please see: https://documentation.ubuntu.com/lxd/en/latest/explanation/performance_tuning/
+Launching controller instance(s) on localhost/localhost...
+ - juju-1e7f52-0 (arch=amd64)
+Installing Juju agent on bootstrap instance
+Waiting for address
+Attempting to connect to [fd42:3738:6497:8f07:216:3eff:fe25:9b61]:22
+Attempting to connect to 10.115.30.214:22
+Connected to fd42:3738:6497:8f07:216:3eff:fe25:9b61
+Running machine configuration script...
+
+Bootstrap agent now started
+Contacting Juju controller at 10.115.30.214 to verify accessibility...
+
+Bootstrap complete, controller "my-controller" is now available
+Controller machines are in the "controller" model
+
+Now you can run
+        juju add-model <model-name>
+to create a new model to deploy workloads.
+ubuntu@vm1-orchestrator:~$
+ubuntu@vm1-orchestrator:~$ juju add-cloud my-maas --client << 'EOF'
+> clouds:
+>   my-maas:
+>     type: maas
+>     auth-types: [oauth1]
+>     endpoint: http://192.168.66.27:5240/MAAS
+> EOF
+ERROR use `update-cloud my-maas --client` to override known definition: local cloud "my-maas" already exists
+ubuntu@vm1-orchestrator:~$ MAAS_API_KEY=$(sudo maas apikey --username=admin)
+
+ubuntu@vm1-orchestrator:~$ juju add-credential my-maas --client << EOF
+> credentials:
+>   my-maas:
+>     admin:
+>       auth-type: oauth1
+>       maas-oauth: $MAAS_API_KEY
+> EOF
+Enter credential name: Invalid credential name: "credentials:"
+
+Enter credential name: Invalid credential name: "  my-maas:"
+
+Enter credential name: Invalid credential name: "    admin:"
+
+Enter credential name: Invalid credential name: "      auth-type: oauth1"
+
+Enter credential name: Invalid credential name: "      maas-oauth: EEyNv9EqCPEpYMv5nm:tA2MdVbewVCAxFjXrA:S8Eg44sr3tqrChdncFaqRQYhWEHK67QR"
+
+Enter credential name:
+ERROR EOF
+ubuntu@vm1-orchestrator:~$ juju add-cloud my-maas --controller my-controller
+Cloud "my-maas" added to controller "my-controller".
+Credential for cloud "my-maas" added to controller "my-controller".
+ubuntu@vm1-orchestrator:~$ juju add-credential my-maas --controller my-controller -f ~/.local/share/juju/credentials.yaml
+Using cloud "my-maas" from the controller to verify credentials.
+ERROR credential "admin" for cloud "my-maas" already exists locally, use 'juju update-credential my-maas admin -f /home/ubuntu/.local/share/juju/credentials.yaml' to update this local client copy
+Controller credential "admin" for user "admin" for cloud "my-maas" on controller "my-controller" added.
+For more information, see 'juju show-credential my-maas admin'.
+ubuntu@vm1-orchestrator:~$ juju clouds --controller my-controller
+
+Clouds available on the controller:
+Cloud      Regions  Default    Type
+localhost  1        localhost  lxd
+my-maas    1        default    maas
+ubuntu@vm1-orchestrator:~$ juju add-model openstack my-maas
+Added 'openstack' model on my-maas/default with credential 'admin' for user 'admin'
+ubuntu@vm1-orchestrator:~$ juju add-credential my-maas --controller my-controller
+Using cloud "my-maas" from the controller to verify credentials.
+Enter credential name: admin
+
+A credential "admin" already exists locally on this client.
+Replace local credential? (y/N): y
+
+Regions
+  default
+
+Select region [any region, credential is not region specific]:
+
+Using auth-type "oauth1".
+
+Enter maas-oauth:
+ubuntu@vm1-orchestrator:~$ juju deploy ./bundle.yaml
+WARNING series are being deprecated in favour of bases. For more information about the transition to bases see https://discourse.charmhub.io/t/transition-from-series-to-base-in-juju-4-0/14127
+Located charm "ceph-mon" in charm-hub, channel quincy/stable
+Located charm "ceph-osd" in charm-hub, channel quincy/stable
+Located charm "cinder" in charm-hub, channel 2023.2/stable
+Located charm "cinder-ceph" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "glance" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "keystone" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "mysql-innodb-cluster" in charm-hub, channel 8.0/stable
+Located charm "neutron-api" in charm-hub, channel 2023.2/stable
+Located charm "neutron-api-plugin-ovn" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "nova-cloud-controller" in charm-hub, channel 2023.2/stable
+Located charm "nova-compute" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "ntp" in charm-hub, channel latest/stable
+Located charm "openstack-dashboard" in charm-hub, channel 2023.2/stable
+Located charm "ovn-central" in charm-hub, channel 23.09/stable
+Located charm "ovn-chassis" in charm-hub, channel 23.09/stable
+Located charm "placement" in charm-hub, channel 2023.2/stable
+Located charm "mysql-router" in charm-hub, channel 8.0/stable
+Located charm "rabbitmq-server" in charm-hub, channel 3.9/stable
+Located charm "vault" in charm-hub, channel 1.8/stable
+Executing changes:
+- upload charm ceph-mon from charm-hub for base ubuntu@22.04/stable from channel quincy/stable with architecture=amd64
+- deploy application ceph-mon from charm-hub on ubuntu@22.04/stable with quincy/stable
+  added resource alert-rules
+- upload charm ceph-osd from charm-hub for base ubuntu@22.04/stable from channel quincy/stable with architecture=amd64
+- deploy application ceph-osd from charm-hub on ubuntu@22.04/stable with quincy/stable
+- upload charm cinder from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application cinder from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+  added resource policyd-override
+- upload charm cinder-ceph from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application cinder-ceph from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+- upload charm mysql-router from charm-hub for base ubuntu@22.04/stable from channel 8.0/stable with architecture=amd64
+- deploy application cinder-mysql-router from charm-hub on ubuntu@22.04/stable with 8.0/stable using mysql-router
+- deploy application dashboard-mysql-router from charm-hub on ubuntu@22.04/stable with 8.0/stable using mysql-router
+- upload charm glance from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application glance from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+  added resource policyd-override
+- deploy application glance-mysql-router from charm-hub on ubuntu@22.04/stable with 8.0/stable using mysql-router
+- upload charm keystone from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application keystone from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+  added resource policyd-override
+- deploy application keystone-mysql-router from charm-hub on ubuntu@22.04/stable with 8.0/stable using mysql-router
+- upload charm mysql-innodb-cluster from charm-hub for base ubuntu@22.04/stable from channel 8.0/stable with architecture=amd64
+- deploy application mysql-innodb-cluster from charm-hub on ubuntu@22.04/stable with 8.0/stable
+  added resource mysql-shell
+- upload charm neutron-api from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application neutron-api from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+  added resource policyd-override
+- upload charm neutron-api-plugin-ovn from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application neutron-api-plugin-ovn from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+- deploy application neutron-mysql-router from charm-hub on ubuntu@22.04/stable with 8.0/stable using mysql-router
+- upload charm nova-cloud-controller from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application nova-cloud-controller from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+  added resource policyd-override
+- upload charm nova-compute from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application nova-compute from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+- deploy application nova-mysql-router from charm-hub on ubuntu@22.04/stable with 8.0/stable using mysql-router
+- upload charm ntp from charm-hub for base ubuntu@22.04/stable from channel latest/stable with architecture=amd64
+- deploy application ntp from charm-hub on ubuntu@22.04/stable with latest/stable
+- upload charm openstack-dashboard from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application openstack-dashboard from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+  added resource policyd-override
+  added resource theme
+- upload charm ovn-central from charm-hub for base ubuntu@22.04/stable from channel 23.09/stable with architecture=amd64
+- deploy application ovn-central from charm-hub on ubuntu@22.04/stable with 23.09/stable
+- upload charm ovn-chassis from charm-hub for base ubuntu@22.04/stable from channel 23.09/stable with architecture=amd64
+- deploy application ovn-chassis from charm-hub on ubuntu@22.04/stable with 23.09/stable
+- upload charm placement from charm-hub for base ubuntu@22.04/stable from channel 2023.2/stable with architecture=amd64
+- deploy application placement from charm-hub on ubuntu@22.04/stable with 2023.2/stable
+- deploy application placement-mysql-router from charm-hub on ubuntu@22.04/stable with 8.0/stable using mysql-router
+- upload charm rabbitmq-server from charm-hub for base ubuntu@22.04/stable from channel 3.9/stable with architecture=amd64
+- deploy application rabbitmq-server from charm-hub on ubuntu@22.04/stable with 3.9/stable
+- upload charm vault from charm-hub for base ubuntu@22.04/stable from channel 1.8/stable with architecture=amd64
+- deploy application vault from charm-hub on ubuntu@22.04/stable with 1.8/stable
+  added resource core
+  added resource vault
+- add new machine 0
+- add new machine 1
+- add new machine 2
+- add relation nova-compute:amqp - rabbitmq-server:amqp
+- add relation nova-cloud-controller:identity-service - keystone:identity-service
+- add relation glance:identity-service - keystone:identity-service
+- add relation neutron-api:identity-service - keystone:identity-service
+- add relation neutron-api:amqp - rabbitmq-server:amqp
+- add relation glance:amqp - rabbitmq-server:amqp
+- add relation nova-cloud-controller:image-service - glance:image-service
+- add relation nova-compute:image-service - glance:image-service
+- add relation nova-cloud-controller:cloud-compute - nova-compute:cloud-compute
+- add relation nova-cloud-controller:amqp - rabbitmq-server:amqp
+- add relation openstack-dashboard:identity-service - keystone:identity-service
+- add relation nova-cloud-controller:neutron-api - neutron-api:neutron-api
+- add relation cinder:image-service - glance:image-service
+- add relation cinder:amqp - rabbitmq-server:amqp
+- add relation cinder:identity-service - keystone:identity-service
+- add relation cinder:cinder-volume-service - nova-cloud-controller:cinder-volume-service
+- add relation cinder-ceph:storage-backend - cinder:storage-backend
+- add relation ceph-mon:client - nova-compute:ceph
+- add relation nova-compute:ceph-access - cinder-ceph:ceph-access
+- add relation ceph-mon:client - cinder-ceph:ceph
+- add relation ceph-mon:client - glance:ceph
+- add relation ceph-osd:mon - ceph-mon:osd
+- add relation ntp:juju-info - nova-compute:juju-info
+- add relation placement:identity-service - keystone:identity-service
+- add relation placement:placement - nova-cloud-controller:placement
+- add relation keystone:shared-db - keystone-mysql-router:shared-db
+- add relation cinder:shared-db - cinder-mysql-router:shared-db
+- add relation glance:shared-db - glance-mysql-router:shared-db
+- add relation nova-cloud-controller:shared-db - nova-mysql-router:shared-db
+- add relation neutron-api:shared-db - neutron-mysql-router:shared-db
+- add relation openstack-dashboard:shared-db - dashboard-mysql-router:shared-db
+- add relation placement:shared-db - placement-mysql-router:shared-db
+- add relation keystone-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation cinder-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation nova-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation glance-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation neutron-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation dashboard-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation placement-mysql-router:db-router - mysql-innodb-cluster:db-router
+- add relation neutron-api-plugin-ovn:neutron-plugin - neutron-api:neutron-plugin-api-subordinate
+- add relation ovn-central:ovsdb-cms - neutron-api-plugin-ovn:ovsdb-cms
+- add relation ovn-chassis:nova-compute - nova-compute:neutron-plugin
+- add relation ovn-chassis:ovsdb - ovn-central:ovsdb
+- add relation vault:certificates - neutron-api-plugin-ovn:certificates
+- add relation vault:certificates - cinder:certificates
+- add relation vault:certificates - glance:certificates
+- add relation vault:certificates - keystone:certificates
+- add relation vault:certificates - nova-cloud-controller:certificates
+- add relation vault:certificates - openstack-dashboard:certificates
+- add relation vault:certificates - placement:certificates
+- add relation ovn-central:certificates - vault:certificates
+- add relation ovn-chassis:certificates - vault:certificates
+- add unit ceph-osd/0 to new machine 0
+- add unit ceph-osd/1 to new machine 1
+- add unit ceph-osd/2 to new machine 2
+- add unit nova-compute/0 to new machine 0
+- add unit nova-compute/1 to new machine 1
+- add unit nova-compute/2 to new machine 2
+- add lxd container 0/lxd/0 on new machine 0
+- add lxd container 1/lxd/0 on new machine 1
+- add lxd container 2/lxd/0 on new machine 2
+- add lxd container 1/lxd/1 on new machine 1
+- add lxd container 2/lxd/1 on new machine 2
+- add lxd container 0/lxd/1 on new machine 0
+- add lxd container 0/lxd/2 on new machine 0
+- add lxd container 1/lxd/2 on new machine 1
+- add lxd container 2/lxd/2 on new machine 2
+- add lxd container 1/lxd/3 on new machine 1
+- add lxd container 2/lxd/3 on new machine 2
+- add lxd container 0/lxd/3 on new machine 0
+- add lxd container 0/lxd/4 on new machine 0
+- add lxd container 1/lxd/4 on new machine 1
+- add lxd container 2/lxd/4 on new machine 2
+- add lxd container 2/lxd/5 on new machine 2
+- add lxd container 2/lxd/6 on new machine 2
+- add lxd container 1/lxd/5 on new machine 1
+- add unit ceph-mon/0 to 0/lxd/0
+- add unit ceph-mon/1 to 1/lxd/0
+- add unit ceph-mon/2 to 2/lxd/0
+- add unit cinder/0 to 1/lxd/1
+- add unit glance/0 to 2/lxd/1
+- add unit keystone/0 to 0/lxd/1
+- add unit mysql-innodb-cluster/0 to 0/lxd/2
+- add unit mysql-innodb-cluster/1 to 1/lxd/2
+- add unit mysql-innodb-cluster/2 to 2/lxd/2
+- add unit neutron-api/0 to 1/lxd/3
+- add unit nova-cloud-controller/0 to 2/lxd/3
+- add unit openstack-dashboard/0 to 0/lxd/3
+- add unit ovn-central/0 to 0/lxd/4
+- add unit ovn-central/1 to 1/lxd/4
+- add unit ovn-central/2 to 2/lxd/4
+- add unit placement/0 to 2/lxd/5
+- add unit rabbitmq-server/0 to 2/lxd/6
+- add unit vault/0 to 1/lxd/5
+Deploy of bundle completed.
+ubuntu@vm1-orchestrator:~$ juju status --watch 10s
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | head -40
+Model      Controller     Cloud/Region     Version  SLA          Timestamp
+openstack  my-controller  my-maas/default  3.6.14   unsupported  21:05:32Z
+
+App                     Version  Status   Scale  Charm                   Channel        Rev  Exposed  Message
+ceph-mon                         waiting    0/3  ceph-mon                quincy/stable  396  no       waiting for machine
+ceph-osd                         waiting    0/3  ceph-osd                quincy/stable  761  no       waiting for machine
+cinder                           waiting    0/1  cinder                  2023.2/stable  691  no       waiting for machine
+cinder-ceph                      unknown      0  cinder-ceph             2023.2/stable  528  no
+cinder-mysql-router              unknown      0  mysql-router            8.0/stable     257  no
+dashboard-mysql-router           unknown      0  mysql-router            8.0/stable     257  no
+glance                           waiting    0/1  glance                  2023.2/stable  622  no       waiting for machine
+glance-mysql-router              unknown      0  mysql-router            8.0/stable     257  no
+keystone                         waiting    0/1  keystone                2023.2/stable  682  no       waiting for machine
+keystone-mysql-router            unknown      0  mysql-router            8.0/stable     257  no
+mysql-innodb-cluster             waiting    0/3  mysql-innodb-cluster    8.0/stable     159  no       waiting for machine
+neutron-api                      waiting    0/1  neutron-api             2023.2/stable  646  no       waiting for machine
+neutron-api-plugin-ovn           unknown      0  neutron-api-plugin-ovn  2023.2/stable  163  no
+neutron-mysql-router             unknown      0  mysql-router            8.0/stable     257  no
+nova-cloud-controller            waiting    0/1  nova-cloud-controller   2023.2/stable  784  no       waiting for machine
+nova-compute                     waiting    0/3  nova-compute            2023.2/stable  825  no       waiting for machine
+nova-mysql-router                unknown      0  mysql-router            8.0/stable     257  no
+ntp                              unknown      0  ntp                     latest/stable   52  no
+openstack-dashboard              waiting    0/1  openstack-dashboard     2023.2/stable  726  no       waiting for machine
+ovn-central                      waiting    0/3  ovn-central             23.09/stable   234  no       waiting for machine
+ovn-chassis                      unknown      0  ovn-chassis             23.09/stable   296  no
+placement                        waiting    0/1  placement               2023.2/stable  100  no       waiting for machine
+placement-mysql-router           unknown      0  mysql-router            8.0/stable     257  no
+rabbitmq-server                  waiting    0/1  rabbitmq-server         3.9/stable     246  no       waiting for machine
+vault                            waiting    0/1  vault                   1.8/stable     372  no       waiting for machine
+
+Unit                     Workload  Agent       Machine  Public address  Ports  Message
+ceph-mon/0               waiting   allocating  0/lxd/0                         waiting for machine
+ceph-mon/1               waiting   allocating  1/lxd/0                         waiting for machine
+ceph-mon/2               waiting   allocating  2/lxd/0                         waiting for machine
+ceph-osd/0               waiting   allocating  0                               waiting for machine
+ceph-osd/1               waiting   allocating  1                               waiting for machine
+ceph-osd/2               waiting   allocating  2                               waiting for machine
+cinder/0                 waiting   allocating  1/lxd/1                         waiting for machine
+glance/0                 waiting   allocating  2/lxd/1                         waiting for machine
+keystone/0               waiting   allocating  0/lxd/1                         waiting for machine
+ubuntu@vm1-orchestrator:~$ sudo maas admin machines read | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> for m in data:
+>     print(m['hostname'], '|', m['status_name'], '|', m.get('status_message',''))
+> "
+os-compute01 | Ready | Released
+os-compute02 | Ready | Released
+os-compute03 | Ready | Released
+ubuntu@vm1-orchestrator:~$ juju debug-log --replay --include machine-0 2>&1 | head -30
+ubuntu@vm1-orchestrator:~$ sudo maas admin machines read | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> for m in data:
+>     print(m['hostname'], '|', m['tag_names'])
+> "
+os-compute01 | ['virtual', 'pod-console-logging', 'compute']
+os-compute02 | ['virtual', 'pod-console-logging', 'compute']
+os-compute03 | ['virtual', 'pod-console-logging', 'compute']
+ubuntu@vm1-orchestrator:~$ sudo maas admin machines allocate tags=compute
+Success.
+Machine-readable output follows:
+{
+    "testing_status_name": "Unknown",
+    "node_type_name": "Machine",
+    "testing_status": -1,
+    "commissioning_status": -1,
+    "node_type": 0,
+    "zone": {
+        "name": "default",
+        "description": "",
+        "id": 1,
+        "resource_uri": "/MAAS/api/2.0/zones/default/"
+    },
+    "system_id": "dx36ea",
+    "ip_addresses": [],
+    "cpu_test_status": -1,
+    "status_message": "Released",
+    "storage": 21474.83648,
+    "status_action": "",
+    "memory": 4096,
+    "blockdevice_set": [
+        {
+            "id_path": "/dev/vda",
+            "size": 21474836480,
+            "block_size": 512,
+            "tags": [],
+            "partition_table_type": "MBR",
+            "system_id": "dx36ea",
+            "storage_pool": "5bfd8cf0-685e-46f7-a046-287f9b3d696f",
+            "path": "/dev/disk/by-dname/sda",
+            "serial": "",
+            "uuid": null,
+            "id": 2,
+            "name": "sda",
+            "available_size": 0,
+            "model": "",
+            "filesystem": null,
+            "numa_node": 0,
+            "partitions": [
+                {
+                    "uuid": "70d64d6a-d98a-4d50-96af-73b9df1e8829",
+                    "size": 21466447872,
+                    "bootable": false,
+                    "tags": [],
+                    "used_for": "ext4 formatted filesystem mounted at /",
+                    "device_id": 2,
+                    "filesystem": {
+                        "fstype": "ext4",
+                        "label": "root",
+                        "uuid": "1cfd8078-919b-4523-a8b6-c7475a8c29ec",
+                        "mount_point": "/",
+                        "mount_options": null
+                    },
+                    "system_id": "dx36ea",
+                    "path": "/dev/disk/by-dname/sda-part1",
+                    "id": 4,
+                    "type": "partition",
+                    "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/partition/4"
+                }
+            ],
+            "used_for": "MBR partitioned with 1 partition",
+            "used_size": 21471690752,
+            "type": "physical",
+            "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/"
+        }
+    ],
+    "storage_test_status": -1,
+    "other_test_status_name": "Unknown",
+    "boot_disk": {
+        "firmware_version": null,
+        "partition_table_type": "MBR",
+        "tags": [],
+        "system_id": "dx36ea",
+        "storage_pool": "5bfd8cf0-685e-46f7-a046-287f9b3d696f",
+        "path": "/dev/disk/by-dname/sda",
+        "serial": "",
+        "uuid": null,
+        "id": 2,
+        "name": "sda",
+        "size": 21474836480,
+        "available_size": 0,
+        "model": "",
+        "filesystem": null,
+        "numa_node": 0,
+        "block_size": 512,
+        "partitions": [
+            {
+                "uuid": "70d64d6a-d98a-4d50-96af-73b9df1e8829",
+                "size": 21466447872,
+                "bootable": false,
+                "tags": [],
+                "used_for": "ext4 formatted filesystem mounted at /",
+                "device_id": 2,
+                "filesystem": {
+                    "fstype": "ext4",
+                    "label": "root",
+                    "uuid": "1cfd8078-919b-4523-a8b6-c7475a8c29ec",
+                    "mount_point": "/",
+                    "mount_options": null
+                },
+                "system_id": "dx36ea",
+                "path": "/dev/disk/by-dname/sda-part1",
+                "id": 4,
+                "type": "partition",
+                "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/partition/4"
+            }
+        ],
+        "used_for": "MBR partitioned with 1 partition",
+        "id_path": "/dev/vda",
+        "used_size": 21471690752,
+        "type": "physical",
+        "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/"
+    },
+    "commissioning_status_name": "Unknown",
+    "min_hwe_kernel": "",
+    "other_test_status": -1,
+    "domain": {
+        "authoritative": true,
+        "ttl": null,
+        "is_default": true,
+        "id": 0,
+        "name": "maas",
+        "resource_record_count": 11,
+        "resource_uri": "/MAAS/api/2.0/domains/0/"
+    },
+    "owner": "admin",
+    "osystem": "",
+    "tag_names": [
+        "virtual",
+        "pod-console-logging",
+        "compute"
+    ],
+    "boot_interface": {
+        "parents": [],
+        "tags": [],
+        "system_id": "dx36ea",
+        "link_connected": true,
+        "links": [
+            {
+                "id": 24,
+                "mode": "dhcp",
+                "subnet": {
+                    "name": "10.10.10.0/24",
+                    "vlan": {
+                        "vid": 0,
+                        "mtu": 1500,
+                        "dhcp_on": true,
+                        "external_dhcp": null,
+                        "relay_vlan": null,
+                        "fabric": "fabric-1",
+                        "primary_rack": "rhg6r8",
+                        "space": "undefined",
+                        "id": 5002,
+                        "secondary_rack": null,
+                        "fabric_id": 1,
+                        "name": "untagged",
+                        "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+                    },
+                    "cidr": "10.10.10.0/24",
+                    "rdns_mode": 2,
+                    "gateway_ip": "10.10.10.1",
+                    "dns_servers": [],
+                    "allow_dns": true,
+                    "allow_proxy": true,
+                    "active_discovery": false,
+                    "managed": true,
+                    "space": "undefined",
+                    "id": 4,
+                    "resource_uri": "/MAAS/api/2.0/subnets/4/"
+                }
+            }
+        ],
+        "id": 4,
+        "name": "eth0",
+        "product": null,
+        "firmware_version": null,
+        "vlan": {
+            "vid": 0,
+            "mtu": 1500,
+            "dhcp_on": true,
+            "external_dhcp": null,
+            "relay_vlan": null,
+            "fabric": "fabric-1",
+            "primary_rack": "rhg6r8",
+            "space": "undefined",
+            "id": 5002,
+            "secondary_rack": null,
+            "fabric_id": 1,
+            "name": "untagged",
+            "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+        },
+        "numa_node": 0,
+        "sriov_max_vf": 0,
+        "discovered": [],
+        "params": "",
+        "mac_address": "52:54:00:31:a1:67",
+        "children": [],
+        "effective_mtu": 1500,
+        "enabled": true,
+        "link_speed": 0,
+        "type": "physical",
+        "vendor": null,
+        "interface_speed": 0,
+        "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/interfaces/4/"
+    },
+    "power_type": "virsh",
+    "virtualblockdevice_set": [],
+    "cpu_count": 2,
+    "bcaches": [],
+    "memory_test_status": -1,
+    "interface_test_status": -1,
+    "disable_ipv4": false,
+    "hostname": "os-compute01",
+    "current_commissioning_result_id": 38,
+    "description": "",
+    "swap_size": null,
+    "interface_set": [
+        {
+            "parents": [],
+            "tags": [],
+            "system_id": "dx36ea",
+            "link_connected": true,
+            "links": [
+                {
+                    "id": 24,
+                    "mode": "dhcp",
+                    "subnet": {
+                        "name": "10.10.10.0/24",
+                        "vlan": {
+                            "vid": 0,
+                            "mtu": 1500,
+                            "dhcp_on": true,
+                            "external_dhcp": null,
+                            "relay_vlan": null,
+                            "fabric": "fabric-1",
+                            "primary_rack": "rhg6r8",
+                            "space": "undefined",
+                            "id": 5002,
+                            "secondary_rack": null,
+                            "fabric_id": 1,
+                            "name": "untagged",
+                            "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+                        },
+                        "cidr": "10.10.10.0/24",
+                        "rdns_mode": 2,
+                        "gateway_ip": "10.10.10.1",
+                        "dns_servers": [],
+                        "allow_dns": true,
+                        "allow_proxy": true,
+                        "active_discovery": false,
+                        "managed": true,
+                        "space": "undefined",
+                        "id": 4,
+                        "resource_uri": "/MAAS/api/2.0/subnets/4/"
+                    }
+                }
+            ],
+            "id": 4,
+            "name": "eth0",
+            "product": null,
+            "firmware_version": null,
+            "vlan": {
+                "vid": 0,
+                "mtu": 1500,
+                "dhcp_on": true,
+                "external_dhcp": null,
+                "relay_vlan": null,
+                "fabric": "fabric-1",
+                "primary_rack": "rhg6r8",
+                "space": "undefined",
+                "id": 5002,
+                "secondary_rack": null,
+                "fabric_id": 1,
+                "name": "untagged",
+                "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+            },
+            "numa_node": 0,
+            "sriov_max_vf": 0,
+            "discovered": [],
+            "params": "",
+            "mac_address": "52:54:00:31:a1:67",
+            "children": [],
+            "effective_mtu": 1500,
+            "enabled": true,
+            "link_speed": 0,
+            "type": "physical",
+            "vendor": null,
+            "interface_speed": 0,
+            "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/interfaces/4/"
+        }
+    ],
+    "status_name": "Allocated",
+    "constraints_by_type": {},
+    "pool": {
+        "name": "default",
+        "description": "Default pool",
+        "id": 0,
+        "resource_uri": "/MAAS/api/2.0/resourcepool/0/"
+    },
+    "iscsiblockdevice_set": [],
+    "cpu_test_status_name": "Unknown",
+    "pod": {
+        "id": 1,
+        "name": "kv1",
+        "resource_uri": "/MAAS/api/2.0/pods/1/"
+    },
+    "physicalblockdevice_set": [
+        {
+            "firmware_version": null,
+            "partition_table_type": "MBR",
+            "tags": [],
+            "system_id": "dx36ea",
+            "storage_pool": "5bfd8cf0-685e-46f7-a046-287f9b3d696f",
+            "path": "/dev/disk/by-dname/sda",
+            "serial": "",
+            "uuid": null,
+            "id": 2,
+            "name": "sda",
+            "size": 21474836480,
+            "available_size": 0,
+            "model": "",
+            "filesystem": null,
+            "numa_node": 0,
+            "block_size": 512,
+            "partitions": [
+                {
+                    "uuid": "70d64d6a-d98a-4d50-96af-73b9df1e8829",
+                    "size": 21466447872,
+                    "bootable": false,
+                    "tags": [],
+                    "used_for": "ext4 formatted filesystem mounted at /",
+                    "device_id": 2,
+                    "filesystem": {
+                        "fstype": "ext4",
+                        "label": "root",
+                        "uuid": "1cfd8078-919b-4523-a8b6-c7475a8c29ec",
+                        "mount_point": "/",
+                        "mount_options": null
+                    },
+                    "system_id": "dx36ea",
+                    "path": "/dev/disk/by-dname/sda-part1",
+                    "id": 4,
+                    "type": "partition",
+                    "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/partition/4"
+                }
+            ],
+            "used_for": "MBR partitioned with 1 partition",
+            "id_path": "/dev/vda",
+            "used_size": 21471690752,
+            "type": "physical",
+            "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/"
+        }
+    ],
+    "current_testing_result_id": 39,
+    "hwe_kernel": null,
+    "network_test_status": -1,
+    "cpu_speed": 2744,
+    "power_state": "off",
+    "special_filesystems": [],
+    "owner_data": {},
+    "netboot": true,
+    "current_installation_result_id": null,
+    "address_ttl": null,
+    "hardware_uuid": null,
+    "volume_groups": [],
+    "default_gateways": {
+        "ipv4": {
+            "gateway_ip": null,
+            "link_id": null
+        },
+        "ipv6": {
+            "gateway_ip": null,
+            "link_id": null
+        }
+    },
+    "fqdn": "os-compute01.maas",
+    "distro_series": "",
+    "network_test_status_name": "Unknown",
+    "cache_sets": [],
+    "bios_boot_method": null,
+    "memory_test_status_name": "Unknown",
+    "storage_test_status_name": "Unknown",
+    "status": 10,
+    "hardware_info": {
+        "system_vendor": "Unknown",
+        "system_product": "Unknown",
+        "system_version": "Unknown",
+        "system_serial": "Unknown",
+        "cpu_model": "Unknown",
+        "mainboard_vendor": "Unknown",
+        "mainboard_product": "Unknown",
+        "mainboard_firmware_version": "Unknown",
+        "mainboard_firmware_date": "Unknown"
+    },
+    "locked": false,
+    "interface_test_status_name": "Unknown",
+    "raids": [],
+    "numanode_set": [
+        {
+            "index": 0,
+            "memory": 4096,
+            "cores": [
+                0,
+                1
+            ]
+        }
+    ],
+    "architecture": "amd64/generic",
+    "resource_uri": "/MAAS/api/2.0/machines/dx36ea/"
+}
+ubuntu@vm1-orchestrator:~$ sudo maas admin machine release dx36ea
+Success.
+Machine-readable output follows:
+{
+    "commissioning_status_name": "Unknown",
+    "distro_series": "",
+    "address_ttl": null,
+    "boot_interface": {
+        "link_connected": true,
+        "mac_address": "52:54:00:31:a1:67",
+        "name": "eth0",
+        "tags": [],
+        "numa_node": 0,
+        "sriov_max_vf": 0,
+        "firmware_version": null,
+        "discovered": [],
+        "id": 4,
+        "links": [
+            {
+                "id": 24,
+                "mode": "dhcp",
+                "subnet": {
+                    "name": "10.10.10.0/24",
+                    "vlan": {
+                        "vid": 0,
+                        "mtu": 1500,
+                        "dhcp_on": true,
+                        "external_dhcp": null,
+                        "relay_vlan": null,
+                        "fabric": "fabric-1",
+                        "name": "untagged",
+                        "secondary_rack": null,
+                        "fabric_id": 1,
+                        "space": "undefined",
+                        "primary_rack": "rhg6r8",
+                        "id": 5002,
+                        "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+                    },
+                    "cidr": "10.10.10.0/24",
+                    "rdns_mode": 2,
+                    "gateway_ip": "10.10.10.1",
+                    "dns_servers": [],
+                    "allow_dns": true,
+                    "allow_proxy": true,
+                    "active_discovery": false,
+                    "managed": true,
+                    "id": 4,
+                    "space": "undefined",
+                    "resource_uri": "/MAAS/api/2.0/subnets/4/"
+                }
+            }
+        ],
+        "parents": [],
+        "effective_mtu": 1500,
+        "system_id": "dx36ea",
+        "product": null,
+        "vendor": null,
+        "params": "",
+        "interface_speed": 0,
+        "enabled": true,
+        "link_speed": 0,
+        "type": "physical",
+        "vlan": {
+            "vid": 0,
+            "mtu": 1500,
+            "dhcp_on": true,
+            "external_dhcp": null,
+            "relay_vlan": null,
+            "fabric": "fabric-1",
+            "name": "untagged",
+            "secondary_rack": null,
+            "fabric_id": 1,
+            "space": "undefined",
+            "primary_rack": "rhg6r8",
+            "id": 5002,
+            "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+        },
+        "children": [],
+        "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/interfaces/4/"
+    },
+    "storage_test_status_name": "Unknown",
+    "node_type": 0,
+    "description": "",
+    "fqdn": "os-compute01.maas",
+    "node_type_name": "Machine",
+    "zone": {
+        "name": "default",
+        "description": "",
+        "id": 1,
+        "resource_uri": "/MAAS/api/2.0/zones/default/"
+    },
+    "blockdevice_set": [
+        {
+            "id_path": "/dev/vda",
+            "size": 21474836480,
+            "block_size": 512,
+            "tags": [],
+            "name": "sda",
+            "numa_node": 0,
+            "uuid": null,
+            "storage_pool": "5bfd8cf0-685e-46f7-a046-287f9b3d696f",
+            "available_size": 0,
+            "used_size": 21471690752,
+            "filesystem": null,
+            "id": 2,
+            "serial": "",
+            "partition_table_type": "MBR",
+            "system_id": "dx36ea",
+            "model": "",
+            "used_for": "MBR partitioned with 1 partition",
+            "path": "/dev/disk/by-dname/sda",
+            "partitions": [
+                {
+                    "uuid": "70d64d6a-d98a-4d50-96af-73b9df1e8829",
+                    "size": 21466447872,
+                    "bootable": false,
+                    "tags": [],
+                    "system_id": "dx36ea",
+                    "type": "partition",
+                    "used_for": "ext4 formatted filesystem mounted at /",
+                    "filesystem": {
+                        "fstype": "ext4",
+                        "label": "root",
+                        "uuid": "1cfd8078-919b-4523-a8b6-c7475a8c29ec",
+                        "mount_point": "/",
+                        "mount_options": null
+                    },
+                    "path": "/dev/disk/by-dname/sda-part1",
+                    "id": 4,
+                    "device_id": 2,
+                    "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/partition/4"
+                }
+            ],
+            "type": "physical",
+            "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/"
+        }
+    ],
+    "hwe_kernel": null,
+    "default_gateways": {
+        "ipv4": {
+            "gateway_ip": null,
+            "link_id": null
+        },
+        "ipv6": {
+            "gateway_ip": null,
+            "link_id": null
+        }
+    },
+    "owner_data": {},
+    "commissioning_status": -1,
+    "memory_test_status": -1,
+    "architecture": "amd64/generic",
+    "netboot": true,
+    "min_hwe_kernel": "",
+    "memory_test_status_name": "Unknown",
+    "status_name": "Ready",
+    "ip_addresses": [],
+    "tag_names": [
+        "virtual",
+        "pod-console-logging",
+        "compute"
+    ],
+    "volume_groups": [],
+    "network_test_status": -1,
+    "bios_boot_method": null,
+    "cpu_test_status_name": "Unknown",
+    "cpu_test_status": -1,
+    "testing_status_name": "Unknown",
+    "memory": 4096,
+    "other_test_status_name": "Unknown",
+    "cpu_count": 2,
+    "raids": [],
+    "disable_ipv4": false,
+    "cache_sets": [],
+    "domain": {
+        "authoritative": true,
+        "ttl": null,
+        "resource_record_count": 11,
+        "name": "maas",
+        "is_default": true,
+        "id": 0,
+        "resource_uri": "/MAAS/api/2.0/domains/0/"
+    },
+    "interface_test_status": -1,
+    "network_test_status_name": "Unknown",
+    "locked": false,
+    "storage": 21474.83648,
+    "pool": {
+        "name": "default",
+        "description": "Default pool",
+        "id": 0,
+        "resource_uri": "/MAAS/api/2.0/resourcepool/0/"
+    },
+    "status_action": "",
+    "current_commissioning_result_id": 38,
+    "bcaches": [],
+    "current_testing_result_id": 39,
+    "virtualblockdevice_set": [],
+    "system_id": "dx36ea",
+    "cpu_speed": 2744,
+    "physicalblockdevice_set": [
+        {
+            "firmware_version": null,
+            "name": "sda",
+            "tags": [],
+            "numa_node": 0,
+            "size": 21474836480,
+            "uuid": null,
+            "storage_pool": "5bfd8cf0-685e-46f7-a046-287f9b3d696f",
+            "available_size": 0,
+            "used_size": 21471690752,
+            "filesystem": null,
+            "id": 2,
+            "serial": "",
+            "partition_table_type": "MBR",
+            "system_id": "dx36ea",
+            "model": "",
+            "used_for": "MBR partitioned with 1 partition",
+            "path": "/dev/disk/by-dname/sda",
+            "partitions": [
+                {
+                    "uuid": "70d64d6a-d98a-4d50-96af-73b9df1e8829",
+                    "size": 21466447872,
+                    "bootable": false,
+                    "tags": [],
+                    "system_id": "dx36ea",
+                    "type": "partition",
+                    "used_for": "ext4 formatted filesystem mounted at /",
+                    "filesystem": {
+                        "fstype": "ext4",
+                        "label": "root",
+                        "uuid": "1cfd8078-919b-4523-a8b6-c7475a8c29ec",
+                        "mount_point": "/",
+                        "mount_options": null
+                    },
+                    "path": "/dev/disk/by-dname/sda-part1",
+                    "id": 4,
+                    "device_id": 2,
+                    "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/partition/4"
+                }
+            ],
+            "block_size": 512,
+            "type": "physical",
+            "id_path": "/dev/vda",
+            "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/"
+        }
+    ],
+    "hostname": "os-compute01",
+    "interface_set": [
+        {
+            "link_connected": true,
+            "mac_address": "52:54:00:31:a1:67",
+            "name": "eth0",
+            "tags": [],
+            "numa_node": 0,
+            "sriov_max_vf": 0,
+            "firmware_version": null,
+            "discovered": [],
+            "id": 4,
+            "links": [
+                {
+                    "id": 24,
+                    "mode": "dhcp",
+                    "subnet": {
+                        "name": "10.10.10.0/24",
+                        "vlan": {
+                            "vid": 0,
+                            "mtu": 1500,
+                            "dhcp_on": true,
+                            "external_dhcp": null,
+                            "relay_vlan": null,
+                            "fabric": "fabric-1",
+                            "name": "untagged",
+                            "secondary_rack": null,
+                            "fabric_id": 1,
+                            "space": "undefined",
+                            "primary_rack": "rhg6r8",
+                            "id": 5002,
+                            "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+                        },
+                        "cidr": "10.10.10.0/24",
+                        "rdns_mode": 2,
+                        "gateway_ip": "10.10.10.1",
+                        "dns_servers": [],
+                        "allow_dns": true,
+                        "allow_proxy": true,
+                        "active_discovery": false,
+                        "managed": true,
+                        "id": 4,
+                        "space": "undefined",
+                        "resource_uri": "/MAAS/api/2.0/subnets/4/"
+                    }
+                }
+            ],
+            "parents": [],
+            "effective_mtu": 1500,
+            "system_id": "dx36ea",
+            "product": null,
+            "vendor": null,
+            "params": "",
+            "interface_speed": 0,
+            "enabled": true,
+            "link_speed": 0,
+            "type": "physical",
+            "vlan": {
+                "vid": 0,
+                "mtu": 1500,
+                "dhcp_on": true,
+                "external_dhcp": null,
+                "relay_vlan": null,
+                "fabric": "fabric-1",
+                "name": "untagged",
+                "secondary_rack": null,
+                "fabric_id": 1,
+                "space": "undefined",
+                "primary_rack": "rhg6r8",
+                "id": 5002,
+                "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+            },
+            "children": [],
+            "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/interfaces/4/"
+        }
+    ],
+    "special_filesystems": [],
+    "storage_test_status": -1,
+    "status": 4,
+    "interface_test_status_name": "Unknown",
+    "numanode_set": [
+        {
+            "index": 0,
+            "memory": 4096,
+            "cores": [
+                0,
+                1
+            ]
+        }
+    ],
+    "osystem": "",
+    "iscsiblockdevice_set": [],
+    "testing_status": -1,
+    "hardware_info": {
+        "system_vendor": "Unknown",
+        "system_product": "Unknown",
+        "system_version": "Unknown",
+        "system_serial": "Unknown",
+        "cpu_model": "Unknown",
+        "mainboard_vendor": "Unknown",
+        "mainboard_product": "Unknown",
+        "mainboard_firmware_version": "Unknown",
+        "mainboard_firmware_date": "Unknown"
+    },
+    "other_test_status": -1,
+    "pod": {
+        "id": 1,
+        "name": "kv1",
+        "resource_uri": "/MAAS/api/2.0/pods/1/"
+    },
+    "hardware_uuid": null,
+    "status_message": "Released",
+    "swap_size": null,
+    "owner": null,
+    "power_state": "off",
+    "power_type": "virsh",
+    "current_installation_result_id": null,
+    "boot_disk": {
+        "firmware_version": null,
+        "name": "sda",
+        "tags": [],
+        "numa_node": 0,
+        "size": 21474836480,
+        "uuid": null,
+        "storage_pool": "5bfd8cf0-685e-46f7-a046-287f9b3d696f",
+        "available_size": 0,
+        "used_size": 21471690752,
+        "filesystem": null,
+        "id": 2,
+        "serial": "",
+        "partition_table_type": "MBR",
+        "system_id": "dx36ea",
+        "model": "",
+        "used_for": "MBR partitioned with 1 partition",
+        "path": "/dev/disk/by-dname/sda",
+        "partitions": [
+            {
+                "uuid": "70d64d6a-d98a-4d50-96af-73b9df1e8829",
+                "size": 21466447872,
+                "bootable": false,
+                "tags": [],
+                "system_id": "dx36ea",
+                "type": "partition",
+                "used_for": "ext4 formatted filesystem mounted at /",
+                "filesystem": {
+                    "fstype": "ext4",
+                    "label": "root",
+                    "uuid": "1cfd8078-919b-4523-a8b6-c7475a8c29ec",
+                    "mount_point": "/",
+                    "mount_options": null
+                },
+                "path": "/dev/disk/by-dname/sda-part1",
+                "id": 4,
+                "device_id": 2,
+                "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/partition/4"
+            }
+        ],
+        "block_size": 512,
+        "type": "physical",
+        "id_path": "/dev/vda",
+        "resource_uri": "/MAAS/api/2.0/nodes/dx36ea/blockdevices/2/"
+    },
+    "resource_uri": "/MAAS/api/2.0/machines/dx36ea/"
+}
+ubuntu@vm1-orchestrator:~$ sleep 10
+ubuntu@vm1-orchestrator:~$ sudo maas admin machines read | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> for m in data:
+>     print(m['hostname'], '|', m['status_name'])
+> "
+os-compute01 | Ready
+os-compute02 | Ready
+os-compute03 | Ready
+ubuntu@vm1-orchestrator:~$ ^C
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "^Machine|^[0-9]"
+Machine  State    Address  Inst id  Base          AZ  Message
+0        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+0/lxd/0  pending           pending  ubuntu@22.04
+0/lxd/1  pending           pending  ubuntu@22.04
+0/lxd/2  pending           pending  ubuntu@22.04
+0/lxd/3  pending           pending  ubuntu@22.04
+0/lxd/4  pending           pending  ubuntu@22.04
+1        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+1/lxd/0  pending           pending  ubuntu@22.04
+1/lxd/1  pending           pending  ubuntu@22.04
+1/lxd/2  pending           pending  ubuntu@22.04
+1/lxd/3  pending           pending  ubuntu@22.04
+1/lxd/4  pending           pending  ubuntu@22.04
+1/lxd/5  pending           pending  ubuntu@22.04
+2        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+2/lxd/0  pending           pending  ubuntu@22.04
+2/lxd/1  pending           pending  ubuntu@22.04
+2/lxd/2  pending           pending  ubuntu@22.04
+2/lxd/3  pending           pending  ubuntu@22.04
+2/lxd/4  pending           pending  ubuntu@22.04
+2/lxd/5  pending           pending  ubuntu@22.04
+2/lxd/6  pending           pending  ubuntu@22.04
+ubuntu@vm1-orchestrator:~$ juju status 2>&1 | grep -E "^Machine|^[0-9]"
+Machine  State    Address  Inst id  Base          AZ  Message
+0        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+0/lxd/0  pending           pending  ubuntu@22.04
+0/lxd/1  pending           pending  ubuntu@22.04
+0/lxd/2  pending           pending  ubuntu@22.04
+0/lxd/3  pending           pending  ubuntu@22.04
+0/lxd/4  pending           pending  ubuntu@22.04
+1        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+1/lxd/0  pending           pending  ubuntu@22.04
+1/lxd/1  pending           pending  ubuntu@22.04
+1/lxd/2  pending           pending  ubuntu@22.04
+1/lxd/3  pending           pending  ubuntu@22.04
+1/lxd/4  pending           pending  ubuntu@22.04
+1/lxd/5  pending           pending  ubuntu@22.04
+2        down              pending  ubuntu@22.04      unexpected: ServerError: 400 Bad Request ({"distro_series": ["'jammy' is not a valid distro_series.  It should be one...
+2/lxd/0  pending           pending  ubuntu@22.04
+2/lxd/1  pending           pending  ubuntu@22.04
+2/lxd/2  pending           pending  ubuntu@22.04
+2/lxd/3  pending           pending  ubuntu@22.04
+2/lxd/4  pending           pending  ubuntu@22.04
+2/lxd/5  pending           pending  ubuntu@22.04
+2/lxd/6  pending           pending  ubuntu@22.04
+ubuntu@vm1-orchestrator:~$

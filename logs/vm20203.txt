@@ -1,0 +1,652 @@
+alex@DESKTOP-8JOK6E1:~$ ssh -J ubuntu@130.195.57.249 ubuntu@192.168.66.243
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-156-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Mar  3 08:30:54 UTC 2026
+
+  System load:  0.16               Users logged in:         0
+  Usage of /:   12.4% of 96.73GB   IPv4 address for br0:    10.10.10.104
+  Memory usage: 15%                IPv4 address for br0:    10.10.10.1
+  Swap usage:   0%                 IPv4 address for ens3:   192.168.66.243
+  Processes:    255                IPv4 address for virbr0: 192.168.122.1
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+48 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+93 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Mar  3 08:17:00 2026 from 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ history
+    1  exit
+    2  # 1. Instalăm hypervizorul KVM și utilitarele
+    3  sudo apt-get update
+    4  sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst
+    5  sudo virt-install   --name os-compute01   --ram 4096   --vcpus 2   --disk path=/var/lib/libvirt/images/os-compute01.qcow2,size=20   --os-variant ubuntu20.04   --network bridge=br0,model=virtio   --pxe   --boot network,hd   --noautoconsole
+    6  ip a
+    7  sudo bash -c 'cat > /etc/netplan/99-bridge.yaml <<EOF
+    8  network:
+    9    version: 2
+   10    ethernets:
+   11      ens4:
+   12        dhcp4: false
+   13        dhcp6: false
+   14    bridges:
+   15      br0:
+   16        interfaces: [ens4]
+   17        dhcp4: true
+   18        parameters:
+   19          stp: false
+   20          forward-delay: 0
+   21  EOF'
+   22  sudo netplan apply
+   23  sudo virt-install   --name os-compute01   --ram 4096   --vcpus 2   --disk path=/var/lib/libvirt/images/os-compute01.qcow2,size=20   --os-variant ubuntu20.04   --network bridge=br0,model=virtio   --pxe   --boot network,hd   --noautoconsole
+   24  exit
+   25  sudo maas init --mode region+rack --database-uri maas-test-db:///
+   26  exit
+   27  history
+   28  exit
+   29  history
+   30  ip a
+   31  ip a | grep ens
+   32  brctl show
+   33  virsh net-list --all
+   34  virsh list --all
+   35  journalctl -u maas-regiond -n 100 --no-pager
+   36  virsh console os-compute01
+   37  sudo ssh-copy-id -i /var/snap/maas/current/root/.ssh/id_rsa.pub ubuntu@192.168.66.243
+   38  ssh ubuntu@192.168.66.243 "virsh list --all"
+   39  ssh ubuntu@192.168.66.243 "sudo virsh list --all"
+   40  ssh ubuntu@192.168.66.243 "sudo usermod -aG libvirt ubuntu && sudo usermod -aG kvm ubuntu"sudo tcpdump -i br0 -n -e port 67 or port 68 2>/dev/null | head -20
+   41  virsh list --all
+   42  sudo tcpdump -i br0 -n -e port 67 or port 68 2>/dev/null | head -20
+   43  sudo snap logs maas -n 200 2>&1 | grep -E "virsh|qemu|ssh|error|ERROR|compute"
+   44  sudo virsh console os-compute01
+   45  sudo virsh dumpxml os-compute01 | grep -A5 "boot"
+   46  sudo virsh dumpxml os-compute01 | grep -E "interface|mac|source"
+   47  sudo tcpdump -i br0 -n -c 20
+   48  ssh ubuntu@192.168.66.243 "virsh list --all"
+   49  virsh list --all
+   50  sudo tcpdump -i br0 -n -c 30 2>/dev/null
+   51  ip a show br0
+   52  ip a | grep -E "lxdbr0|ens|10.10"
+   53  sudo tcpdump -i br0 -n port 67 or port 68 or port 69
+   54  sudo apt install isc-dhcp-relay -y
+   55  sudo nano /etc/default/isc-dhcp-relay
+   56  sudo systemctl restart isc-dhcp-relay
+   57  sudo systemctl enable isc-dhcp-relay
+   58  sudo systemctl status isc-dhcp-relay
+   59  sudo tcpdump -i br0 -n port 67 or port 68
+   60  sudo tcpdump -i br0 -n port 67 or port 68 or port 69
+   61  sudo systemctl status isc-dhcp-relay
+   62  cat /etc/default/isc-dhcp-relay
+   63  sudo tcpdump -i br0 -n port 67 or port 68
+   64  sudo tcpdump -i ens3 -n port 67 or port 68
+   65  sudo tcpdump -i any -n port 67 or port 68
+   66  sudo nano /etc/default/isc-dhcp-relay
+   67  sudo systemctl restart isc-dhcp-relay
+   68  sudo tcpdump -i ens3 -n port 67 or port 68
+   69  sudo systemctl status isc-dhcp-relay
+   70  sudo journalctl -u isc-dhcp-relay -f
+   71  cat /etc/default/isc-dhcp-relay
+   72  sudo tcpdump -i br0 -n port 67 or port 68
+   73  sudo virsh destroy os-compute01 && sudo virsh start os-compute01
+   74  sudo virsh destroy os-compute02 && sudo virsh start os-compute02
+   75  sudo virsh destroy os-compute03 && sudo virsh start os-compute03
+   76  sudo tcpdump -i br0 -n port 67 or port 68
+   77  sudo tcpdump -i any -n port 67 or port 68
+   78  sudo snap run --shell maas -c "cat /var/snap/maas/current/dhcpd.conf"
+   79  sudo ip route add 10.115.30.0/24 via 192.168.66.27
+   80  sudo nano /etc/default/isc-dhcp-relay
+   81  sudo systemctl restart isc-dhcp-relay
+   82  sudo snap logs maas -f 2>&1 | grep -E "OFFER|offer|52:54:00|DISCOVER|ACK|ack|10\.10\.10"
+   83  sudo tcpdump -i any -n port 67 or port 68
+   84  sudo virsh list --all
+   85  sudo tcpdump -i any -n port 69
+   86  sudo virsh dumpxml os-compute01 | grep -A10 "boot"
+   87  sudo virsh dumpxml os-compute02 | grep -A10 "boot"
+   88  sudo virsh destroy os-compute01
+   89  sudo virsh start os-compute01 --paused
+   90  sudo virsh domxml-to-native qemu-argv os-compute01
+   91  sudo virsh edit os-compute01
+   92  sudo virsh console os-compute01
+   93  exit
+   94  mkdir -p /home/VMs/juju-controller
+   95  virt-install --os-variant ubuntu20.04 --noautoconsole --print-xml --boot network,hd,menu=on   --graphics vnc --video=cirrus   --controller scsi,model=virtio-scsi,index=0   --name juju-controller --ram 4096 --vcpus 2 --cpu host   --disk path=/home/VMs/juju-controller/juju-controller.img,size=40,format=raw,bus=virtio,cache=none,io=native   --network=network=host-bridge,model=virtio   > juju-controller.xml
+   96  virsh define juju-controller.xml
+   97  virsh autostart juju-controller
+   98  virsh start juju-controller
+   99  sudo mkdir -p /home/VMs/juju-controller
+  100  sudo virt-install --os-variant ubuntu20.04 --noautoconsole --print-xml --boot network,hd,menu=on   --graphics vnc --video=cirrus   --controller scsi,model=virtio-scsi,index=0   --name juju-controller --ram 4096 --vcpus 2 --cpu host   --disk path=/home/VMs/juju-controller/juju-controller.img,size=40,format=raw,bus=virtio,cache=none,io=native   --network=network=host-bridge,mac=52:54:00:63:dd:dc,model=virtio   > juju-controller.xml
+  101  sudo virsh define juju-controller.xml
+  102  sudo virsh autostart juju-controller
+  103  sudo virsh start juju-controller
+  104  maas admin machines read | python3 -m json.tool | grep -E '"hostname"|"system_id"|"status_name"'
+  105  exit
+  106  sudo maas admin machines read | python3 -m json.tool | grep -E '"hostname"|"status_name"'
+  107  snap list | grep maas
+  108  virsh list --all
+  109  ip a show br0
+  110  ls /home/VMs/
+  111  ssh ubuntu@10.10.10.104 "virsh list --all"
+  112  virsh list --all
+  113  sudo cat /var/snap/maas/common/root-id_rsa.pub
+  114  echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDiQblaVy/SuXnbcJRxltaCqOQu2MYtuSiGli8nlyhJTSEEW+7fOZIpt6ZyAhNxEqDfd2sGVoSV+11mLRi+VbjK79NELnukPNX5Qy17Dj+Hsa4PjJAg8y5k8t6KaGECCRm4h+oF+MrPBzkjb/hd5Jpzr9fqY7yg31ujsGcuwtw4ZQELf8FFQOb08+kqOIAeKhB8TCwiwKoOuFki8Ov8U/vJ9slJnRnpANusmdht7vLdeJS3L5rCQSXHumN7DwEh98HSjrYYOBm96fdUOtKv0QUh8JKTkp1Nd1DGP6aCPjpMsT4tQWubEvOB0RFPnJsptL6mGBrjxWzQgXRHoQZ3CtEOPZRDX/r0LwLFTi4q7DcEGXNIG81DWn0qr5KQjbYsvdwK8xnJxxZ4NVeckdN7fyp3xAgAz4PeoWHbsNWsAbHXW3IqueLnI1dF56wXZtO+JXvK6Mz/cEynOxaifSQVnHBmDWarXAG/Zo7X7w0fmiPZH3VKjPDxh66HwK0iXdJuBwc= root@vm1-orchestrator" >> ~/.ssh/authorized_keys
+  115  sudo virsh resume os-compute01
+  116  virsh uri
+  117  sudo virsh uri
+  118  virsh list --all
+  119  sudo virsh list --all
+  120  sudo usermod -aG libvirt ubuntu
+  121  sudo usermod -aG kvm ubuntu
+  122  sudo cat /etc/polkit-1/localauthority/50-local.d/50-libvirt-access.pkla 2>/dev/null || echo "nu exista"
+  123  virsh list --all
+  124  virsh -c qemu:///system list --all
+  125  virsh -c qemu:///session list --all
+  126  id ubuntu
+  127  virsh --list all
+  128  virsh lista --all
+  129  virsh list --all
+  130  sudo virsh dominfo os-compute01 | grep -i "cpu time"
+  131  sudo virsh dominfo os-compute02 | grep -i "cpu time"
+  132  sudo virsh dominfo os-compute01 | grep -i "cpu time"
+  133  sudo virsh dominfo os-compute02 | grep -i "cpu time"
+  134  sudo virsh dominfo os-compute01 | grep -i "cpu time"
+  135  sudo virsh list --all | grep juju
+  136  sudo virsh domifaddr juju-controller
+  137  sudo virsh vncdisplay juju-controller
+  138  sudo virsh console juju-controller
+  139  sudo virsh destroy juju-controller
+  140  sudo virsh undefine juju-controller
+  141  sudo virt-install --os-variant ubuntu20.04 --noautoconsole --print-xml --boot network,hd,menu=on   --graphics vnc --video=cirrus   --controller scsi,model=virtio-scsi,index=0   --name juju-controller --ram 4096 --vcpus 2 --cpu host   --disk path=/home/VMs/juju-controller/juju-controller.img,size=40,format=raw,bus=virtio,cache=none,io=native   --network=network=host-bridge,mac=52:54:00:63:dd:dc,model=virtio   --network=network=host-bridge,mac=52:54:00:63:dd:dd,model=virtio   > juju-controller.xml
+  142  sudo virsh define juju-controller.xml
+  143  sudo virsh autostart juju-controller
+  144  sudo virsh start juju-controller
+  145  exit
+  146  top -d 5
+  147  virsh list --all
+  148  top -d 5
+  149  du -sh /home/VMs/*/
+  150  df -h /home/
+  151  virsh list --all
+  152  for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+  153  virsh domblklist os-compute01
+  154  virsh domblklist os-compute02
+  155  brctl show
+  156  ip a show br0
+  157  sudo tcpdump -i br0 -n port 67 or port 68 -c 10
+  158  virsh dumpxml os-compute01 | grep -A5 "interface"
+  159  virsh dumpxml os-compute01 | grep -A5 "boot"
+  160  virsh net-list --all
+  161  virsh net-info host-bridge
+  162  virsh console os-compute01
+  163  sudo qemu-img info /var/lib/libvirt/images/os-compute01.qcow2
+  164  sudo ls -lh /var/lib/libvirt/images/os-compute01.qcow2
+  165  virsh destroy os-compute01
+  166  sudo qemu-img create -f qcow2 /var/lib/libvirt/images/os-compute01.qcow2 21G
+  167  virsh start os-compute01
+  168  sleep 5
+  169  virsh console os-compute01
+  170  sudo snap logs maas -f 2>&1 | grep -E "52:54:00"
+  171  virsh console os-compute01
+  172  virsh destroy os-compute02
+  173  sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+  174  virsh start os-compute02
+  175  virsh domblklist os-compute03
+  176  virsh destroy os-compute02
+  177  sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+  178  virsh start os-compute02
+  179  virsh domblklist os-compute03
+  180  for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+  181  sleep 30
+  182  for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+  183  sleep 30
+  184  virsh domblklist os-compute01
+  185  virsh domblklist os-compute02
+  186  virsh domblklist os-compute03
+  187  virsh destroy os-compute01
+  188  virsh destroy os-compute02
+  189  virsh destroy os-compute03
+  190  sudo qemu-img create -f qcow2 /var/lib/libvirt/images/os-compute01.qcow2 21G
+  191  sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+  192  watch -n 30 'for vm in os-compute01 os-compute02 os-compute03; do echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep "CPU time")"; done'
+  193  sudo maas admin machines read | python3 -c "
+  194  import sys, json
+  195  data = json.load(sys.stdin)
+  196  for m in data:
+  197      print(m['hostname'], '|', m.get('distro_series',''))
+  198  "
+  199  df -h /
+  200  du -sh /var/lib/libvirt/images/*
+  201  du -sh /home/VMs/*/*
+  202  virsh domblklist os-compute01
+  203  virsh domblklist os-compute02
+  204  virsh domblklist os-compute03
+  205  for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+  206  du -sh /var/lib/libvirt/images/os-compute01.qcow2
+  207  du -sh /home/VMs/compute02/compute02d1.img
+  208  du -sh /home/VMs/compute03/compute03d1.img
+  209  curl -s http://10.10.10.1:5248/ipxe.cfg | head -5
+  210  # Verifică consola
+  211  virsh console os-compute01
+  212  ping -c 2 10.10.10.1
+  213  curl -v http://10.10.10.1:5248/ipxe.cfg 2>&1 | head -15
+  214  curl -s http://192.168.66.27:5248/ipxe.cfg | head -5
+  215  ip a show ens3 | grep 10.10.10
+  216  ping -c 2 10.10.10.104
+  217  sudo ip addr add 10.10.10.1/24 dev ens3 2>/dev/null; echo "done"
+  218  ip a show ens3 | grep 10.10.10
+  219  ping -c 2 10.10.10.104
+  220  sudo iptables -L -n | grep -i drop
+  221  sudo iptables -L FORWARD -n
+  222  sudo ip addr del 10.10.10.1/24 dev ens3
+  223  ping -c 2 10.10.10.1
+  224  curl -s http://10.10.10.1:5248/ipxe.cfg | head -3
+  225  ip a show br0 | grep 10.10.10
+  226  ip route | grep 10.10.10
+  227  arp -n | grep 10.10.10
+  228  bashsudo arping -I br0 -c 2 10.10.10.1
+  229  ip neigh show dev br0 | grep 10.10.10
+  230  sudo ip route add 10.10.10.1/32 via 192.168.66.27 dev ens3
+  231  ping -c 2 10.10.10.1
+  232  curl -s http://10.10.10.1:5248/ipxe.cfg | head -3
+  233  sudo sysctl -w net.ipv4.ip_forward=1
+  234  sudo sysctl -w net.ipv4.conf.br0.proxy_arp=1
+  235  sudo sysctl -w net.ipv4.conf.ens3.proxy_arp=1
+  236  ping -c 2 -I br0 10.10.10.1
+  237  sudo ip route del 10.10.10.1/32 via 192.168.66.27 dev ens3 2>/dev/null
+  238  sudo ip route add 10.10.10.1/32 via 192.168.66.27
+  239  sudo iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -d 10.10.10.1 -o ens3 -j MASQUERADE
+  240  ping -c 2 -I br0 10.10.10.1
+  241  sudo ip route del 10.10.10.1/32 2>/dev/null
+  242  sudo ip addr add 10.10.10.1/32 dev br0
+  243  sudo iptables -t nat -A PREROUTING -i br0 -d 10.10.10.1 -j DNAT --to-destination 192.168.66.27
+  244  sudo iptables -t nat -A POSTROUTING -d 192.168.66.27 -o ens3 -j MASQUERADE
+  245  ping -c 2 -I br0 10.10.10.1
+  246  curl -s http://10.10.10.1:5248/ipxe.cfg | head -3
+  247  curl -s http://192.168.66.27:5248/ipxe.cfg | head -3
+  248  sudo iptables -t nat -L -n -v | grep 5248
+  249  sudo iptables -t nat -L PREROUTING -n -v
+  250  udo apt install -y socat
+  251  sudo socat TCP-LISTEN:5248,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5248 &
+  252  sudo apt install -y socat
+  253  sudo socat TCP-LISTEN:5248,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5248 &
+  254  curl -s http://10.10.10.1:5248/ipxe.cfg | head -3
+  255  sudo socat TCP-LISTEN:5240,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5240 &
+  256  sudo socat UDP-LISTEN:69,fork,bind=10.10.10.1,reuseaddr UDP:192.168.66.27:69 &
+  257  curl -s http://10.10.10.1:5248/ipxe.cfg | head -1
+  258  C:\Users\Alex\AppData\Local\Packages\MicrosoftWindows.Client.Core_cw5n1h2txyewy\TempState\ScreenClip\{1FE557C6-1C86-47E6-A50F-3C44B90021F7}.png
+  259  for vm in os-compute01 os-compute02 os-compute03; do   echo "$vm: $(virsh dominfo $vm 2>/dev/null | grep 'CPU time')"; done
+  260  virsh destroy os-compute01
+  261  virsh destroy os-compute02
+  262  virsh destroy os-compute03
+  263  virsh edit os-compute01
+  264  virsh edit os-compute02
+  265  virsh edit os-compute03
+  266  history
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute02
+error: Failed to destroy domain os-compute02
+error: Requested operation is not valid: domain is not running
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+Formatting '/home/VMs/compute02/compute02d1.img', fmt=qcow2 size=69793218560 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img info /home/VMs/compute02/compute02d1.img
+image: /home/VMs/compute02/compute02d1.img
+file format: qcow2
+virtual size: 65 GiB (69793218560 bytes)
+disk size: 196 KiB
+cluster_size: 65536
+Format specific information:
+    compat: 1.1
+    lazy refcounts: false
+    refcount bits: 16
+    corrupt: false
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img info /home/VMs/compute03/compute03d1.img
+image: /home/VMs/compute03/compute03d1.img
+file format: raw
+virtual size: 61 GiB (65498251264 bytes)
+disk size: 4.63 GiB
+ubuntu@vm2-services-hypervisor:~$ # Verifică starea
+name'], '|', m['status_name'], '|', m.get('status_message','')[:80])
+"ubuntu@vm2-services-hypervisor:~$ sudo maas admin machines read | python3 -c "
+> import sys, json
+> for m in json.load(sys.stdin):
+>     print(m['hostname'], '|', m['status_name'], '|', m.get('status_message','')[:80])
+> "^C
+ubuntu@vm2-services-hypervisor:~$ ^C
+ubuntu@vm2-services-hypervisor:~$ ^C
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ virsh list --all | grep compute0
+ 47   os-compute01      running
+ 49   os-compute03      running
+ 50   os-compute02      running
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute02
+ Target   Source
+-----------------------------------------------
+ vda      /home/VMs/compute02/compute02d1.img
+
+ubuntu@vm2-services-hypervisor:~$ ls -la /home/VMs/compute02/compute02d1.img
+-rw-r--r-- 1 libvirt-qemu kvm 197648 Mar  3 08:31 /home/VMs/compute02/compute02d1.img
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img info /home/VMs/compute02/compute02d1.img
+image: /home/VMs/compute02/compute02d1.img
+file format: qcow2
+virtual size: 65 GiB (69793218560 bytes)
+disk size: 196 KiB
+cluster_size: 65536
+Format specific information:
+    compat: 1.1
+    lazy refcounts: false
+    refcount bits: 16
+    corrupt: false
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute02
+qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+virsh start os-compute02error: Failed to destroy domain os-compute02
+error: Requested operation is not valid: domain is not running
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img create -f qcow2 /home/VMs/compute02/compute02d1.img 65G
+Formatting '/home/VMs/compute02/compute02d1.img', fmt=qcow2 size=69793218560 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+ubuntu@vm2-services-hypervisor:~$ virsh start os-compute02
+Domain os-compute02 started
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img info /home/VMs/compute02/compute02d1.img
+qemu-img: Could not open '/home/VMs/compute02/compute02d1.img': Failed to get shared "write" lock
+Is another process using the image [/home/VMs/compute02/compute02d1.img]?
+ubuntu@vm2-services-hypervisor:~$ virsh dumpxml os-compute02 | grep -A10 "<disk"
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native'/>
+      <source file='/home/VMs/compute02/compute02d1.img'/>
+      <target dev='vda' bus='virtio'/>
+      <serial>compute02</serial>
+      <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
+    </disk>
+    <controller type='scsi' index='0' model='virtio-scsi'>
+      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-ehci1'>
+ubuntu@vm2-services-hypervisor:~$ virsh dumpxml os-compute01 | grep -A10 "<disk"
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/os-compute01.qcow2' index='1'/>
+      <backingStore/>
+      <target dev='vda' bus='virtio'/>
+      <serial>compute01</serial>
+      <alias name='virtio-disk0'/>
+      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+    </disk>
+    <controller type='usb' index='0' model='ich9-ehci1'>
+      <alias name='usb'/>
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute02
+error: Failed to destroy domain os-compute02
+error: Requested operation is not valid: domain is not running
+
+ubuntu@vm2-services-hypervisor:~$ virsh destroy os-compute02
+error: Failed to destroy domain os-compute02
+error: Requested operation is not valid: domain is not running
+
+ubuntu@vm2-services-hypervisor:~$ virsh edit os-compute02
+Domain os-compute02 XML configuration edited.
+
+ubuntu@vm2-services-hypervisor:~$ ps aux | grep socat
+root      524832  0.0  0.0  11168  4724 ?        S    Mar02   0:00 sudo socat TCP-LISTEN:5248,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5248
+root      524833  0.0  0.0   6968  1768 ?        S    Mar02   0:00 socat TCP-LISTEN:5248,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5248
+root      524837  0.0  0.0  11176  4772 ?        S    Mar02   0:00 sudo socat TCP-LISTEN:5240,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5240
+root      524838  0.0  0.0  11168  4792 ?        S    Mar02   0:00 sudo socat UDP-LISTEN:69,fork,bind=10.10.10.1,reuseaddr UDP:192.168.66.27:69
+root      524839  0.0  0.0   6968  1768 ?        S    Mar02   0:00 socat TCP-LISTEN:5240,fork,bind=10.10.10.1,reuseaddr TCP:192.168.66.27:5240
+root      524840  0.0  0.0   6968  1832 ?        S    Mar02   0:00 socat UDP-LISTEN:69,fork,bind=10.10.10.1,reuseaddr UDP:192.168.66.27:69
+ubuntu    601975  0.0  0.0   8160  2328 pts/0    S+   09:07   0:00 grep --color=auto socat
+ubuntu@vm2-services-hypervisor:~$ ^C
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -A POSTROUTING -s 10.10.10.0/24 ! -d 10.10.10.0/24 -o ens3 -j MASQUERADE
+ubuntu@vm2-services-hypervisor:~$ ip route show default
+default via 192.168.66.1 dev ens3 proto dhcp src 192.168.66.243 metric 100
+default via 10.10.10.1 dev br0 proto dhcp src 10.10.10.104 metric 100
+default via 10.10.10.1 dev br0 proto dhcp src 10.10.10.104 metric 100
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=116 time=37.9 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=116 time=34.9 ms
+
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 34.909/36.396/37.883/1.487 ms
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -D POSTROUTING -s 10.10.10.0/24 ! -d 10.10.10.0/24 -o ens3 -j MASQUERADE
+ubuntu@vm2-services-hypervisor:~$ sudo ip route replace default via 192.168.66.27 dev ens3
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=116 time=38.2 ms
+From 192.168.66.27 icmp_seq=2 Redirect Host(New nexthop: 1.66.168.192)
+
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 1 received, +1 errors, 50% packet loss, time 1001ms
+rtt min/avg/max/mdev = 38.185/38.185/38.185/0.000 ms
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -A POSTROUTING -s 10.10.10.0/24 ! -d 10.10.10.0/24 -o ens3 -j MASQUERADE
+ubuntu@vm2-services-hypervisor:~$ juju ssh 0 "nslookup api.snapcraft.io 8.8.8.8; ping -c 2 api.snapcraft.io"
+juju: command not found
+ubuntu@vm2-services-hypervisor:~$ sudo apt install -y dnsmasq
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Suggested packages:
+  resolvconf
+The following NEW packages will be installed:
+  dnsmasq
+0 upgraded, 1 newly installed, 0 to remove and 44 not upgraded.
+Need to get 16.7 kB of archives.
+After this operation, 76.8 kB of additional disk space will be used.
+0% [Waiting for headers]
+Ign:1 http://nova.clouds.archive.ubuntu.com/ubuntu focal-updates/universe amd64 dnsmasq all 2.90-0ubuntu0.20.04.1
+0% [Waiting for headers]^C
+ubuntu@vm2-services-hypervisor:~$ sudo ip route replace default via 192.168.66.1 dev ens3
+ubuntu@vm2-services-hypervisor:~$ ping -c 2 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=116 time=37.2 ms
+ll -y dnsmasq64 bytes from 8.8.8.8: icmp_seq=2 ttl=116 time=34.7 ms
+
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 34.698/35.953/37.208/1.255 ms
+ubuntu@vm2-services-hypervisor:~$ sudo apt install -y dnsmasq
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Suggested packages:
+  resolvconf
+The following NEW packages will be installed:
+  dnsmasq
+0 upgraded, 1 newly installed, 0 to remove and 44 not upgraded.
+Need to get 16.7 kB of archives.
+After this operation, 76.8 kB of additional disk space will be used.
+Get:1 http://nova.clouds.archive.ubuntu.com/ubuntu focal-updates/universe amd64 dnsmasq all 2.90-0ubuntu0.20.04.1 [16.7 kB]
+Fetched 16.7 kB in 0s (96.4 kB/s)
+Selecting previously unselected package dnsmasq.
+(Reading database ... 112159 files and directories currently installed.)
+Preparing to unpack .../dnsmasq_2.90-0ubuntu0.20.04.1_all.deb ...
+Unpacking dnsmasq (2.90-0ubuntu0.20.04.1) ...
+Setting up dnsmasq (2.90-0ubuntu0.20.04.1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/dnsmasq.service → /lib/systemd/system/dnsmasq.service.
+Processing triggers for systemd (245.4-4ubuntu3.24) ...
+ubuntu@vm2-services-hypervisor:~$ sudo bash -c 'cat > /etc/dnsmasq.d/forward.conf << EOF
+> listen-address=10.10.10.1
+> bind-interfaces
+> no-dhcp-interface=br0
+> server=8.8.8.8
+> server=8.8.4.4
+> EOF'
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl restart dnsmasq
+ubuntu@vm2-services-hypervisor:~$ nslookup api.snapcraft.io 8.8.8.8
+;; communications error to 8.8.8.8#53: timed out
+;; communications error to 8.8.8.8#53: timed out
+;; communications error to 8.8.8.8#53: timed out
+;; no servers could be reached
+
+ubuntu@vm2-services-hypervisor:~$ nslookup api.snapcraft.io
+Server:         127.0.0.53
+Address:        127.0.0.53#53
+
+Non-authoritative answer:
+Name:   api.snapcraft.io
+Address: 185.125.188.54
+Name:   api.snapcraft.io
+Address: 185.125.188.58
+Name:   api.snapcraft.io
+Address: 185.125.188.57
+Name:   api.snapcraft.io
+Address: 185.125.188.59
+Name:   api.snapcraft.io
+Address: 2620:2d:4000:1010::2d6
+Name:   api.snapcraft.io
+Address: 2620:2d:4000:1010::2cc
+Name:   api.snapcraft.io
+Address: 2620:2d:4000:1010::117
+Name:   api.snapcraft.io
+Address: 2620:2d:4000:1010::42
+
+ubuntu@vm2-services-hypervisor:~$ resolvectl status | grep "DNS Servers"
+         DNS Servers: 193.151.29.205
+ubuntu@vm2-services-hypervisor:~$ sudo bash -c 'cat > /etc/dnsmasq.d/forward.conf << EOF
+> listen-address=10.10.10.1
+> bind-interfaces
+> no-dhcp-interface=br0
+> server=127.0.0.53
+> EOF'
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl restart dnsmasq
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ sudo bash -c 'cat > /etc/dnsmasq.d/forward.conf << EOF
+> listen-address=10.10.10.1
+> bind-interfaces
+> no-dhcp-interface=br0
+> server=193.151.29.205
+> EOF'
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ sudo systemctl restart dnsmasq
+ubuntu@vm2-services-hypervisor:~$ nslookup api.snapcraft.io 10.10.10.1
+Server:         10.10.10.1
+Address:        10.10.10.1#53
+
+Non-authoritative answer:
+Name:   api.snapcraft.io
+Address: 185.125.188.59
+Name:   api.snapcraft.io
+Address: 185.125.188.57
+Name:   api.snapcraft.io
+Address: 185.125.188.58
+Name:   api.snapcraft.io
+Address: 185.125.188.54
+Name:   api.snapcraft.io
+Address: 2620:2d:4000:1010::42
+Name:   api.snapcraft.io
+Address: 2620:2d:4000:1010::117
+Name:   api.snapcraft.io
+Address: 2620:2d:4000:1010::2cc
+Name:   api.snapcraft.io
+Address: 2620:2d:4000:1010::2d6
+
+ubuntu@vm2-services-hypervisor:~$ sudo ss -ulnp | grep 53
+UNCONN   0        0                   10.10.10.1:53              0.0.0.0:*       users:(("dnsmasq",pid=604562,fd=4))
+UNCONN   0        0                192.168.122.1:53              0.0.0.0:*       users:(("dnsmasq",pid=5405,fd=5))
+UNCONN   0        0                127.0.0.53%lo:53              0.0.0.0:*       users:(("systemd-resolve",pid=4644,fd=12))
+ubuntu@vm2-services-hypervisor:~$ juju ssh 0 "dig @10.10.10.1 api.snapcraft.io +timeout=3"
+juju: command not found
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -L PREROUTING -n -v
+Chain PREROUTING (policy ACCEPT 800 packets, 59872 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+ 1476 97926 DNAT       all  --  br0    *       0.0.0.0/0            10.10.10.1           to:192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -D PREROUTING -i br0 -d 10.10.10.1 -j DNAT --to-destination 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -A PREROUTING -i br0 -d 10.10.10.1 -p tcp --dport 5248 -j DNAT --to-destination 192.168.66.27
+UTING -i br0 -d 10.10.10.1 -p tcp --dport 5240 -j DNAT --to-destination 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -A PREROUTING -i br0 -d 10.10.10.1 -p tcp --dport 5240 -j DNAT --to-destination 192.168.66.27
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ sudo iptables -t nat -L PREROUTING -n -v
+Chain PREROUTING (policy ACCEPT 13 packets, 2873 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 DNAT       tcp  --  br0    *       0.0.0.0/0            10.10.10.1           tcp dpt:5248 to:192.168.66.27
+    0     0 DNAT       tcp  --  br0    *       0.0.0.0/0            10.10.10.1           tcp dpt:5240 to:192.168.66.27
+ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute01
+ Target   Source
+------------------------------------------------------
+ vda      /var/lib/libvirt/images/os-compute01.qcow2
+
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img info /var/lib/libvirt/images/os-compute01.qcow2
+qemu-img: Could not open '/var/lib/libvirt/images/os-compute01.qcow2': Failed to get shared "write" lock
+Is another process using the image [/var/lib/libvirt/images/os-compute01.qcow2]?
+ubuntu@vm2-services-hypervisor:~$ ubuntu@vm2-services-hypervisor:~$ virsh domblklist os-compute01
+the image [/var/lib/libvirt/images/os-compute01.qcow2]?
+ubuntu@vm2-services-hypervisor:~$ubuntu@vm2-services-hypervisor:~$: command not found
+ubuntu@vm2-services-hypervisor:~$  Target   Source
+Target: command not found
+ubuntu@vm2-services-hypervisor:~$ ------------------------------------------------------
+------------------------------------------------------: command not found
+ubuntu@vm2-services-hypervisor:~$  vda      /var/lib/libvirt/images/os-compute01.qcow2
+
+Command 'vda' not found, did you mean:
+
+  command 'dda' from snap dda (0.1)
+  command 'vba' from deb visualboyadvance (1.8.0.dfsg-5build1)
+  command 'pda' from deb speech-tools (1:2.5.0-8build1)
+  command 'vd' from deb visidata (1.5.2-1)
+  command 'vdr' from deb vdr (2.4.1-4ubuntu1)
+  command 'tda' from deb devtodo (0.1.20-7build1)
+
+See 'snap info <snapname>' for additional versions.
+
+ubuntu@vm2-services-hypervisor:~$
+ubuntu@vm2-services-hypervisor:~$ ubuntu@vm2-services-hypervisor:~$ sudo qemu-img info /var/lib/libvirt/images/os-compute01.qcow2
+ubuntu@vm2-services-hypervisor:~$: command not found
+ubuntu@vm2-services-hypervisor:~$ qemu-img: Could not open '/var/lib/libvirt/images/os-compute01.qcow2': Failed to get shared "write" lock
+
+Command 'qemu-img:' not found, did you mean:
+
+  command 'qemu-img' from deb qemu-utils (1:4.2-3ubuntu6.30)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm2-services-hypervisor:~$ Is another process using the image [/var/lib/libvirt/images/os-compute01.qcow2]?
+Is: command not found
+ubuntu@vm2-services-hypervisor:~$ ubuntu@vm2-services-hypervisor:~$sudo qemu-img resize /var/lib/libvirt/images/os-compute01.qcow2 65G
+ubuntu@vm2-services-hypervisor:~: command not found
+ubuntu@vm2-services-hypervisor:~$ sudo qemu-img resize /var/lib/libvirt/images/os-compute01.qcow2 65G
+qemu-img: Could not open '/var/lib/libvirt/images/os-compute01.qcow2': Failed to get "write" lock
+Is another process using the image [/var/lib/libvirt/images/os-compute01.qcow2]?
+ubuntu@vm2-services-hypervisor:~$ ubuntu@vm2-services-hypervisor:~$ sudo qemu-img resize /var/lib/libvirt/images/os-compute01.qcow2 65G
+/images/os-compute01.qcow2': Failed to get "write" lock
+Is another process using the image [/var/lib/libvirt/images/os-compute01.qcow2]?ubuntu@vm2-services-hypervisor:~$: command not found
+ubuntu@vm2-services-hypervisor:~$ qemu-img: Could not open '/var/lib/libvirt/images/os-compute01.qcow2': Failed to get "write" lock
+
+Command 'qemu-img:' not found, did you mean:
+
+  command 'qemu-img' from deb qemu-utils (1:4.2-3ubuntu6.30)
+
+Try: sudo apt install <deb name>
+
+ubuntu@vm2-services-hypervisor:~$ Is another process using the image [/var/lib/libvirt/images/os-compute01.qcow2]?^C
+ubuntu@vm2-services-hypervisor:~$ sudo virsh blockresize os-compute01 /var/lib/libvirt/images/os-compute01.qcow2 65G
+Block device '/var/lib/libvirt/images/os-compute01.qcow2' is resized
+ubuntu@vm2-services-hypervisor:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        97G   72G   25G  75% /
+ubuntu@vm2-services-hypervisor:~$ du -sh /var/lib/libvirt/images/os-compute01.qcow2
+18G     /var/lib/libvirt/images/os-compute01.qcow2
+ubuntu@vm2-services-hypervisor:~$ du -sh /home/VMs/compute02/compute02d1.img
+28G     /home/VMs/compute02/compute02d1.img
+ubuntu@vm2-services-hypervisor:~$ du -sh /home/VMs/compute03/compute03d1.img
+25G     /home/VMs/compute03/compute03d1.img
+ubuntu@vm2-services-hypervisor:~$ client_loop: send disconnect: Broken pipe
+client_loop: send disconnect: Broken pipe
+alex@DESKTOP-8JOK6E1:~$
