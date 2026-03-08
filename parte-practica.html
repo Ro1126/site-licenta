@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ro" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parte Practică - Licență</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15), transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glass {
+            background: rgba(24, 24, 27, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            transition: color 0.3s ease;
+            position: relative;
+            color: #a1a1aa;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #f4f4f5;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Timeline Styles */
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: -2rem;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -0.35rem;
+            top: 0.25rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: #38bdf8;
+            border: 2px solid #09090b;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+        
+        .update-card {
+            background: linear-gradient(145deg, rgba(39, 39, 42, 0.5) 0%, rgba(24, 24, 27, 0.3) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .update-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30">
+
+    <div class="ambient-glow"></div>
+
+    <!-- Navigație -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex-1"></div>
+            <div class="hidden md:flex items-center justify-center gap-8 font-medium flex-1">
+                <a href="index.html" class="nav-link">Acasă</a>
+                <a href="parte-scrisa.html" class="nav-link">Parte scrisă</a>
+                <a href="parte-practica.html" class="nav-link active">Parte practică</a>
+                <a href="prezentare.html" class="nav-link">Prezentare</a>
+                <a href="loguri.html" class="nav-link">Log-uri</a>
+            </div>
+            <div class="flex-1 flex justify-end">
+                <a href="https://github.com" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="ph ph-github-logo text-xl"></i> Link fișiere proiect
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conținut Principal -->
+    <main class="pt-32 pb-16 px-6 max-w-4xl mx-auto relative z-10">
+        <header class="mb-16 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Parte Practică</h1>
+            <p class="text-zinc-400 text-lg">Jurnal de dezvoltare și update-uri privind implementarea infrastructurii cloud.</p>
+        </header>
+
+        <!-- Secțiune Update-uri -->
+        <div id="updates-container" class="relative">
+            <!-- Placeholder pentru update-uri statice (în caz că nu se folosește JSON din repo) -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="update-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-white">Inițializare Proiect</h3>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/20">
+                            26 Feb 2026
+                        </span>
+                    </div>
+                    <p class="text-zinc-400 leading-relaxed mb-4">
+                        Am creat structura de bază a portalului web și am configurat conexiunea cu repository-ul privat de pe GitHub pentru preluarea dinamică a datelor.
+                    </p>
+                    <div class="flex gap-2">
+                        <span class="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">#frontend</span>
+                        <span class="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">#setup</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot" style="background: #818cf8; box-shadow: 0 0 10px rgba(129, 140, 248, 0.5);"></div>
+                <div class="update-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-white">Configurare Server Proxmox</h3>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/20">
+                            20 Feb 2026
+                        </span>
+                    </div>
+                    <p class="text-zinc-400 leading-relaxed mb-4">
+                        Instalarea și configurarea inițială a hypervisor-ului Proxmox VE pe serverul fizic. S-au configurat rețelele virtuale și storage-ul ZFS.
+                    </p>
+                    <div class="flex gap-2">
+                        <span class="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">#proxmox</span>
+                        <span class="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">#infrastructura</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formular Adăugare Update (Doar vizual, necesită backend pentru salvare) -->
+        <div class="mt-16 p-6 rounded-2xl border border-dashed border-zinc-700 bg-zinc-900/50 text-center">
+            <i class="ph ph-plus-circle text-4xl text-zinc-500 mb-4"></i>
+            <h4 class="text-lg font-medium text-zinc-300 mb-2">Adaugă un nou update</h4>
+            <p class="text-sm text-zinc-500 mb-6">Pentru a adăuga update-uri dinamic, poți crea un fișier <code>updates.json</code> în repository-ul privat.</p>
+            <button class="px-6 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg text-sm font-medium transition-colors">
+                Vezi documentația
+            </button>
+        </div>
+    </main>
+
+</body>
+</html>

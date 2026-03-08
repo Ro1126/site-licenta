@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ro" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Licență: Automatizare Cloud Privat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b; /* Zinc 950 - un negru mai profund și modern */
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Ambient Background Glow */
+        .ambient-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15), transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Enhanced Glassmorphism */
+        .glass {
+            background: rgba(24, 24, 27, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(39, 39, 42, 0.5) 0%, rgba(24, 24, 27, 0.3) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.05);
+        }
+
+        /* Navbar Links */
+        .nav-link {
+            transition: color 0.3s ease;
+            position: relative;
+            color: #a1a1aa;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #f4f4f5;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30">
+
+    <div class="ambient-glow"></div>
+
+    <!-- Navigație -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Stânga gol conform cerinței -->
+            <div class="flex-1"></div>
+            
+            <!-- Link-uri meniu (duc către pagini separate) -->
+            <div class="hidden md:flex items-center justify-center gap-8 font-medium flex-1">
+                <a href="index.html" class="nav-link active">Acasă</a>
+                <a href="parte-scrisa.html" class="nav-link">Parte scrisă</a>
+                <a href="parte-practica.html" class="nav-link">Parte practică</a>
+                <a href="prezentare.html" class="nav-link">Prezentare</a>
+                <a href="loguri.html" class="nav-link">Log-uri</a>
+            </div>
+
+            <!-- Buton GitHub Dreapta -->
+            <div class="flex-1 flex justify-end">
+                <a href="https://github.com" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                    <i class="ph ph-github-logo text-xl"></i> Link fișiere proiect
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-48 pb-16 px-6 relative">
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-500/10 text-sky-400 text-sm font-semibold border border-sky-500/20 mb-8 shadow-[0_0_20px_rgba(56,189,248,0.1)]">
+                <i class="ph-fill ph-graduation-cap"></i> Proiect de Diplomă 2026
+            </div>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-8 leading-tight tracking-tighter">
+                Automatizarea <br /> unui <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-500">cloud privat</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto mb-12 font-light leading-relaxed">
+                Portalul principal al proiectului de licență. Explorează documentația tehnică, implementarea practică și resursele vizuale.
+            </p>
+        </div>
+    </header>
+
+    <!-- Cuprins / Sum-up Proiect -->
+    <section class="py-12 px-6 mb-24 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <!-- Card Parte Scrisă -->
+                <a href="parte-scrisa.html" class="glass-card p-10 rounded-3xl group block hover:bg-zinc-800/50 cursor-pointer">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sky-500/20 to-sky-500/5 border border-sky-500/20 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+                        <i class="ph ph-book-open text-sky-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white flex items-center justify-between">
+                        Parte Scrisă
+                        <i class="ph ph-arrow-right text-sky-400 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-2"></i>
+                    </h3>
+                    <p class="text-zinc-400 leading-relaxed text-lg">Documentația teoretică, analiza tehnologiilor de virtualizare (IaC) și arhitectura propusă pentru infrastructura cloud.</p>
+                </a>
+                
+                <!-- Card Parte Practică -->
+                <a href="parte-practica.html" class="glass-card p-10 rounded-3xl group block hover:bg-zinc-800/50 cursor-pointer">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-indigo-500/5 border border-indigo-500/20 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+                        <i class="ph ph-cpu text-indigo-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white flex items-center justify-between">
+                        Parte Practică
+                        <i class="ph ph-arrow-right text-indigo-400 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-2"></i>
+                    </h3>
+                    <p class="text-zinc-400 leading-relaxed text-lg">Implementarea efectivă folosind Terraform, Ansible și sisteme de monitorizare (Prometheus & Grafana).</p>
+                </a>
+                
+                <!-- Card Prezentare -->
+                <a href="prezentare.html" class="glass-card p-10 rounded-3xl group block hover:bg-zinc-800/50 cursor-pointer">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/20 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+                        <i class="ph ph-presentation-chart text-purple-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white flex items-center justify-between">
+                        Prezentare Finală
+                        <i class="ph ph-arrow-right text-purple-400 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-2"></i>
+                    </h3>
+                    <p class="text-zinc-400 leading-relaxed text-lg">Slide-urile folosite pentru susținerea licenței, grafice și un rezumat vizual al întregului proiect.</p>
+                </a>
+
+                <!-- Card Log-uri -->
+                <a href="loguri.html" class="glass-card p-10 rounded-3xl group block hover:bg-zinc-800/50 cursor-pointer">
+                    <div class="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 border border-emerald-500/20 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+                        <i class="ph ph-terminal-window text-emerald-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white flex items-center justify-between">
+                        Log-uri Sistem
+                        <i class="ph ph-arrow-right text-emerald-400 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-2"></i>
+                    </h3>
+                    <p class="text-zinc-400 leading-relaxed text-lg">Istoricul rulărilor, output-ul consolei din timpul deployment-ului automat și logurile de configurare.</p>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 border-t border-white/5 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-zinc-500 text-sm">
+            <p>© 2026 - Creat pentru examenul de licență.</p>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-sky-400 transition-colors">Documentație</a>
+                <a href="#" class="hover:text-sky-400 transition-colors">Cod Sursă</a>
+                <a href="#" class="hover:text-sky-400 transition-colors">Universitate</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

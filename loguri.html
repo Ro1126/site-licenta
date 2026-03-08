@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ro" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log-uri - Licență</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15), transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glass {
+            background: rgba(24, 24, 27, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            transition: color 0.3s ease;
+            position: relative;
+            color: #a1a1aa;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #f4f4f5;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Layout Log-uri */
+        .logs-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.5rem;
+            height: calc(100vh - 140px); /* Scădem navbar-ul și padding-ul */
+            margin-top: 100px;
+        }
+
+        .sidebar {
+            background: rgba(24, 24, 27, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .log-viewer {
+            background: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-header {
+            background: rgba(39, 39, 42, 0.8);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            color: #a1a1aa;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .file-item {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #a1a1aa;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f4f4f5;
+        }
+
+        .file-item.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border-left: 3px solid #38bdf8;
+        }
+
+        /* Scrollbar personalizat */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #38bdf8;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30">
+
+    <div class="ambient-glow"></div>
+
+    <!-- Navigație -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex-1"></div>
+            <div class="hidden md:flex items-center justify-center gap-8 font-medium flex-1">
+                <a href="index.html" class="nav-link">Acasă</a>
+                <a href="parte-scrisa.html" class="nav-link">Parte scrisă</a>
+                <a href="parte-practica.html" class="nav-link">Parte practică</a>
+                <a href="prezentare.html" class="nav-link">Prezentare</a>
+                <a href="loguri.html" class="nav-link active">Log-uri</a>
+            </div>
+            <div class="flex-1 flex justify-end">
+                <a href="https://github.com" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="ph ph-github-logo text-xl"></i> Link fișiere proiect
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conținut Principal -->
+    <main class="px-6 max-w-7xl mx-auto w-full flex-grow relative z-10">
+        <div class="logs-layout">
+            
+            <!-- Sidebar cu lista de fișiere -->
+            <aside class="sidebar flex flex-col">
+                <div class="flex items-center gap-2 mb-6 px-2">
+                    <i class="ph ph-folder-open text-sky-400 text-xl"></i>
+                    <h2 class="text-lg font-semibold text-white">Fișiere Log</h2>
+                </div>
+                
+                <div id="file-list" class="flex-grow">
+                    <div class="flex items-center justify-center py-8 text-zinc-500">
+                        <div class="loader mr-3"></div>
+                        <span class="text-sm">Se încarcă lista...</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Vizualizator Log-uri -->
+            <section class="log-viewer">
+                <div class="log-header">
+                    <div class="flex items-center gap-3">
+                        <i class="ph ph-file-text text-zinc-400 text-xl"></i>
+                        <h3 id="current-file-name" class="font-medium text-white">Selectează un fișier</h3>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btn-refresh" class="p-2 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white transition-colors" title="Reîncarcă">
+                            <i class="ph ph-arrows-clockwise text-lg"></i>
+                        </button>
+                        <button id="btn-download" class="p-2 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white transition-colors hidden" title="Descarcă">
+                            <i class="ph ph-download-simple text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="log-content" class="log-content code-font">
+                    <div class="h-full flex flex-col items-center justify-center text-zinc-600">
+                        <i class="ph ph-terminal-window text-6xl mb-4 opacity-50"></i>
+                        <p>Alege un fișier din panoul din stânga pentru a-i vizualiza conținutul.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        let currentFiles = [];
+        let activeFile = null;
+
+        async function loadFileList() {
+            const fileListContainer = document.getElementById('file-list');
+            
+            try {
+                // Preluăm lista de fișiere generată de GitHub Actions
+                const response = await fetch('data/logs-list.json');
+                
+                if (!response.ok) {
+                    throw new Error("Nu am putut încărca lista de log-uri.");
+                }
+
+                const text = await response.text();
+                
+                // Dacă e un array JSON valid (când e gol)
+                if (text.trim() === '[]') {
+                    fileListContainer.innerHTML = '<p class="text-sm text-zinc-500 text-center py-4">Nu s-au găsit fișiere.</p>';
+                    return;
+                }
+
+                // Dacă e lista generată de `ls -1` (un fișier pe linie)
+                let files = [];
+                try {
+                    files = JSON.parse(text);
+                } catch (e) {
+                    // Fallback dacă e text simplu cu linii
+                    files = text.split('\n').filter(line => line.trim() !== '');
+                }
+
+                if (files.length === 0) {
+                    fileListContainer.innerHTML = '<p class="text-sm text-zinc-500 text-center py-4">Nu s-au găsit fișiere.</p>';
+                    return;
+                }
+
+                fileListContainer.innerHTML = '';
+                files.forEach(fileName => {
+                    // Dacă e obiect (din API vechi) sau string (din ls -1)
+                    const name = typeof fileName === 'string' ? fileName : fileName.name;
+                    const path = `data/log/${name}`;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'file-item';
+                    div.dataset.path = path;
+                    
+                    // Iconiță în funcție de extensie
+                    let icon = 'ph-file-text';
+                    if (name.endsWith('.json')) icon = 'ph-file-code';
+                    else if (name.endsWith('.log') || name.endsWith('.txt')) icon = 'ph-terminal';
+                    
+                    div.innerHTML = `
+                        <i class="ph ${icon} text-lg opacity-70"></i>
+                        <span class="truncate text-sm">${name}</span>
+                    `;
+                    
+                    div.addEventListener('click', () => loadFileContent({name, path}, div));
+                    fileListContainer.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error("Eroare la încărcarea listei de fișiere:", error);
+                fileListContainer.innerHTML = `
+                    <div class="text-red-400 text-center py-4">
+                        <i class="ph ph-warning-circle text-2xl mb-2"></i>
+                        <p class="text-xs">${error.message}</p>
+                        <p class="text-[10px] mt-2 text-zinc-500">Asigură-te că GitHub Actions a rulat.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadFileContent(file, element) {
+            // Update UI
+            document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+            
+            activeFile = file;
+            document.getElementById('current-file-name').textContent = file.name;
+            
+            const btnDownload = document.getElementById('btn-download');
+            btnDownload.classList.remove('hidden');
+            // Setăm link-ul de download direct către fișierul local
+            btnDownload.onclick = () => window.open(file.path, '_blank');
+            
+            const contentContainer = document.getElementById('log-content');
+            contentContainer.innerHTML = '<div class="flex items-center justify-center h-full"><div class="loader"></div></div>';
+
+            try {
+                const response = await fetch(file.path);
+                if (!response.ok) throw new Error("Fișierul nu a putut fi citit.");
+                
+                const content = await response.text();
+                
+                // Evidențiere simplă pentru log-uri (opțional)
+                let formattedContent = content
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/(ERROR|FATAL|CRITICAL)/g, '<span class="text-red-400 font-bold">$1</span>')
+                    .replace(/(WARN|WARNING)/g, '<span class="text-yellow-400 font-bold">$1</span>')
+                    .replace(/(INFO|NOTICE)/g, '<span class="text-sky-400 font-bold">$1</span>')
+                    .replace(/(DEBUG|TRACE)/g, '<span class="text-zinc-500 font-bold">$1</span>');
+
+                contentContainer.innerHTML = formattedContent;
+                
+                // Scroll la final dacă e log sau txt
+                if (file.name.endsWith('.log') || file.name.endsWith('.txt')) {
+                    contentContainer.scrollTop = contentContainer.scrollHeight;
+                }
+
+            } catch (error) {
+                console.error("Eroare la încărcarea conținutului:", error);
+                contentContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-red-400">
+                        <i class="ph ph-warning-circle text-4xl mb-4"></i>
+                        <p>Eroare la citirea fișierului.</p>
+                        <p class="text-sm mt-2">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Evenimente butoane
+        document.getElementById('btn-refresh').addEventListener('click', () => {
+            if (activeFile) {
+                const activeElement = document.querySelector('.file-item.active');
+                loadFileContent(activeFile, activeElement);
+            } else {
+                loadFileList();
+            }
+        });
+
+        // Inițializare
+        document.addEventListener('DOMContentLoaded', loadFileList);
+    </script>
+</body>
+</html>

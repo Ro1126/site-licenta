@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ro" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parte Scrisă - Licență</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15), transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glass {
+            background: rgba(24, 24, 27, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            transition: color 0.3s ease;
+            position: relative;
+            color: #a1a1aa;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #f4f4f5;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Container pentru PDF */
+        #pdf-container {
+            background-color: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            height: 80vh;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #pdf-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Loader */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #38bdf8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30">
+
+    <div class="ambient-glow"></div>
+
+    <!-- Navigație -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex-1"></div>
+            <div class="hidden md:flex items-center justify-center gap-8 font-medium flex-1">
+                <a href="index.html" class="nav-link">Acasă</a>
+                <a href="parte-scrisa.html" class="nav-link active">Parte scrisă</a>
+                <a href="parte-practica.html" class="nav-link">Parte practică</a>
+                <a href="prezentare.html" class="nav-link">Prezentare</a>
+                <a href="loguri.html" class="nav-link">Log-uri</a>
+            </div>
+            <div class="flex-1 flex justify-end">
+                <a href="https://github.com" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="ph ph-github-logo text-xl"></i> Link fișiere proiect
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conținut Principal -->
+    <main class="pt-32 pb-16 px-6 max-w-6xl mx-auto relative z-10">
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Parte Scrisă</h1>
+            <p class="text-zinc-400 text-lg mb-2">Documentația teoretică a proiectului de licență.</p>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/50 border border-zinc-700 text-sm text-zinc-300">
+                <i class="ph ph-clock-counter-clockwise"></i>
+                <span id="last-update">Ultima actualizare: Se verifică...</span>
+            </div>
+        </header>
+
+        <div id="status-message" class="flex flex-col items-center justify-center py-12 text-zinc-400">
+            <div class="loader mb-4"></div>
+            <p>Se încarcă documentul PDF...</p>
+        </div>
+
+        <div id="pdf-container" class="hidden">
+            <iframe id="pdf-viewer" src="" title="Documentație Licență"></iframe>
+        </div>
+    </main>
+
+    <!-- Script pentru preluare PDF și metadate -->
+    <script>
+        async function loadDocument() {
+            const statusMessage = document.getElementById('status-message');
+            const pdfContainer = document.getElementById('pdf-container');
+            const pdfViewer = document.getElementById('pdf-viewer');
+            const lastUpdateSpan = document.getElementById('last-update');
+
+            try {
+                // 1. Preluare metadate pentru ultima actualizare
+                try {
+                    const metaResponse = await fetch('data/metadata.json');
+                    if (metaResponse.ok) {
+                        const metadata = await metaResponse.json();
+                        lastUpdateSpan.textContent = `Ultima actualizare: ${metadata.lastUpdate}`;
+                    } else {
+                        lastUpdateSpan.textContent = 'Ultima actualizare: Indisponibil';
+                    }
+                } catch (e) {
+                    lastUpdateSpan.textContent = 'Ultima actualizare: Indisponibil';
+                }
+
+                // 2. Verificare existență PDF
+                const pdfResponse = await fetch('data/lucrare.pdf', { method: 'HEAD' });
+                
+                if (!pdfResponse.ok) {
+                    throw new Error(`Documentul PDF nu a fost găsit (Status: ${pdfResponse.status})`);
+                }
+
+                // 3. Afișare PDF
+                pdfViewer.src = 'data/lucrare.pdf';
+                
+                statusMessage.classList.add('hidden');
+                pdfContainer.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Eroare la încărcarea documentului:", error);
+                statusMessage.innerHTML = `
+                    <div class="text-red-400 mb-4"><i class="ph ph-warning-circle text-4xl"></i></div>
+                    <p class="text-red-400 font-medium">Eroare la încărcarea documentului.</p>
+                    <p class="text-sm mt-2 max-w-md text-center">${error.message}</p>
+                    <p class="text-xs mt-4 text-zinc-500">Asigură-te că GitHub Actions a rulat cu succes și a copiat fișierul lucrare.pdf în folderul data/.</p>
+                `;
+            }
+        }
+
+        // Inițializare la încărcarea paginii
+        document.addEventListener('DOMContentLoaded', loadDocument);
+    </script>
+</body>
+</html>
