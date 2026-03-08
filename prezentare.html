@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ro" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prezentare - Licență</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15), transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glass {
+            background: rgba(24, 24, 27, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            transition: color 0.3s ease;
+            position: relative;
+            color: #a1a1aa;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #f4f4f5;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30">
+
+    <div class="ambient-glow"></div>
+
+    <!-- Navigație -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex-1"></div>
+            <div class="hidden md:flex items-center justify-center gap-8 font-medium flex-1">
+                <a href="index.html" class="nav-link">Acasă</a>
+                <a href="parte-scrisa.html" class="nav-link">Parte scrisă</a>
+                <a href="parte-practica.html" class="nav-link">Parte practică</a>
+                <a href="prezentare.html" class="nav-link active">Prezentare</a>
+                <a href="loguri.html" class="nav-link">Log-uri</a>
+            </div>
+            <div class="flex-1 flex justify-end">
+                <a href="https://github.com" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="ph ph-github-logo text-xl"></i> Link fișiere proiect
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conținut Principal -->
+    <main class="pt-48 pb-16 px-6 max-w-5xl mx-auto relative z-10 text-center">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/20 mb-8">
+            <i class="ph ph-presentation-chart text-purple-400 text-5xl"></i>
+        </div>
+        
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">Prezentare Proiect</h1>
+        <p class="text-xl text-zinc-400 max-w-2xl mx-auto mb-12">
+            Aici va fi integrată prezentarea finală a proiectului de licență (ex: slide-uri PowerPoint, PDF sau un videoclip demonstrativ).
+        </p>
+
+        <div class="p-12 rounded-3xl border border-dashed border-zinc-700 bg-zinc-900/50 max-w-3xl mx-auto">
+            <i class="ph ph-video-camera text-6xl text-zinc-600 mb-4"></i>
+            <h3 class="text-2xl font-medium text-zinc-300 mb-2">În curând</h3>
+            <p class="text-zinc-500">Materialele de prezentare vor fi încărcate înainte de susținerea lucrării.</p>
+        </div>
+    </main>
+
+</body>
+</html>
