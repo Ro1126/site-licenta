@@ -4,8 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prezentare - Licență</title>
+    
+    <!-- Tailwind & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- React & Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
         
@@ -14,6 +22,9 @@
             background-color: #09090b;
             color: #f4f4f5;
             overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .ambient-glow {
@@ -62,6 +73,18 @@
         .nav-link:hover::after, .nav-link.active::after {
             width: 100%;
         }
+
+        /* Container specific prezentarii */
+        .presentation-wrapper {
+            background-color: #0c0c0e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+            overflow: hidden;
+            position: relative;
+            flex-grow: 1;
+            margin-bottom: 2rem;
+        }
     </style>
 </head>
 <body class="selection:bg-sky-500/30">
@@ -88,22 +111,665 @@
     </nav>
 
     <!-- Conținut Principal -->
-    <main class="pt-48 pb-16 px-6 max-w-5xl mx-auto relative z-10 text-center">
-        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/20 mb-8">
-            <i class="ph ph-presentation-chart text-purple-400 text-5xl"></i>
-        </div>
-        
-        <h1 class="text-4xl md:text-6xl font-bold mb-6">Prezentare Proiect</h1>
-        <p class="text-xl text-zinc-400 max-w-2xl mx-auto mb-12">
-            Aici va fi integrată prezentarea finală a proiectului de licență (ex: slide-uri PowerPoint, PDF sau un videoclip demonstrativ).
-        </p>
+    <main class="pt-28 px-6 max-w-[1400px] w-full mx-auto flex flex-col flex-grow relative z-10">
+        <header class="mb-6 text-center shrink-0">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">Prezentare Interactivă</h1>
+            <p class="text-zinc-400 text-lg">Parcurge slide-urile folosind săgețile <kbd class="px-2 py-1 bg-zinc-800 rounded mx-1 text-xs">←</kbd> <kbd class="px-2 py-1 bg-zinc-800 rounded mx-1 text-xs">→</kbd> sau click pe controalele de jos.</p>
+        </header>
 
-        <div class="p-12 rounded-3xl border border-dashed border-zinc-700 bg-zinc-900/50 max-w-3xl mx-auto">
-            <i class="ph ph-video-camera text-6xl text-zinc-600 mb-4"></i>
-            <h3 class="text-2xl font-medium text-zinc-300 mb-2">În curând</h3>
-            <p class="text-zinc-500">Materialele de prezentare vor fi încărcate înainte de susținerea lucrării.</p>
+        <!-- Containerul unde va fi montată aplicația React -->
+        <div class="presentation-wrapper">
+            <div id="root" class="w-full h-full absolute inset-0"></div>
         </div>
     </main>
 
+    <!-- Codul React incrustat direct cu Babel -->
+    <script type="text/babel">
+        // Extragem Hook-urile direct din obiectul global React
+        const { useState, useEffect } = React;
+
+        const slides = [
+          { id: "intro", tag: "PROIECT DE LICENȚĂ", title: "De la Zero la Cloud", subtitle: "Implementarea OpenStack Wallaby pe infrastructură nested KVM", content: "intro", bg: "radial-gradient(ellipse at 20% 50%, #1a0533 0%, #0a0a1a 50%, #000 100%)", accent: "#a855f7" },
+          { id: "obiective", tag: "OBIECTIVE", title: "Ce Am Vrut Să Realizăm", subtitle: "Un cloud privat complet funcțional, automatizat și reproductibil", content: "obiective", bg: "radial-gradient(ellipse at 80% 30%, #0c1e3a 0%, #0a0a1a 60%, #000 100%)", accent: "#3b82f6" },
+          { id: "tech", tag: "TEHNOLOGII", title: "Stiva Tehnologică", subtitle: "Fiecare componentă are un rol esențial în ecosistem", content: "tech", bg: "radial-gradient(ellipse at 50% 80%, #1a0a2e 0%, #0a0a1a 50%, #000 100%)", accent: "#8b5cf6" },
+          { id: "arch", tag: "ARHITECTURĂ", title: "Topologia Infrastructurii", subtitle: "2 VM-uri gazdă, 3 noduri compute nested, 18 containere LXD", content: "arch", bg: "radial-gradient(ellipse at 30% 50%, #0c1e3a 0%, #0a0a1a 60%, #000 100%)", accent: "#3b82f6" },
+          { id: "pas1", tag: "PASUL 1", title: "Crearea Infrastructurii", subtitle: "Terraform provizionează cele două mașini virtuale pe OpenStack-ul gazdă", content: "pas1", bg: "radial-gradient(ellipse at 70% 20%, #1a0a2e 0%, #0a0a1a 50%, #000 100%)", accent: "#7c3aed" },
+          { id: "pas2", tag: "PASUL 2", title: "Configurarea Hypervisorului", subtitle: "VM2 devine gazdă KVM cu bridge networking și 3 VM-uri nested", content: "pas2", bg: "radial-gradient(ellipse at 20% 70%, #0a2a1a 0%, #0a0a1a 50%, #000 100%)", accent: "#10b981" },
+          { id: "err_disk", tag: "PROBLEMĂ #1", title: "Discuri Configurate Greșit", subtitle: "Format raw vs qcow2, discuri corupte, GRUB fără serial numbers", content: "err_disk", bg: "radial-gradient(ellipse at 80% 80%, #2a0a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#ef4444" },
+          { id: "pas3", tag: "PASUL 3", title: "Rețeaua — Partea Critică", subtitle: "NAT, DNS forwarding, DNAT și socat — pentru ca totul să comunice", content: "pas3", bg: "radial-gradient(ellipse at 60% 40%, #1a1a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#f59e0b" },
+          { id: "err_dns", tag: "PROBLEMĂ #2", title: "DNS-ul Care Nu Funcționa", subtitle: "ISP-ul bloca UDP 53, systemd-resolved ignora configurarea, DNAT interferea", content: "err_dns", bg: "radial-gradient(ellipse at 30% 20%, #2a0a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#ef4444" },
+          { id: "pas4", tag: "PASUL 4", title: "MAAS — Bare Metal Provisioning", subtitle: "PXE boot, commissioning, etichetare și deploy automat", content: "pas4", bg: "radial-gradient(ellipse at 40% 60%, #2a1a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#f97316" },
+          { id: "pas5", tag: "PASUL 5", title: "Juju — Deploy cu Bundle", subtitle: "27 de charm-uri, 18 containere LXD, toate relațiile definite declarativ", content: "pas5", bg: "radial-gradient(ellipse at 50% 30%, #0a1a2a 0%, #0a0a1a 50%, #000 100%)", accent: "#06b6d4" },
+          { id: "err_space", tag: "PROBLEMĂ #3", title: "Disc Plin — 100% pe Compute01", subtitle: "21GB nu ajung pentru OS + 5 containere LXD + charm dependencies", content: "err_space", bg: "radial-gradient(ellipse at 20% 40%, #2a0a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#ef4444" },
+          { id: "err_version", tag: "PROBLEMĂ #4", title: "Versiuni Incompatibile", subtitle: "nova-compute 23.2.2 (Wallaby) vs nova-conductor 21.2.4 (Ussuri)", content: "err_version", bg: "radial-gradient(ellipse at 70% 60%, #2a0a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#ef4444" },
+          { id: "pas6", tag: "PASUL 6", title: "Vault — Securitate și PKI", subtitle: "Inițializare Shamir, unseal, autorizare charm, generare CA root", content: "pas6", bg: "radial-gradient(ellipse at 70% 70%, #1a0a1a 0%, #0a0a1a 50%, #000 100%)", accent: "#ec4899" },
+          { id: "err_mysql", tag: "PROBLEMĂ #5", title: "MySQL Cluster — Quorum Pierdut", subtitle: "Toate 3 noduri offline simultan, GTID-uri conflictuale, clone recovery", content: "err_mysql", bg: "radial-gradient(ellipse at 50% 30%, #2a0a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#ef4444" },
+          { id: "err_ssl", tag: "PROBLEMĂ #6", title: "Certificate SSL Nepropgate", subtitle: "Vault emite certificate dar serviciile nu le preiau, Neutron eșuează", content: "err_ssl", bg: "radial-gradient(ellipse at 40% 70%, #2a0a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#ef4444" },
+          { id: "err_vm2disk", tag: "PROBLEMĂ #7", title: "VM2 — Disc Gazdă Plin", subtitle: "97GB din 97GB ocupat, VM-uri paused automat, niciun director nu se poate crea", content: "err_vm2disk", bg: "radial-gradient(ellipse at 60% 20%, #2a0a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#ef4444" },
+          { id: "servicii", tag: "REZULTAT", title: "27 de Servicii Active", subtitle: "Întregul stack OpenStack funcțional pe 3 noduri", content: "servicii", bg: "radial-gradient(ellipse at 30% 40%, #0a2a1a 0%, #0a0a1a 50%, #000 100%)", accent: "#10b981" },
+          { id: "lectii", tag: "LECȚII", title: "Ce Am Învățat", subtitle: "Insight-uri din 12 ore de troubleshooting", content: "lectii", bg: "radial-gradient(ellipse at 50% 50%, #1a0a2e 0%, #0a0a1a 50%, #000 100%)", accent: "#8b5cf6" },
+          { id: "auto", tag: "AUTOMATIZARE", title: "De la Manual la Cod", subtitle: "Totul condensat în scripturi reproductibile", content: "auto", bg: "radial-gradient(ellipse at 40% 40%, #1a1a0a 0%, #0a0a1a 50%, #000 100%)", accent: "#f59e0b" },
+          { id: "gitlab", tag: "GITLAB CI/CD", title: "Pipeline-ul Complet", subtitle: "Un git push declanșează deploy-ul end-to-end", content: "gitlab", bg: "radial-gradient(ellipse at 60% 60%, #1a0a2e 0%, #0a0a1a 50%, #000 100%)", accent: "#e24329" },
+          { id: "next", tag: "PAȘI URMĂTORI", title: "Drumul Înainte", subtitle: "De la laborator la producție", content: "next", bg: "radial-gradient(ellipse at 60% 50%, #0a1a2a 0%, #0a0a1a 50%, #000 100%)", accent: "#06b6d4" },
+          { id: "final", tag: "MULȚUMESC", title: "Întrebări?", subtitle: "Alexandru Mureșanu — Proiect de Licență 2026", content: "final", bg: "radial-gradient(ellipse at 50% 50%, #1a0533 0%, #0a0a1a 50%, #000 100%)", accent: "#a855f7" },
+        ];
+
+        const A = ({ visible, delay = 0, children, y = 20, x = 0, style = {} }) => (
+          <div style={{ transform: visible ? "translate(0,0)" : `translate(${x}px,${y}px)`, opacity: visible ? 1 : 0, transition: `all 0.5s cubic-bezier(0.16,1,0.3,1) ${delay}s`, ...style }}>{children}</div>
+        );
+
+        const Log = ({ visible, delay = 0, lines, title }) => (
+          <A visible={visible} delay={delay}>
+            {title && <div style={{ color: "#475569", fontSize: "9px", fontFamily: "monospace", marginBottom: "4px", letterSpacing: "1px" }}>{title}</div>}
+            <div style={{ background: "#0c0f1a", border: "1px solid #1e293b", borderRadius: "6px", padding: "10px 12px", fontFamily: "'JetBrains Mono',monospace", fontSize: "9.5px", lineHeight: 1.7, overflowX: "auto" }}>
+              {lines.map((l, i) => <div key={i} style={{ color: l.err ? "#f87171" : l.warn ? "#fbbf24" : l.ok ? "#34d399" : l.cmd ? "#e2e8f0" : l.dim ? "#334155" : "#94a3b8", whiteSpace: "pre" }}>{l.cmd && <span style={{ color: "#10b981" }}>$ </span>}{l.text}</div>)}
+            </div>
+          </A>
+        );
+
+        const Card = ({ visible, delay, icon, title, desc, color }) => (
+          <A visible={visible} delay={delay}>
+            <div style={{ padding: "12px", background: `${color}08`, border: `1px solid ${color}20`, borderRadius: "8px", borderLeft: `3px solid ${color}50`, height: "100%" }}>
+              <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                <span style={{ fontSize: "18px", flexShrink: 0 }}>{icon}</span>
+                <div><div style={{ color: "#f1f5f9", fontSize: "11px", fontWeight: 700 }}>{title}</div><div style={{ color: "#94a3b8", fontSize: "9.5px", marginTop: "2px", lineHeight: 1.5 }}>{desc}</div></div>
+              </div>
+            </div>
+          </A>
+        );
+
+        const Txt = ({ visible, delay, children }) => (
+          <A visible={visible} delay={delay}><p style={{ color: "#94a3b8", fontSize: "12px", lineHeight: 1.75, margin: "0 0 12px 0" }}>{children}</p></A>
+        );
+
+        const HL = ({ children, color = "#a855f7" }) => <span style={{ color, fontWeight: 600 }}>{children}</span>;
+        const Mono = ({ children, color = "#06b6d4" }) => <code style={{ color, fontSize: "10px", fontFamily: "'JetBrains Mono',monospace", background: `${color}10`, padding: "1px 4px", borderRadius: "3px" }}>{children}</code>;
+
+        // ===================== SLIDE CONTENTS =====================
+
+        const IntroContent = ({ v }) => (
+          <div>
+            <Txt visible={v} delay={0.2}>
+              Acest proiect demonstrează implementarea completă a unei platforme <HL>cloud computing privat</HL> folosind
+              OpenStack Wallaby pe infrastructură <HL>nested KVM</HL>, orchestrată cu Juju și provizionată prin MAAS.
+              Pe parcurs am întâmpinat și rezolvat <HL color="#ef4444">12 probleme critice</HL> — fiecare documentată cu log-uri reale.
+            </Txt>
+            <A visible={v} delay={0.4} style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              {["Ubuntu Focal 20.04","OpenStack Wallaby","Juju 3.6","MAAS 2.7","3 Compute Nodes","27 Servicii","18 Containere LXD","Vault PKI"].map((t, i) => (
+                <span key={i} style={{ padding: "4px 12px", borderRadius: "16px", fontSize: "9px", background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", color: "#c4b5fd", fontFamily: "monospace" }}>{t}</span>
+              ))}
+            </A>
+            <A visible={v} delay={0.6} style={{ display: "flex", gap: "40px", marginTop: "25px" }}>
+              {[{ n: "~12h", l: "Deploy manual" }, { n: "~20min", l: "Deploy automatizat" }, { n: "12", l: "Probleme critice" }, { n: "27", l: "Servicii active" }].map((s, i) => (
+                <div key={i}><div style={{ color: "#a855f7", fontSize: "26px", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace" }}>{s.n}</div><div style={{ color: "#64748b", fontSize: "9px", marginTop: "2px" }}>{s.l}</div></div>
+              ))}
+            </A>
+          </div>
+        );
+
+        const ObiectiveContent = ({ v }) => (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+            {[
+              { icon: "☁️", title: "Cloud privat funcțional", desc: "Compute, storage, networking și dashboard web — toate serviciile OpenStack integrate." },
+              { icon: "🔄", title: "Reproductibilitate 100%", desc: "Terraform + Ansible + Juju bundle — întregul deploy descris în cod, rulabil de la zero." },
+              { icon: "🏗️", title: "Nested KVM fezabil", desc: "Demonstrăm că OpenStack poate rula pe mașini virtuale nested, fără hardware dedicat." },
+              { icon: "🤖", title: "Automatizare CI/CD", desc: "Pipeline GitLab: un git push pornește deploy-ul complet fără intervenție manuală." },
+              { icon: "🔐", title: "Securitate prin design", desc: "TLS pe fiecare endpoint prin Vault CA, certificate emise automat la deploy." },
+              { icon: "📝", title: "Documentație completă", desc: "Fiecare problemă întâmpinată, log-ul real și soluția aplicată — totul documentat." },
+            ].map((item, i) => <Card key={i} visible={v} delay={i * 0.07} icon={item.icon} title={item.title} desc={item.desc} color="#3b82f6" />)}
+          </div>
+        );
+
+        const TechContent = ({ v }) => (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "12px" }}>
+            {[
+              { icon: "🏗️", name: "Terraform", role: "Provizionare VM-uri pe OpenStack gazdă — security groups, floating IP, port fără security", color: "#7c3aed" },
+              { icon: "⚙️", name: "Ansible", role: "Configurare automată: KVM, bridge, compute VMs, NAT, DNS, socat forwarding", color: "#ef4444" },
+              { icon: "🖥️", name: "MAAS 2.7", role: "PXE boot, commissioning, DHCP/DNS, deploy Ubuntu pe bare-metal virtual", color: "#f59e0b" },
+              { icon: "🎯", name: "Juju 3.6", role: "Orchestrare prin charme — relații declarative între servicii, lifecycle management", color: "#10b981" },
+              { icon: "☁️", name: "OpenStack Wallaby", role: "Nova (compute), Neutron (net), Glance (images), Cinder (block storage), Keystone (identity)", color: "#3b82f6" },
+              { icon: "🔒", name: "Vault 1.7", role: "Shamir secret sharing, PKI backend, certificate authority, TLS automatizat", color: "#ec4899" },
+              { icon: "💾", name: "Ceph Pacific", role: "Distributed storage — 3 OSD-uri, 3 monitoare, replicare automată", color: "#f97316" },
+              { icon: "🌐", name: "OVN 22.03", role: "Software-defined networking — northbound/southbound DB, chassis per compute node", color: "#06b6d4" },
+            ].map((t, i) => (
+              <A key={i} visible={v} delay={i * 0.06}>
+                <div style={{ display: "flex", gap: "10px", alignItems: "center", padding: "10px 12px", background: `${t.color}06`, border: `1px solid ${t.color}18`, borderRadius: "8px" }}>
+                  <span style={{ fontSize: "20px" }}>{t.icon}</span>
+                  <div><span style={{ color: t.color, fontWeight: 700, fontSize: "11px" }}>{t.name}</span><div style={{ color: "#94a3b8", fontSize: "9px", marginTop: "1px", lineHeight: 1.4 }}>{t.role}</div></div>
+                </div>
+              </A>
+            ))}
+          </div>
+        );
+
+        const ArchContent = ({ v }) => (
+          <div style={{ position: "relative", width: "100%", height: "260px", marginTop: "10px" }}>
+            <svg style={{ position: "absolute", width: "100%", height: "100%" }}>
+              <line x1="22%" y1="22%" x2="68%" y2="22%" stroke="#3b82f640" strokeWidth="1.5" strokeDasharray="5,4" />
+              <text x="45%" y="17%" fill="#475569" fontSize="8.5" textAnchor="middle" fontFamily="monospace">192.168.66.0/24 — rețea externă</text>
+              <rect x="12%" y="44%" width="76%" height="1.5" rx="1" fill="#a855f740" />
+              <text x="50%" y="42%" fill="#7c3aed90" fontSize="8.5" textAnchor="middle" fontFamily="monospace">10.10.10.0/24 — br0 bridge pe VM2</text>
+              {[2,3,4].map((_, idx) => <line key={idx} x1="75%" y1="33%" x2={`${[12,40,70][idx]}%`} y2="54%" stroke="#a855f720" strokeWidth="1" strokeDasharray="4,4" />)}
+            </svg>
+            {[
+              { l: "VM1", s: "192.168.66.27\nMAAS Region+Rack\nJuju Controller (LXD)", x: 8, y: 6, c: "#3b82f6" },
+              { l: "VM2", s: "192.168.66.243\nKVM + br0:10.10.10.104\nNAT + dnsmasq + DNAT + socat", x: 62, y: 6, c: "#f59e0b" },
+              { l: "compute01", s: "Machine 0 — vda:65G vdb:20G\nkeystone, mysql, dashboard\novn-central, ceph-mon", x: 2, y: 56, c: "#a855f7" },
+              { l: "compute03", s: "Machine 1 — vda:65G vdb:20G\ncinder, neutron, vault\nmysql(RW), ovn-central", x: 34, y: 56, c: "#a855f7" },
+              { l: "compute02", s: "Machine 2 — vda:65G vdb:20G\nglance, nova-cc, rabbitmq\nplacement, ceph-mon", x: 66, y: 56, c: "#a855f7" },
+            ].map((n, i) => (
+              <A key={i} visible={v} delay={i * 0.1} style={{ position: "absolute", left: `${n.x}%`, top: `${n.y}%` }}>
+                <div style={{ width: "125px", padding: "8px", background: `${n.c}10`, border: `1.5px solid ${n.c}35`, borderRadius: "8px", textAlign: "center" }}>
+                  <div style={{ color: n.c, fontWeight: 800, fontSize: "11px", fontFamily: "monospace" }}>{n.l}</div>
+                  <div style={{ color: "#94a3b8", fontSize: "7.5px", marginTop: "3px", whiteSpace: "pre-line", lineHeight: 1.35 }}>{n.s}</div>
+                </div>
+              </A>
+            ))}
+          </div>
+        );
+
+        const Pas1Content = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              <HL color="#7c3aed">Terraform</HL> creează cele două VM-uri pe platforma OpenStack gazdă. <HL color="#7c3aed">VM1</HL> primește floating IP pentru acces SSH extern. <HL color="#7c3aed">VM2</HL> primește port cu <Mono>port_security_enabled = false</Mono> — critic pentru nested KVM, altfel MAC-urile compute VM-urilor sunt filtrate.
+            </Txt>
+            <Log visible={v} delay={0.3} title="TERRAFORM APPLY" lines={[
+              { cmd: true, text: "terraform apply -auto-approve" },
+              { dim: true, text: "openstack_compute_instance_v2.orchestrator: Creating..." },
+              { dim: true, text: "openstack_compute_instance_v2.services: Creating..." },
+              { ok: true, text: "Apply complete! Resources: 8 added, 0 changed, 0 destroyed." },
+              { text: "" },
+              { ok: true, text: 'public_ip_orchestrator = "130.195.57.249"' },
+              { ok: true, text: 'private_ip_services   = "192.168.66.243"' },
+            ]} />
+          </div>
+        );
+
+        const Pas2Content = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Ansible configurează VM2: instalare KVM, creare bridge <Mono>br0</Mono>, definire rețea libvirt <Mono>host-bridge</Mono>. Apoi
+              scriptul <Mono>create_nodes.sh</Mono> creează 3 VM-uri cu discuri <HL color="#10b981">qcow2</HL> (thin provisioned — ocupă doar spațiul scris efectiv) și <HL color="#10b981">serial numbers</HL> obligatorii pentru GRUB.
+            </Txt>
+            <Log visible={v} delay={0.3} title="CREATE COMPUTE VMs" lines={[
+              { cmd: true, text: "qemu-img create -f qcow2 compute01d1.img 65G     # thin provisioned!" },
+              { cmd: true, text: "qemu-img create -f qcow2 compute01-osd.qcow2 20G # disc Ceph OSD" },
+              { cmd: true, text: "virt-install --name os-compute01 --ram 4096 --vcpus 2 \\" },
+              { text: "  --disk path=...,format=qcow2,serial=compute01 \\" },
+              { text: "  --disk path=...-osd.qcow2,serial=osd01 \\" },
+              { text: "  --network=network=host-bridge,mac=52:54:00:31:a1:67" },
+              { ok: true, text: "VM os-compute01 created and started ✓" },
+            ]} />
+          </div>
+        );
+
+        const ErrDiskContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Prima problemă majoră: VM-urile aveau 3 defecte de disc simultan. Compute02 avea XML-ul definit cu <Mono color="#ef4444">driver type='raw'</Mono> dar discul era qcow2 — VM-ul vedea 198KB în loc de 65GB. Compute03 avea format raw real (ocupa 4.63GB fizic). Și GRUB nu putea instala bootloader-ul fără serial numbers pe discuri.
+            </Txt>
+            <Log visible={v} delay={0.3} title="EROARE — DISC COMPUTE02 CORUPT" lines={[
+              { cmd: true, text: "virsh dumpxml os-compute02 | grep 'driver'" },
+              { err: true, text: "<driver name='qemu' type='raw'/>" },
+              { text: "# XML zice raw, dar discul e qcow2 → VM vede doar headerul: 198KB" },
+              { text: "" },
+              { cmd: true, text: "qemu-img info compute02d1.img" },
+              { warn: true, text: "file format: qcow2" },
+              { warn: true, text: "virtual size: 65 GiB  /  disk size: 196 KiB  ← PROBLEMA!" },
+            ]} />
+            <Log visible={v} delay={0.5} title="FIX APLICAT" lines={[
+              { cmd: true, text: "virt-xml os-compute02 --edit target=vda --disk driver_type=qcow2" },
+              { cmd: true, text: "virt-xml os-compute01 --edit target=vda --disk serial=compute01" },
+              { cmd: true, text: "virt-xml os-compute02 --edit target=vda --disk serial=compute02" },
+              { cmd: true, text: "virt-xml os-compute03 --edit target=vda --disk serial=compute03" },
+              { ok: true, text: "Toate discurile corectate — GRUB poate identifica /dev/disk/by-id ✓" },
+            ]} />
+          </div>
+        );
+
+        const Pas3Content = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Cea mai complexă parte. Compute VM-urile pe 10.10.10.0/24 au nevoie de: internet (apt, snap), DNS funcțional, și acces la MAAS (pe VM1). Am configurat <HL color="#f59e0b">4 mecanisme</HL> pe VM2:
+            </Txt>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+              {[
+                { icon: "🔀", title: "NAT MASQUERADE", desc: "Traficul din 10.10.10.0/24 iese prin ens3 VM2 cu IP-ul tradus. Fără NAT, ping 8.8.8.8 eșuează." },
+                { icon: "📡", title: "dnsmasq pe 10.10.10.1", desc: "DNS forwarder — compute VMs rezolvă prin VM2. Direct prin ISP nu mergea (UDP 53 blocat)." },
+                { icon: "↩️", title: "DNAT selectiv", desc: "Doar porturile MAAS (5248/5240) sunt redirecționate la VM1. Inițial era DNAT pe tot → bloca DNS." },
+                { icon: "🔌", title: "socat relay", desc: "10.10.10.1 e local pe VM2, DNAT nu funcționează. socat face TCP relay la VM1 pentru porturile MAAS." },
+              ].map((item, i) => <Card key={i} visible={v} delay={0.2 + i * 0.08} icon={item.icon} title={item.title} desc={item.desc} color="#f59e0b" />)}
+            </div>
+          </div>
+        );
+
+        const ErrDnsContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Containerele LXD nu porneau — <Mono color="#ef4444">snap refresh lxd</Mono> eșua pentru că nu putea rezolva DNS. Am încercat 5 abordări diferite până am găsit soluția. Problema principală: regula DNAT generală redirecționa TOT traficul către VM1, inclusiv cererile DNS care trebuiau să ajungă la dnsmasq pe VM2.
+            </Txt>
+            <Log visible={v} delay={0.25} title="EROARE ÎN JUJU LOG" lines={[
+              { err: true, text: 'cannot refresh "lxd": lookup api.snapcraft.io on 127.0.0.53:53:' },
+              { err: true, text: "  server misbehaving" },
+            ]} />
+            <Log visible={v} delay={0.4} title="TENTATIVE EȘUATE" lines={[
+              { cmd: true, text: "# 1. /etc/resolv.conf direct → suprascris de systemd-resolved" },
+              { cmd: true, text: "# 2. resolved.conf.d → per-link DNS pe eth0 are prioritate" },
+              { cmd: true, text: "# 3. resolvectl dns eth0 → tot nu merge" },
+              { cmd: true, text: "# 4. DNS extern 8.8.8.8 UDP 53 → BLOCAT de ISP!" },
+            ]} />
+            <Log visible={v} delay={0.55} title="SOLUȚIA — dnsmasq + DNAT SELECTIV" lines={[
+              { cmd: true, text: "# Pe VM2: dnsmasq ca DNS forwarder" },
+              { text: "listen-address=10.10.10.1, server=193.151.29.205" },
+              { cmd: true, text: "# FIX CRITIC: DNAT doar pentru porturile MAAS, nu tot" },
+              { cmd: true, text: "iptables -t nat -D PREROUTING ... -j DNAT  # șterge regula generală" },
+              { cmd: true, text: "iptables -t nat -A PREROUTING -p tcp --dport 5248 -j DNAT --to VM1" },
+              { cmd: true, text: "iptables -t nat -A PREROUTING -p tcp --dport 5240 -j DNAT --to VM1" },
+              { ok: true, text: "nslookup api.snapcraft.io 10.10.10.1 → 185.125.188.54 ✓" },
+            ]} />
+          </div>
+        );
+
+        const Pas4Content = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              <HL color="#f97316">MAAS</HL> tratează VM-urile nested ca bare-metal. Ele fac PXE boot, sunt comisionate automat (hardware inventory), apoi etichetate. MAAS gestionează DHCP/DNS pe 10.10.10.0/24 și servește imagini Ubuntu pentru deploy.
+            </Txt>
+            <Log visible={v} delay={0.3} title="MAAS CLI — AUTOMATIZAT" lines={[
+              { cmd: true, text: "maas admin subnets create cidr=10.10.10.0/24 gateway_ip=10.10.10.1" },
+              { cmd: true, text: "maas admin vlan update $FABRIC $VLAN dhcp_on=true primary_rack=$RACK" },
+              { cmd: true, text: "maas admin tags create name=compute" },
+              { cmd: true, text: "maas admin tag update-nodes compute add=dx36ea,sdmfkq,cxaf3n" },
+              { text: "" },
+              { ok: true, text: "os-compute01 | Ready | dx36ea | 52:54:00:31:a1:67" },
+              { ok: true, text: "os-compute02 | Ready | sdmfkq | 52:54:00:63:ae:ac" },
+              { ok: true, text: "os-compute03 | Ready | cxaf3n | 52:54:00:63:be:bc" },
+            ]} />
+          </div>
+        );
+
+        const Pas5Content = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              <HL color="#06b6d4">Juju</HL> transformă un fișier YAML declarativ în 27 de servicii pe 3 mașini și 18 containere. Bundle-ul original avea 3 bug-uri pe care le-am corectat (marcate cu <HL color="#10b981">FIX</HL>):
+            </Txt>
+            <Log visible={v} delay={0.3} title="BUNDLE.YAML — CU FIX-URI" lines={[
+              { dim: true, text: "# 27 charm applications, 18 LXD containers" },
+              { text: "nova-compute:  openstack-origin: cloud:focal-wallaby  # FIX #1", ok: true },
+              { text: "ovn-chassis:   bridge-interface-mappings: br-ex:eth0   # FIX #2", ok: true },
+              { text: "vault-mysql-router: charm: mysql-router               # FIX #3", ok: true },
+              { text: "" },
+              { cmd: true, text: "juju bootstrap my-maas my-controller" },
+              { cmd: true, text: "juju add-model openstack my-maas" },
+              { cmd: true, text: "juju deploy ./bundle.yaml" },
+              { dim: true, text: "# Deploying 27 applications across 3 machines..." },
+            ]} />
+            <A visible={v} delay={0.5} style={{ marginTop: "8px" }}>
+              <div style={{ color: "#475569", fontSize: "9px", borderLeft: "2px solid #06b6d440", paddingLeft: "8px", lineHeight: 1.6 }}>
+                <HL color="#10b981">FIX #1</HL>: Fără openstack-origin uniform, charm-urile instalau mix Ussuri/Wallaby<br/>
+                <HL color="#10b981">FIX #2</HL>: Interfața pe compute VMs e eth0, nu ens3 — OVN crasha cu "ip link set ens3 up"<br/>
+                <HL color="#10b981">FIX #3</HL>: vault-mysql-router lipsea complet — Vault nu se putea conecta la baza de date
+              </div>
+            </A>
+          </div>
+        );
+
+        const ErrSpaceContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Compute01 avea doar <HL color="#ef4444">21GB</HL> disc (restul de 65GB). Cu Ubuntu + 5 containere LXD + charm dependencies, s-a umplut complet. Charm-urile eșuau cu <Mono color="#ef4444">No space left on device</Mono> iar pip-ul din containere nu putea instala nimic.
+            </Txt>
+            <Log visible={v} delay={0.25} title="LOG — EROARE DISC PLIN" lines={[
+              { err: true, text: "ERROR: Could not install packages due to an EnvironmentError:" },
+              { err: true, text: "  [Errno 28] No space left on device" },
+              { text: "" },
+              { cmd: true, text: "juju ssh 0 'df -h /'" },
+              { err: true, text: "/dev/vda1   21G   20G     0 100% /    ← PLIN!" },
+            ]} />
+            <Log visible={v} delay={0.45} title="FIX — RESIZE LIVE FĂRĂ REBOOT" lines={[
+              { cmd: true, text: "# Pe VM2 — resize online" },
+              { cmd: true, text: "virsh blockresize os-compute01 /var/.../os-compute01.qcow2 65G" },
+              { cmd: true, text: "# Pe compute01 — extinde partiția" },
+              { cmd: true, text: "growpart /dev/vda 1 && resize2fs /dev/vda1" },
+              { ok: true, text: "/dev/vda1   64G   20G   42G  32% /    ← REZOLVAT!" },
+              { text: "" },
+              { cmd: true, text: "# Apoi reparăm pachetele stricate" },
+              { cmd: true, text: "dpkg --configure -a && apt --fix-broken install -y" },
+            ]} />
+          </div>
+        );
+
+        const ErrVersionContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Nova-compute (pe bare-metal) era versiunea <HL color="#ef4444">23.2.2 (Wallaby)</HL> dar nova-conductor (în LXD container) era <HL color="#ef4444">21.2.4 (Ussuri)</HL>. Obiectele versionate nu erau compatibile — MigrationList v1.5 vs v1.4. Serviciul nova-compute crasha la start.
+            </Txt>
+            <Log visible={v} delay={0.25} title="LOG — VERSIUNE INCOMPATIBILĂ" lines={[
+              { err: true, text: "oslo_messaging.rpc.client.RemoteError:" },
+              { err: true, text: "  Version 1.5 of MigrationList is not supported," },
+              { err: true, text: "  supported version is 1.4" },
+              { text: "" },
+              { cmd: true, text: "# Verificare versiuni" },
+              { warn: true, text: "compute:   nova-compute   3:23.2.2  (Wallaby) ← din cloud archive" },
+              { warn: true, text: "conductor: nova-conductor  2:21.2.4  (Ussuri)  ← din focal base" },
+            ]} />
+            <Log visible={v} delay={0.45} title="FIX — UNIFORMIZARE LA WALLABY" lines={[
+              { cmd: true, text: "juju config nova-cloud-controller openstack-origin=cloud:focal-wallaby" },
+              { cmd: true, text: "juju config keystone openstack-origin=cloud:focal-wallaby" },
+              { cmd: true, text: "juju config glance openstack-origin=cloud:focal-wallaby" },
+              { dim: true, text: "# ... și restul serviciilor" },
+              { ok: true, text: "nova-conductor: 23.2.2 (Wallaby) — compatibil cu compute ✓" },
+            ]} />
+          </div>
+        );
+
+        const Pas6Content = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              <HL color="#ec4899">Vault</HL> folosește Shamir Secret Sharing: 5 chei generate, 3 necesare pentru unseal. După unseal, se creează un token temporar (TTL 10min) pentru autorizarea charm-ului, apoi se generează CA root. Toate serviciile primesc certificate TLS automat.
+            </Txt>
+            <Log visible={v} delay={0.3} title="VAULT INIT & UNSEAL" lines={[
+              { cmd: true, text: "vault operator init -key-shares=5 -key-threshold=3" },
+              { text: "Unseal Key 1: yzge62n6nOZjGRnl2xAO7Ate..." },
+              { text: "Unseal Key 2: 28ZSYm08bMI+39b8ZPTzYxiy..." },
+              { text: "Root Token:   s.tFhleKtSl1KvCXmO4SLmRprP" },
+              { text: "" },
+              { cmd: true, text: "vault operator unseal $KEY1 && unseal $KEY2 && unseal $KEY3" },
+              { ok: true, text: "Sealed: false ✓" },
+              { cmd: true, text: "juju run vault/leader authorize-charm token=$TEMP_TOKEN" },
+              { cmd: true, text: "juju run vault/leader generate-root-ca" },
+              { ok: true, text: "PKI CA generated — charm-pki-local backend active ✓" },
+            ]} />
+          </div>
+        );
+
+        const ErrMysqlContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Când VM-urile s-au repornit (din cauza discului plin pe VM2), toate 3 noduri MySQL au pierdut quorum simultan. Recovery-ul a necesitat identificarea nodului cu cel mai avansat GTID, excluderea nodului cu tranzacții conflictuale, și clone de la primary.
+            </Txt>
+            <Log visible={v} delay={0.25} title="DIAGNOSTIC" lines={[
+              { err: true, text: "MySQL InnoDB Cluster not healthy:" },
+              { err: true, text: "  Cluster has no quorum as visible from '10.10.10.202:3306'" },
+              { text: "" },
+              { cmd: true, text: "# Verificare GTID pe fiecare nod" },
+              { text: "10.10.10.202: ...44503388...:1-113013  ← în urmă + GTID extra!" },
+              { text: "10.10.10.207: ...44503388...:1-113046  ← cel mai avansat" },
+              { text: "10.10.10.204: ...44503388...:1-113046" },
+            ]} />
+            <Log visible={v} delay={0.45} title="RECOVERY — 4 PAȘI" lines={[
+              { cmd: true, text: "# 1. Reboot cluster de pe nodul cu GTID cel mai avansat" },
+              { cmd: true, text: "dba.reboot_cluster_from_complete_outage(" },
+              { text: '    removeInstances=["10.10.10.202:3306"])' },
+              { ok: true, text: "The cluster was successfully rebooted ✓" },
+              { cmd: true, text: "# 2. Rejoin al treilea nod" },
+              { cmd: true, text: "c.rejoin_instance('clusteruser@10.10.10.204:3306')" },
+              { cmd: true, text: "# 3. Re-add nodul exclus cu clone" },
+              { cmd: true, text: "c.add_instance('...@10.10.10.202:3306', {recoveryMethod:'clone'})" },
+              { cmd: true, text: "# 4. Rescan metadata" },
+              { ok: true, text: "Cluster is ONLINE and can tolerate up to ONE failure ✓" },
+            ]} />
+          </div>
+        );
+
+        const ErrSslContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Dashboard-ul OpenStack returna "Something went wrong" după login. Cauza: <HL color="#ef4444">Neutron API</HL> nu putea verifica certificatul TLS al Keystone. Vault emisese certificatele dar serviciile nu le instalaseră — directorul <Mono>/usr/local/share/ca-certificates/</Mono> era gol.
+            </Txt>
+            <Log visible={v} delay={0.25} title="LOG NEUTRON — SSL VERIFICATION FAILED" lines={[
+              { err: true, text: "keystoneauth1.exceptions.connection.SSLError:" },
+              { err: true, text: "  SSL exception connecting to https://10.10.10.206:35357/v3/..." },
+              { err: true, text: '  certificate verify failed' },
+              { text: "" },
+              { cmd: true, text: "ls /usr/local/share/ca-certificates/  # pe neutron container" },
+              { warn: true, text: "(gol) ← certificatul CA nu a fost instalat!" },
+            ]} />
+            <Log visible={v} delay={0.45} title="FIX — INSTALARE MANUALĂ CA CERT" lines={[
+              { cmd: true, text: "vault read -field=certificate charm-pki-local/cert/ca > vault-ca.pem" },
+              { cmd: true, text: "# Copiere pe fiecare container care are nevoie" },
+              { cmd: true, text: "cat vault-ca.pem > /usr/local/share/ca-certificates/vault-ca.crt" },
+              { cmd: true, text: "update-ca-certificates  # rehash: 1 added" },
+              { cmd: true, text: "systemctl restart neutron-server" },
+              { ok: true, text: "Neutron API → Keystone: SSL verification passed ✓" },
+            ]} />
+          </div>
+        );
+
+        const ErrVm2DiskContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              VM2 avea doar 100GB disc, dar cele 3 compute VMs ocupau ~95GB. Discul s-a umplut complet —
+              VM-urile au fost <HL color="#ef4444">paused automat</HL> de libvirt, nu se mai putea crea niciun fișier, nici măcar un director. Soluția: adăugat un volum nou de 100GB din platforma OpenStack gazdă.
+            </Txt>
+            <Log visible={v} delay={0.25} title="DIAGNOSTIC" lines={[
+              { cmd: true, text: "df -h /" },
+              { err: true, text: "/dev/vda1  97G  97G  0 100% /    ← COMPLET PLIN" },
+              { cmd: true, text: "virsh list --all" },
+              { warn: true, text: "os-compute01   paused    ← VM-uri paused automat!" },
+              { cmd: true, text: "du -sh /home/VMs/compute02/compute02d1.img" },
+              { text: "37G    ← qcow2 thin-provisioned a crescut la 37GB real" },
+            ]} />
+            <Log visible={v} delay={0.45} title="FIX — VOLUM NOU + SYMLINKS" lines={[
+              { cmd: true, text: "# Din OpenStack gazdă: creat volum 100GB, atașat la VM2" },
+              { cmd: true, text: "mkfs.ext4 /dev/vdb && mount /dev/vdb /mnt" },
+              { cmd: true, text: "mv /home/VMs/compute02 /mnt/" },
+              { cmd: true, text: "mv /home/VMs/compute03 /mnt/" },
+              { cmd: true, text: "mv /home/VMs/juju-controller /mnt/" },
+              { cmd: true, text: "ln -s /mnt/compute02 /home/VMs/compute02  # symlinks" },
+              { ok: true, text: "/dev/vda1  97G  29G  69G  30% /  ← 69GB eliberate ✓" },
+              { ok: true, text: "/dev/vdb   98G  69G  25G  74% /mnt" },
+            ]} />
+          </div>
+        );
+
+        const ServiciiContent = ({ v }) => (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px", marginTop: "12px" }}>
+            {[
+              { icon: "🔐", name: "Keystone", ver: "17.0.1", cat: "Identitate" , c: "#a855f7" },
+              { icon: "🖥️", name: "Nova", ver: "23.2.2", cat: "Compute", c: "#3b82f6" },
+              { icon: "🌐", name: "Neutron", ver: "18.6.0", cat: "Rețea", c: "#ef4444" },
+              { icon: "📀", name: "Glance", ver: "22.1.1", cat: "Imagini", c: "#10b981" },
+              { icon: "💾", name: "Cinder", ver: "18.2.1", cat: "Block Storage", c: "#f59e0b" },
+              { icon: "📊", name: "Horizon", ver: "19.4.0", cat: "Dashboard", c: "#06b6d4" },
+              { icon: "🛡️", name: "Vault", ver: "1.7.9", cat: "PKI/TLS", c: "#ec4899" },
+              { icon: "🗄️", name: "MySQL", ver: "8.0.42", cat: "Cluster 3 noduri", c: "#6366f1" },
+              { icon: "📨", name: "RabbitMQ", ver: "3.8.3", cat: "Mesagerie", c: "#84cc16" },
+              { icon: "📍", name: "Placement", ver: "5.0.1", cat: "Resurse", c: "#f97316" },
+            ].map((s, i) => (
+              <A key={i} visible={v} delay={i * 0.05}>
+                <div style={{ padding: "12px 6px", background: `${s.c}08`, border: `1px solid ${s.c}20`, borderRadius: "8px", textAlign: "center" }}>
+                  <div style={{ fontSize: "20px", marginBottom: "4px" }}>{s.icon}</div>
+                  <div style={{ color: s.c, fontWeight: 700, fontSize: "10px" }}>{s.name}</div>
+                  <div style={{ color: "#475569", fontSize: "7.5px", fontFamily: "monospace" }}>{s.ver}</div>
+                  <div style={{ color: "#334155", fontSize: "7.5px" }}>{s.cat}</div>
+                </div>
+              </A>
+            ))}
+          </div>
+        );
+
+        const LectiiContent = ({ v }) => (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginTop: "12px" }}>
+            {[
+              { icon: "🧩", title: "Rețeaua e totul", desc: "Nested KVM complică enorm networking-ul. O singură regulă iptables greșită blochează DNS, PXE, sau API-urile.", color: "#ef4444" },
+              { icon: "📦", title: "Versiunile contează", desc: "Charm-urile ussuri/stable + cloud archive Wallaby = mix toxic. openstack-origin trebuie setat explicit pe fiecare charm.", color: "#f59e0b" },
+              { icon: "💾", title: "Thin provisioning minte", desc: "qcow2 de 65GB pare mic la creare (200KB). Dar crește rapid cu LXD containere — monitorizarea spațiului e critică.", color: "#3b82f6" },
+              { icon: "🔄", title: "Vault e fragil", desc: "Se sealed la fiecare reboot. Fără auto-unseal, cloud-ul devine inaccesibil. Script de unseal e obligatoriu.", color: "#ec4899" },
+              { icon: "🗄️", title: "MySQL cluster recovery", desc: "Când toate nodurile cad simultan, GTID-ul determină cine e master. Clone recovery șterge și recreează datele.", color: "#6366f1" },
+              { icon: "📜", title: "SSL e complex", desc: "Vault emite certificate, dar fiecare serviciu trebuie să-și instaleze CA cert. Automatizarea propagării e esențială.", color: "#10b981" },
+            ].map((item, i) => <Card key={i} visible={v} delay={i * 0.08} icon={item.icon} title={item.title} desc={item.desc} color={item.color} />)}
+          </div>
+        );
+
+        const AutoContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Am condensat cele ~12 ore de deploy manual în <HL color="#f59e0b">6 scripturi</HL>. Fiecare încapsulează o etapă și include fix-urile descoperite. Scriptul principal <Mono>setup_vm1_maas_juju.sh</Mono> rulează totul end-to-end sau pe faze individuale.
+            </Txt>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
+              {[
+                { file: "main.tf", desc: "Terraform — VM1+VM2, security groups, floating IP, port fără security", icon: "🏗️" },
+                { file: "deploy_full.yaml", desc: "Ansible master — configurează ambele VM-uri cu toate dependențele", icon: "⚙️" },
+                { file: "create_nodes.sh", desc: "3 compute VMs cu qcow2, serial numbers, OSD disk — toate fix-urile incluse", icon: "🖥️" },
+                { file: "setup_vm2_net.sh", desc: "NAT, dnsmasq, DNAT selectiv, socat, proxy ARP — configurat și persistent", icon: "🌐" },
+                { file: "bundle.yaml", desc: "27 charme cu openstack-origin, eth0 fix, vault-mysql-router adăugat", icon: "📦" },
+                { file: "setup_vm1.sh", desc: "MAAS install + subnet + DHCP + Juju + deploy + Vault init — un singur script", icon: "🚀" },
+              ].map((f, i) => (
+                <A key={i} visible={v} delay={0.2 + i * 0.07}>
+                  <div style={{ padding: "10px", background: "rgba(245,158,11,0.05)", border: "1px solid rgba(245,158,11,0.12)", borderRadius: "7px", height: "100%" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "5px" }}>
+                      <span style={{ fontSize: "14px" }}>{f.icon}</span>
+                      <span style={{ color: "#f59e0b", fontSize: "10px", fontWeight: 700, fontFamily: "monospace" }}>{f.file}</span>
+                    </div>
+                    <div style={{ color: "#94a3b8", fontSize: "8.5px", lineHeight: 1.4 }}>{f.desc}</div>
+                  </div>
+                </A>
+              ))}
+            </div>
+          </div>
+        );
+
+        const GitlabContent = ({ v }) => (
+          <div style={{ marginTop: "8px" }}>
+            <Txt visible={v} delay={0.1}>
+              Cu <HL color="#e24329">GitLab CI/CD</HL>, un <Mono>git push</Mono> pe main declanșează totul. Pipeline-ul are 5 stage-uri cu retry logic, artefacte (vault keys) și smoke tests. La eșec, <Mono color="#ef4444">terraform destroy</Mono> curăță automat.
+            </Txt>
+            <Log visible={v} delay={0.3} title=".gitlab-ci.yml" lines={[
+              { key: "stages", text: "[infra, configure, provision, deploy, verify]", color: "#e24329" },
+              { text: "" },
+              { key: "infra", text: "terraform apply -auto-approve", color: "#7c3aed" },
+              { dim: true, text: "  artifacts: terraform.tfstate" },
+              { key: "configure", text: "ansible-playbook -i hosts.ini deploy_full.yaml", color: "#3b82f6" },
+              { dim: true, text: "  needs: [infra]" },
+              { key: "provision", text: "ssh vm1 ./setup_vm1_maas_juju.sh maas", color: "#f59e0b" },
+              { dim: true, text: "  retry: { max: 2, when: script_failure }" },
+              { key: "deploy", text: "ssh vm1 ./setup_vm1_maas_juju.sh deploy && ... vault", color: "#10b981" },
+              { dim: true, text: "  artifacts: vault-keys.txt  # salvate ca CI artifact" },
+              { key: "verify", text: "curl -sk https://$DASHBOARD/horizon | grep login", color: "#06b6d4" },
+              { text: "" },
+              { key: "on_failure", text: "terraform destroy -auto-approve  # cleanup", color: "#ef4444" },
+            ]} />
+            <A visible={v} delay={0.6} style={{ display: "flex", gap: "6px", marginTop: "10px", justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
+              {["git push", "→", "Terraform", "→", "Ansible", "→", "MAAS", "→", "Juju Bundle", "→", "Vault Init", "→", "✅ Cloud"].map((t, i) => (
+                <span key={i} style={{ color: i % 2 === 1 ? "#1e293b" : (t.includes("✅") ? "#10b981" : "#e24329"), fontSize: i % 2 === 1 ? "12px" : "9px", fontWeight: i % 2 === 1 ? 400 : 700, fontFamily: "monospace" }}>{t}</span>
+              ))}
+            </A>
+          </div>
+        );
+
+        const NextContent = ({ v }) => {
+          const pc = { URGENT: "#ef4444", IMPORTANT: "#f59e0b", "OPȚIONAL": "#3b82f6" };
+          return (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "12px" }}>
+              {[
+                { icon: "🔄", title: "GitLab Runner self-hosted", desc: "Runner pe VM1 cu acces direct la MAAS și Juju — pipeline complet automatizat", p: "URGENT" },
+                { icon: "📊", title: "Monitoring (Prometheus)", desc: "Grafana dashboards pentru metrici OpenStack, Ceph health, MySQL cluster status", p: "URGENT" },
+                { icon: "🌍", title: "Provider Network", desc: "Rețea externă cu floating IPs pentru acces la instanțe din afara cloud-ului", p: "URGENT" },
+                { icon: "🔐", title: "Auto-Unseal Vault", desc: "Transit seal cu secondary Vault sau cloud KMS — elimină intervenția manuală la reboot", p: "IMPORTANT" },
+                { icon: "📦", title: "Imagini & Flavors", desc: "Upload Ubuntu 22.04/CentOS, creare flavors (m1.small, m1.medium), rețele tenant", p: "IMPORTANT" },
+                { icon: "💾", title: "Backup automat", desc: "MySQL dumps zilnice, Ceph snapshots, disaster recovery plan documentat", p: "IMPORTANT" },
+                { icon: "🛡️", title: "Security hardening", desc: "Firewall rules per serviciu, audit logging, vulnerability scanning", p: "OPȚIONAL" },
+                { icon: "📈", title: "Scalare orizontală", desc: "Procedură documentată pentru adăugare compute node fără downtime", p: "OPȚIONAL" },
+              ].map((item, i) => (
+                <A key={i} visible={v} delay={i * 0.06}>
+                  <div style={{ display: "flex", gap: "8px", padding: "10px", background: "rgba(15,23,42,0.4)", border: "1px solid #1e293b", borderRadius: "8px" }}>
+                    <span style={{ fontSize: "18px" }}>{item.icon}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", justify: "space-between", alignItems: "center" }}>
+                        <span style={{ color: "#f1f5f9", fontSize: "10px", fontWeight: 700 }}>{item.title}</span>
+                        <span style={{ fontSize: "7px", fontWeight: 800, padding: "2px 5px", borderRadius: "3px", background: `${pc[item.p]}12`, color: pc[item.p], border: `1px solid ${pc[item.p]}25` }}>{item.p}</span>
+                      </div>
+                      <div style={{ color: "#64748b", fontSize: "9px", marginTop: "2px" }}>{item.desc}</div>
+                    </div>
+                  </div>
+                </A>
+              ))}
+            </div>
+          );
+        };
+
+        const FinalContent = ({ v }) => (
+          <div style={{ textAlign: "center", marginTop: "25px" }}>
+            <A visible={v} delay={0.2}><div style={{ fontSize: "50px", marginBottom: "15px" }}>☁️</div></A>
+            <A visible={v} delay={0.4}>
+              <p style={{ color: "#94a3b8", fontSize: "14px", lineHeight: 1.8, maxWidth: "500px", margin: "0 auto" }}>
+                Un cloud privat complet — de la infrastructură la dashboard funcțional — implementat, documentat și automatizat.
+              </p>
+            </A>
+            <A visible={v} delay={0.6} style={{ display: "flex", gap: "40px", justifyContent: "center", marginTop: "30px" }}>
+              {[{ n: "27", l: "Servicii active" }, { n: "12", l: "Probleme rezolvate" }, { n: "6", l: "Scripturi de automatizare" }, { n: "100%", l: "Reproductibil" }].map((s, i) => (
+                <div key={i}><div style={{ color: "#a855f7", fontSize: "28px", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace" }}>{s.n}</div><div style={{ color: "#64748b", fontSize: "9px" }}>{s.l}</div></div>
+              ))}
+            </A>
+          </div>
+        );
+
+        const CM = { intro: IntroContent, obiective: ObiectiveContent, tech: TechContent, arch: ArchContent, pas1: Pas1Content, pas2: Pas2Content, err_disk: ErrDiskContent, pas3: Pas3Content, err_dns: ErrDnsContent, pas4: Pas4Content, pas5: Pas5Content, err_space: ErrSpaceContent, err_version: ErrVersionContent, pas6: Pas6Content, err_mysql: ErrMysqlContent, err_ssl: ErrSslContent, err_vm2disk: ErrVm2DiskContent, servicii: ServiciiContent, lectii: LectiiContent, auto: AutoContent, gitlab: GitlabContent, next: NextContent, final: FinalContent };
+
+        function Presentation() {
+          const [cur, setCur] = useState(0);
+          const [vis, setVis] = useState(true);
+          const [dir, setDir] = useState(0);
+
+          const go = (n) => {
+            if (n === cur || n < 0 || n >= slides.length) return;
+            setVis(false); setDir(n > cur ? 1 : -1);
+            setTimeout(() => { setCur(n); setTimeout(() => setVis(true), 50); }, 250);
+          };
+
+          useEffect(() => {
+            const h = (e) => { if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); go(cur + 1); } if (e.key === "ArrowLeft") go(cur - 1); };
+            window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
+          }, [cur]);
+
+          const s = slides[cur]; const Content = CM[s.content];
+
+          // S-a modificat height: "100vh" in height: "100%" pentru a respecta container-ul parinte
+          return (
+            <div style={{ width: "100%", height: "100%", overflow: "hidden", position: "relative", background: s.bg, transition: "background 0.7s ease", fontFamily: "'Outfit',sans-serif", cursor: "default", userSelect: "none", borderRadius: "1rem" }}>
+              <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+              <style>{`@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.7}} ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:2px}`}</style>
+              <div style={{ position: "absolute", inset: 0, opacity: 0.02, backgroundImage: "linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px)", backgroundSize: "50px 50px" }} />
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "12px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.03)", zIndex: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: s.accent, boxShadow: `0 0 8px ${s.accent}40` }} />
+                  <span style={{ color: "#374151", fontSize: "9px", fontFamily: "'JetBrains Mono',monospace", letterSpacing: "2px" }}>ALEXANDRU MUREȘANU</span>
+                </div>
+                <span style={{ color: "#1e293b", fontSize: "9px", fontFamily: "'JetBrains Mono',monospace" }}>{String(cur + 1).padStart(2, "0")}/{String(slides.length).padStart(2, "0")}</span>
+              </div>
+              <div style={{ position: "absolute", top: "42px", left: "24px", right: "24px", bottom: "44px", display: "flex", flexDirection: "column", justifyContent: s.content === "intro" || s.content === "final" ? "center" : "flex-start", paddingTop: s.content === "intro" || s.content === "final" ? 0 : "6px", overflowY: "auto", overflowX: "hidden" }}>
+                <A visible={vis} delay={0} x={-12} y={0}>
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
+                    <div style={{ width: "16px", height: "1.5px", background: s.accent }} />
+                    <span style={{ color: s.accent, fontSize: "8px", fontWeight: 700, letterSpacing: "3px", fontFamily: "'JetBrains Mono',monospace" }}>{s.tag}</span>
+                  </div>
+                </A>
+                <A visible={vis} delay={0.04} y={dir >= 0 ? 20 : -20}>
+                  <h1 style={{ color: "#f8fafc", fontSize: s.content === "intro" || s.content === "final" ? "38px" : "24px", fontWeight: 900, margin: "0 0 4px 0", lineHeight: 1.1, letterSpacing: "-0.5px" }}>{s.title}</h1>
+                </A>
+                <A visible={vis} delay={0.08}>
+                  <p style={{ color: "#94a3b8", fontSize: s.content === "intro" || s.content === "final" ? "14px" : "12px", fontWeight: 300, margin: 0, maxWidth: "600px" }}>{s.subtitle}</p>
+                </A>
+                {Content && <Content v={vis} />}
+              </div>
+              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "8px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.03)", zIndex: 10, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(4px)" }}>
+                <button onClick={() => go(cur - 1)} disabled={cur === 0} style={{ background: "none", border: "1px solid #1e293b", color: cur === 0 ? "#0f172a" : "#64748b", padding: "4px 12px", borderRadius: "4px", cursor: cur === 0 ? "default" : "pointer", fontSize: "9px", fontFamily: "'JetBrains Mono',monospace" }}>← ÎNAPOI</button>
+                <div style={{ display: "flex", gap: "3px" }}>
+                  {slides.map((sl, i) => (
+                    <button key={i} onClick={() => go(i)} title={sl.title} style={{ width: i === cur ? "16px" : "5px", height: "5px", borderRadius: "3px", border: "none", cursor: "pointer", background: i === cur ? s.accent : sl.tag.includes("PROBLEMĂ") ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.06)", transition: "all 0.3s ease", boxShadow: i === cur ? `0 0 5px ${s.accent}30` : "none" }} />
+                  ))}
+                </div>
+                <button onClick={() => go(cur + 1)} disabled={cur === slides.length - 1} style={{ background: cur === slides.length - 1 ? "none" : `${s.accent}12`, border: `1px solid ${cur === slides.length - 1 ? "#0f172a" : s.accent + "25"}`, color: cur === slides.length - 1 ? "#0f172a" : s.accent, padding: "4px 12px", borderRadius: "4px", cursor: cur === slides.length - 1 ? "default" : "pointer", fontSize: "9px", fontFamily: "'JetBrains Mono',monospace" }}>URMĂTORUL →</button>
+              </div>
+              {cur === 0 && <div style={{ position: "absolute", bottom: "38px", left: "50%", transform: "translateX(-50%)", color: "#1e293b", fontSize: "8px", fontFamily: "monospace", animation: "pulse 2s infinite" }}>→ sau Space pentru navigare</div>}
+            </div>
+          );
+        }
+
+        // Randăm componenta pe ecran în id="root"
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Presentation />);
+    </script>
 </body>
 </html>
